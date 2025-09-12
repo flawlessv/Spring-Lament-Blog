@@ -57,3 +57,56 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles for Markdown content */
+@layer components {
+  .prose {
+    @apply text-foreground;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-foreground font-semibold;
+  }
+
+  .prose p {
+    @apply text-foreground/90 leading-7;
+  }
+
+  .prose code {
+    @apply text-sm bg-muted px-1 py-0.5 rounded font-mono;
+  }
+
+  .prose pre {
+    @apply bg-muted border border-border rounded-lg overflow-x-auto;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-primary/50 pl-4 italic text-muted-foreground;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply text-foreground/90;
+  }
+
+  .prose li::marker {
+    @apply text-muted-foreground;
+  }
+
+  .prose hr {
+    @apply border-border my-6;
+  }
+
+  .prose img {
+    @apply rounded-lg border border-border;
+  }
+}

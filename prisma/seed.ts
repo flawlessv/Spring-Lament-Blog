@@ -113,8 +113,10 @@ async function main() {
   });
 
   if (frontendCategory && aiCategory) {
-    const post1 = await prisma.post.create({
-      data: {
+    const post1 = await prisma.post.upsert({
+      where: { slug: "building-modern-blog-with-nextjs" },
+      update: {},
+      create: {
         title: "使用 Next.js 构建现代博客系统",
         slug: "building-modern-blog-with-nextjs",
         content: `# 使用 Next.js 构建现代博客系统
@@ -161,20 +163,28 @@ async function main() {
     });
 
     if (reactTag && nextjsTag && typescriptTag) {
-      await prisma.postTag.createMany({
-        data: [
-          { postId: post1.id, tagId: reactTag.id },
-          { postId: post1.id, tagId: nextjsTag.id },
-          { postId: post1.id, tagId: typescriptTag.id },
-        ],
+      const existingTags = await prisma.postTag.findMany({
+        where: { postId: post1.id },
       });
+
+      if (existingTags.length === 0) {
+        await prisma.postTag.createMany({
+          data: [
+            { postId: post1.id, tagId: reactTag.id },
+            { postId: post1.id, tagId: nextjsTag.id },
+            { postId: post1.id, tagId: typescriptTag.id },
+          ],
+        });
+      }
     }
 
     console.log("✅ 创建示例文章:", post1.title);
 
     // 创建第二篇文章
-    const post2 = await prisma.post.create({
-      data: {
+    const post2 = await prisma.post.upsert({
+      where: { slug: "frontend-development-in-ai-era" },
+      update: {},
+      create: {
         title: "AI 时代的前端开发",
         slug: "frontend-development-in-ai-era",
         content: `# AI 时代的前端开发
@@ -215,12 +225,18 @@ AI 将使前端开发变得更加高效和智能化。`,
     });
 
     if (aiTag && jsTag) {
-      await prisma.postTag.createMany({
-        data: [
-          { postId: post2.id, tagId: aiTag.id },
-          { postId: post2.id, tagId: jsTag.id },
-        ],
+      const existingTags2 = await prisma.postTag.findMany({
+        where: { postId: post2.id },
       });
+
+      if (existingTags2.length === 0) {
+        await prisma.postTag.createMany({
+          data: [
+            { postId: post2.id, tagId: aiTag.id },
+            { postId: post2.id, tagId: jsTag.id },
+          ],
+        });
+      }
     }
 
     console.log("✅ 创建示例文章:", post2.title);
