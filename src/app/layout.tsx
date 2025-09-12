@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import AuthProvider from "@/components/providers/auth-provider";
+import AntdConfigProvider from "@/components/providers/antd-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        <AntdConfigProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </AntdConfigProvider>
+      </body>
     </html>
   );
 }
