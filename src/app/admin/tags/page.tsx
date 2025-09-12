@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
-import EnhancedTagsTable from "@/components/admin/enhanced-tags-table";
+import UnifiedTagsTable from "@/components/admin/unified-tags-table";
 import TagDialog from "@/components/admin/tag-dialog";
 import { ModernButton } from "@/components/ui/modern-button";
 import { Plus, Tags } from "lucide-react";
@@ -50,7 +50,7 @@ export default function TagsPage() {
 
         {/* 标签列表 */}
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 p-6">
-          <EnhancedTagsTable onEdit={handleEdit} />
+          <UnifiedTagsTable onEdit={handleEdit} />
         </div>
 
         {/* 创建/编辑对话框 */}

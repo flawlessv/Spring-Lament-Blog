@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
-import CategoriesTable from "@/components/admin/categories-table";
+import UnifiedCategoriesTable from "@/components/admin/unified-categories-table";
 import CategoryDialog from "@/components/admin/category-dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -34,23 +34,24 @@ export default function CategoriesPage() {
 
   return (
     <CleanAdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">分类管理</h1>
-            <p className="text-muted-foreground">
-              管理博客分类，组织您的文章内容
-            </p>
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl mb-4">
+            <Plus className="h-8 w-8 text-white" />
           </div>
-          <Button onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" />
-            新建分类
-          </Button>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            分类管理
+          </h1>
+          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
+            管理博客分类，为文章提供清晰的组织结构，帮助读者快速找到感兴趣的内容
+          </p>
         </div>
 
         {/* 分类列表 */}
-        <CategoriesTable onEdit={handleEdit} />
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 p-6">
+          <UnifiedCategoriesTable onEdit={handleEdit} />
+        </div>
 
         {/* 创建/编辑对话框 */}
         <CategoryDialog
