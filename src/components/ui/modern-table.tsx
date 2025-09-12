@@ -36,11 +36,16 @@ interface ModernTableColumn {
 
 interface ModernTableAction {
   key: string;
-  label: string;
+  label: string | ((record: any) => string);
   icon?: ReactNode;
   onClick: (record: any) => void;
   className?: string;
-  variant?: "default" | "danger" | "warning" | "success";
+  variant?:
+    | "default"
+    | "danger"
+    | "warning"
+    | "success"
+    | ((record: any) => "default" | "danger" | "warning" | "success");
 }
 
 interface ModernTableProps<T = any> {
@@ -355,10 +360,17 @@ export function ModernTable<T = any>({
                                 onClick={() => handleAction(action, record)}
                                 className={cn(
                                   "rounded-lg",
-                                  action.variant === "danger" && "text-red-600",
-                                  action.variant === "warning" &&
+                                  (typeof action.variant === "function"
+                                    ? action.variant(record)
+                                    : action.variant) === "danger" &&
+                                    "text-red-600",
+                                  (typeof action.variant === "function"
+                                    ? action.variant(record)
+                                    : action.variant) === "warning" &&
                                     "text-orange-600",
-                                  action.variant === "success" &&
+                                  (typeof action.variant === "function"
+                                    ? action.variant(record)
+                                    : action.variant) === "success" &&
                                     "text-green-600",
                                   action.className
                                 )}
@@ -366,7 +378,9 @@ export function ModernTable<T = any>({
                                 {action.icon && (
                                   <span className="mr-2">{action.icon}</span>
                                 )}
-                                {action.label}
+                                {typeof action.label === "function"
+                                  ? action.label(record)
+                                  : action.label}
                               </DropdownMenuItem>
                             ))}
                           </DropdownMenuContent>

@@ -35,17 +35,9 @@ export default function CategoriesPage() {
   return (
     <CleanAdminLayout>
       <div className="space-y-8">
-        {/* 页面头部 */}
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl mb-4">
-            <Plus className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            分类管理
-          </h1>
-          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
-            管理博客分类，为文章提供清晰的组织结构，帮助读者快速找到感兴趣的内容
-          </p>
+        {/* 页面标题 */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">分类管理</h2>
         </div>
 
         {/* 分类列表 */}

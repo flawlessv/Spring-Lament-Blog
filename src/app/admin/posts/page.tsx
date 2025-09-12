@@ -28,17 +28,9 @@ export default function PostsPage() {
   return (
     <CleanAdminLayout>
       <div className="space-y-8">
-        {/* 页面头部 */}
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl mb-4">
-            <Plus className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            文章管理
-          </h1>
-          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
-            管理您的博客文章，支持创建、编辑和发布，让内容管理更加高效
-          </p>
+        {/* 页面标题 */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">文章管理</h2>
         </div>
 
         {/* 文章列表 */}

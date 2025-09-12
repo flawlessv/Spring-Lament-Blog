@@ -35,17 +35,9 @@ export default function TagsPage() {
   return (
     <CleanAdminLayout>
       <div className="space-y-8">
-        {/* 页面头部 */}
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4">
-            <Tags className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            标签管理
-          </h1>
-          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
-            管理博客标签，为文章添加细粒度分类，帮助读者更好地发现相关内容
-          </p>
+        {/* 页面标题 */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">标签管理</h2>
         </div>
 
         {/* 标签列表 */}
