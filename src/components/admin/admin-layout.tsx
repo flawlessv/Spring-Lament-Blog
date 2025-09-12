@@ -3,16 +3,13 @@
 /**
  * 管理员后台布局组件
  *
- * 使用 Ant Design Layout 组件重新设计
+ * 使用 shadcn/ui 和 Tailwind CSS 重新设计
  * 包括导航栏、侧边栏、用户信息和登出功能
  */
 
 import { ReactNode } from "react";
-import { Layout } from "antd";
 import AdminHeader from "./admin-header";
 import AdminSidebar from "./admin-sidebar";
-
-const { Content } = Layout;
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -20,19 +17,23 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <Layout className="min-h-screen">
+    <div className="min-h-screen bg-background">
       {/* 顶部导航栏 */}
       <AdminHeader />
 
-      <Layout>
+      <div className="flex">
         {/* 侧边栏 */}
         <AdminSidebar />
 
         {/* 主内容区域 */}
-        <Content className="m-6 p-6 bg-white rounded-lg shadow-sm">
-          {children}
-        </Content>
-      </Layout>
-    </Layout>
+        <main className="flex-1 ml-64 mt-16">
+          <div className="p-6">
+            <div className="bg-card rounded-lg shadow-sm border p-6">
+              {children}
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }

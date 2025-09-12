@@ -3,6 +3,7 @@
 /**
  * 登录页面组件
  *
+ * 使用 shadcn/ui 组件重新实现
  * 管理员登录界面，使用 NextAuth.js 的凭证认证
  * 只允许管理员账户登录后台系统
  */
@@ -10,14 +11,34 @@
 import { useState, Suspense } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Form, Input, Button, Alert, Card, Typography } from "antd";
-import { UserOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
+import { useForm } from "react-hook-form";
+import { LogIn, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const { Title, Text } = Typography;
+interface LoginFormData {
+  username: string;
+  password: string;
+}
 
 function LoginForm() {
   // 状态管理
-  const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,13 +46,18 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
+  // 表单管理
+  const form = useForm<LoginFormData>({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
   /**
    * 处理表单提交
    */
-  const handleSubmit = async (values: {
-    username: string;
-    password: string;
-  }) => {
+  const handleSubmit = async (values: LoginFormData) => {
     setIsLoading(true);
     setError("");
 
@@ -68,84 +94,116 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <Card className="shadow-lg">
-          {/* 页面头部 */}
-          <div className="text-center mb-8">
-            <div className="mx-auto mb-4 w-12 h-12 flex items-center justify-center rounded-full bg-blue-100">
-              <LoginOutlined className="text-2xl text-blue-600" />
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                <LogIn className="w-6 h-6 text-primary" />
+              </div>
             </div>
-            <Title level={2} className="!mb-2">
+            <CardTitle className="text-2xl font-bold text-center">
               SpringLament 博客管理
-            </Title>
-            <Text type="secondary">请使用管理员账户登录</Text>
-          </div>
+            </CardTitle>
+            <CardDescription className="text-center">
+              请使用管理员账户登录
+            </CardDescription>
+          </CardHeader>
 
-          {/* 错误提示 */}
-          {error && (
-            <Alert
-              message="登录失败"
-              description={error}
-              type="error"
-              showIcon
-              className="mb-6"
-            />
-          )}
+          <CardContent>
+            {/* 错误提示 */}
+            {error && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-          {/* 登录表单 */}
-          <Form
-            form={form}
-            name="login"
-            onFinish={handleSubmit}
-            size="large"
-            disabled={isLoading}
-          >
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: "请输入用户名" },
-                { min: 2, message: "用户名至少2个字符" },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined className="text-gray-400" />}
-                placeholder="用户名"
-                autoComplete="username"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: "请输入密码" },
-                { min: 4, message: "密码至少4个字符" },
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="text-gray-400" />}
-                placeholder="密码"
-                autoComplete="current-password"
-              />
-            </Form.Item>
-
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={isLoading}
-                block
-                size="large"
-                icon={<LoginOutlined />}
+            {/* 登录表单 */}
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-6"
               >
-                {isLoading ? "登录中..." : "登录"}
-              </Button>
-            </Form.Item>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  rules={{
+                    required: "请输入用户名",
+                    minLength: {
+                      value: 2,
+                      message: "用户名至少2个字符",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>用户名</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="请输入用户名"
+                          autoComplete="username"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* 提示信息 */}
-            <div className="text-center">
-              <Text type="secondary" className="text-sm">
-                默认管理员账户: admin / 0919
-              </Text>
-            </div>
-          </Form>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  rules={{
+                    required: "请输入密码",
+                    minLength: {
+                      value: 4,
+                      message: "密码至少4个字符",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>密码</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="请输入密码"
+                          autoComplete="current-password"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                  size="lg"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      登录中...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      登录
+                    </>
+                  )}
+                </Button>
+
+                {/* 提示信息 */}
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">
+                    默认管理员账户: admin / 0919
+                  </p>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
         </Card>
       </div>
     </div>
