@@ -4,12 +4,12 @@
  * 提供文章创建功能，包括 Markdown 编辑器
  */
 
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import PostEditor from "@/components/admin/post-editor";
 
 export default function NewPostPage() {
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面头部 */}
         <div>
@@ -20,6 +20,6 @@ export default function NewPostPage() {
         {/* 文章编辑器 */}
         <PostEditor mode="create" />
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

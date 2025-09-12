@@ -8,7 +8,7 @@
  */
 
 import { useState } from "react";
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import PostsTable from "@/components/admin/posts-table";
 import PostsHeader from "@/components/admin/posts-header";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export default function PostsPage() {
   };
 
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面头部 */}
         <div className="flex items-center justify-between">
@@ -65,6 +65,6 @@ export default function PostsPage() {
           onSelectionChange={setSelectedIds}
         />
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

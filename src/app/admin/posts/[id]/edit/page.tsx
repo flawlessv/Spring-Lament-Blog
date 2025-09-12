@@ -4,7 +4,7 @@
  * 提供文章编辑功能，包括 Markdown 编辑器
  */
 
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import PostEditor from "@/components/admin/post-editor";
 
 interface EditPostPageProps {
@@ -17,7 +17,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   const { id } = await params;
 
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面头部 */}
         <div>
@@ -28,6 +28,6 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         {/* 文章编辑器 */}
         <PostEditor mode="edit" postId={id} />
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

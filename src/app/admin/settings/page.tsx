@@ -2,7 +2,7 @@
  * 系统设置页面
  */
 
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { Settings, Database, Server, Shield, Palette } from "lucide-react";
 
 export default function SettingsPage() {
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面标题 */}
         <div>
@@ -137,6 +137,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

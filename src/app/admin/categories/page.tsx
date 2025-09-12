@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import CategoriesTable from "@/components/admin/categories-table";
 import CategoryDialog from "@/components/admin/category-dialog";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ export default function CategoriesPage() {
   };
 
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面头部 */}
         <div className="flex items-center justify-between">
@@ -59,6 +59,6 @@ export default function CategoriesPage() {
           category={editingCategory}
         />
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

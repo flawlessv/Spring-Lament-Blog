@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import AdminLayout from "@/components/admin/admin-layout";
+import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import {
   Card,
   CardContent,
@@ -106,7 +106,7 @@ export default function NewTagPage() {
   ];
 
   return (
-    <AdminLayout>
+    <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面标题和返回按钮 */}
         <div className="flex items-center justify-between">
@@ -238,6 +238,6 @@ export default function NewTagPage() {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </CleanAdminLayout>
   );
 }

@@ -236,7 +236,7 @@ export default function EnhancedTagsTable({ onEdit }: TagsTableProps) {
   // 错误状态
   if (error && tags.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
@@ -244,19 +244,27 @@ export default function EnhancedTagsTable({ onEdit }: TagsTableProps) {
               placeholder="搜索标签名称..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 border-0 bg-gray-50 focus:bg-white transition-colors"
             />
           </div>
           <Link href="/admin/tags/new">
-            <Button>
+            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg">
               <Plus className="mr-2 h-4 w-4" />
               新建标签
             </Button>
           </Link>
         </div>
-        <div className="rounded-md border p-6 text-center">
-          <div className="text-red-600 mb-4">加载失败: {error}</div>
-          <Button onClick={() => fetchTags()} variant="outline">
+        <div className="rounded-xl border-0 bg-gradient-to-br from-red-50 to-pink-50 p-8 text-center shadow-sm">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-4">
+            <RefreshCw className="h-6 w-6 text-red-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">加载失败</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button
+            onClick={() => fetchTags()}
+            variant="outline"
+            className="shadow-sm"
+          >
             <RefreshCw className="h-4 w-4 mr-2" />
             重试
           </Button>
