@@ -10,6 +10,8 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { LoadingButton } from "@/components/ui/loading";
 import {
   Dialog,
   DialogContent,
@@ -72,6 +74,7 @@ interface TagDialogProps {
 
 export default function TagDialog({ open, onClose, tag }: TagDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   const isEdit = !!tag;
 
   const form = useForm<TagFormData>({
@@ -139,12 +142,24 @@ export default function TagDialog({ open, onClose, tag }: TagDialogProps) {
         throw new Error(error.error || "操作失败");
       }
 
-      // 成功后关闭对话框并刷新页面
+      // 成功后关闭对话框
+      toast({
+        title: isEdit ? "更新成功" : "创建成功",
+        description: `标签"${data.name}"已${isEdit ? "更新" : "创建"}成功`,
+        variant: "success",
+      });
+
       onClose();
+      // 刷新页面以显示更新
       window.location.reload();
     } catch (error) {
       console.error("操作失败:", error);
-      alert(error instanceof Error ? error.message : "操作失败，请重试");
+      toast({
+        title: "操作失败",
+        description:
+          error instanceof Error ? error.message : "操作失败，请重试",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -242,10 +257,9 @@ export default function TagDialog({ open, onClose, tag }: TagDialogProps) {
               >
                 取消
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {isEdit ? "更新" : "创建"}
-              </Button>
+              <LoadingButton type="submit" isLoading={isLoading}>
+                {isEdit ? "更新标签" : "创建标签"}
+              </LoadingButton>
             </div>
           </form>
         </Form>

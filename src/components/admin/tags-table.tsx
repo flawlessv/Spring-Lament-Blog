@@ -37,6 +37,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 // 标签数据类型
 interface Tag {
@@ -67,6 +70,9 @@ export default function TagsTable({ onEdit }: TagsTableProps) {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [deleteTag, setDeleteTag] = useState<Tag | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   // 获取标签数据
   const fetchTags = async (search?: string) => {
@@ -90,46 +96,13 @@ export default function TagsTable({ onEdit }: TagsTableProps) {
       setTags(data.tags);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "未知错误");
-      // 如果API失败，使用模拟数据
-      setTags([
-        {
-          id: "1",
-          name: "React",
-          slug: "react",
-          color: "#61DAFB",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          stats: {
-            totalPosts: 3,
-            publishedPosts: 2,
-          },
-        },
-        {
-          id: "2",
-          name: "TypeScript",
-          slug: "typescript",
-          color: "#3178C6",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          stats: {
-            totalPosts: 2,
-            publishedPosts: 1,
-          },
-        },
-        {
-          id: "3",
-          name: "Next.js",
-          slug: "nextjs",
-          color: "#000000",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          stats: {
-            totalPosts: 1,
-            publishedPosts: 1,
-          },
-        },
-      ]);
+      const errorMessage = err instanceof Error ? err.message : "未知错误";
+      setError(errorMessage);
+      toast({
+        title: "加载失败",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
