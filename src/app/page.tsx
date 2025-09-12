@@ -1,35 +1,31 @@
+import { Metadata } from "next";
+import PublicLayout from "@/components/layout/public-layout";
+import AdminProfileCard from "@/components/profile/admin-profile-card";
+import PostList from "@/components/posts/post-list";
+
+export const metadata: Metadata = {
+  title: "SpringLament Blog - 个人博客",
+  description: "专注于高效创作和优雅展示的现代化博客系统",
+};
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          SpringLament Blog
-        </h1>
-        <p className="text-xl text-center text-gray-600">
-          基于 Next.js 的全栈个人博客系统
-        </p>
-        <div className="mt-16 text-center">
-          <p className="text-lg mb-4">项目正在建设中...</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-2">前端技术</h3>
-              <p className="text-sm text-gray-600">Next.js 15, React 18</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-2">人工智能</h3>
-              <p className="text-sm text-gray-600">AI相关技术分享</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-2">算法数据结构</h3>
-              <p className="text-sm text-gray-600">计算机基础知识</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-semibold mb-2">生活随笔</h3>
-              <p className="text-sm text-gray-600">个人感悟与思考</p>
-            </div>
+    <PublicLayout>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* 左侧：管理员信息 */}
+        <aside className="lg:col-span-4 xl:col-span-3">
+          <AdminProfileCard />
+        </aside>
+
+        {/* 右侧：文章列表 */}
+        <main className="lg:col-span-8 xl:col-span-9">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">最新文章</h1>
+            <p className="text-slate-600">分享技术见解，记录成长足迹</p>
           </div>
-        </div>
+          <PostList />
+        </main>
       </div>
-    </main>
+    </PublicLayout>
   );
 }
