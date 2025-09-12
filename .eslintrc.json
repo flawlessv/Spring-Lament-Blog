@@ -1,0 +1,110 @@
+{
+  /**
+   * ESLint 配置文件
+   *
+   * ESLint 是一个静态代码分析工具，用于识别和报告 JavaScript/TypeScript 代码中的问题
+   * 帮助团队维持一致的代码风格和避免常见错误
+   *
+   * 文档：https://eslint.org/docs/user-guide/configuring/
+   */
+
+  /**
+   * 继承的配置
+   *
+   * ESLint 支持配置继承，可以基于现有配置进行扩展
+   * 这里使用 Next.js 官方提供的配置预设
+   */
+  "extends": [
+    /**
+     * Next.js 核心 Web Vitals 规则集
+     *
+     * 包含了 Next.js 开发的最佳实践规则
+     * 重点关注影响 Core Web Vitals 的问题：
+     * - 图片优化
+     * - 字体加载
+     * - 脚本加载策略
+     *
+     * 文档：https://nextjs.org/docs/basic-features/eslint#core-web-vitals
+     */
+    "next/core-web-vitals",
+
+    /**
+     * Next.js TypeScript 规则集
+     *
+     * 专门针对 TypeScript 项目的规则
+     * 包含了 TypeScript 特有的最佳实践：
+     * - 类型定义检查
+     * - 导入声明优化
+     * - React 组件类型检查
+     */
+    "next/typescript"
+  ],
+
+  /**
+   * 自定义规则配置
+   *
+   * 可以覆盖继承配置中的规则，或添加新规则
+   * 规则级别：
+   * - "off" 或 0: 关闭规则
+   * - "warn" 或 1: 警告级别
+   * - "error" 或 2: 错误级别
+   */
+  "rules": {
+    /**
+     * TypeScript 特定规则
+     */
+
+    // 未使用变量检查 - 设为警告而不是错误
+    // 在开发阶段可能会临时创建变量，避免中断开发流程
+    "@typescript-eslint/no-unused-vars": "warn",
+
+    // 禁止使用 any 类型 - 设为警告
+    // 鼓励使用具体类型，但在某些情况下 any 是必要的
+    "@typescript-eslint/no-explicit-any": "warn"
+
+    /**
+     * 其他可配置的规则（示例）：
+     *
+     * // React 相关
+     * "react-hooks/exhaustive-deps": "warn",
+     * "react/prop-types": "off",
+     *
+     * // 导入相关
+     * "import/order": ["error", {
+     *   "groups": ["builtin", "external", "internal"],
+     *   "newlines-between": "always"
+     * }],
+     *
+     * // 代码风格
+     * "prefer-const": "error",
+     * "no-var": "error",
+     *
+     * // Next.js 特定
+     * "@next/next/no-img-element": "error"
+     */
+  }
+
+  /**
+   * 其他配置选项（当前未使用）：
+   *
+   * // 环境配置
+   * "env": {
+   *   "browser": true,
+   *   "node": true,
+   *   "es2022": true
+   * },
+   *
+   * // 解析器配置
+   * "parser": "@typescript-eslint/parser",
+   * "parserOptions": {
+   *   "ecmaVersion": "latest",
+   *   "sourceType": "module"
+   * },
+   *
+   * // 插件配置
+   * "plugins": ["@typescript-eslint"],
+   *
+   * // 忽略模式
+   * "ignorePatterns": ["dist", ".next", "node_modules"]
+   */
+}

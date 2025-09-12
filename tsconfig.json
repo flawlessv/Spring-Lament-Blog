@@ -1,0 +1,66 @@
+{
+  /**
+   * TypeScript 配置文件
+   *
+   * 这个文件定义了 TypeScript 编译器的行为
+   * Next.js 会根据项目需求自动调整部分配置
+   *
+   * 文档：https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+   */
+  "compilerOptions": {
+    // 编译目标和模块系统
+    "target": "ES2017", // 编译目标版本，支持 top-level await（Next.js 自动设置）
+    "module": "esnext", // 使用最新的 ES 模块系统
+    "moduleResolution": "bundler", // 使用 bundler 风格的模块解析（Next.js 推荐）
+
+    // 库和环境支持
+    "lib": [
+      "dom", // DOM API 支持（浏览器环境）
+      "dom.iterable", // DOM 迭代器支持
+      "es6" // ES6 语法支持
+    ],
+
+    // 语言特性
+    "allowJs": true, // 允许编译 JavaScript 文件
+    "jsx": "preserve", // 保留 JSX，由 Next.js 处理
+    "incremental": true, // 启用增量编译，提升编译速度
+
+    // 类型检查严格性
+    "strict": true, // 启用所有严格类型检查选项
+    "noEmit": true, // 不生成编译输出文件（Next.js 处理编译）
+    "skipLibCheck": true, // 跳过库文件的类型检查，提升编译速度
+
+    // 模块解析和导入
+    "esModuleInterop": true, // 启用 ES 模块互操作性
+    "resolveJsonModule": true, // 允许导入 JSON 文件
+    "isolatedModules": true, // 每个文件作为独立模块处理
+
+    // 路径映射配置
+    "baseUrl": ".", // 基础路径为项目根目录
+    "paths": {
+      "@/*": [
+        "./src/*" // @ 别名映射到 src 目录，简化导入路径
+      ]
+    },
+
+    // Next.js 特定配置
+    "plugins": [
+      {
+        "name": "next" // Next.js TypeScript 插件，提供路由类型等
+      }
+    ]
+  },
+
+  // 包含的文件和目录
+  "include": [
+    "next-env.d.ts", // Next.js 环境类型定义
+    "**/*.ts", // 所有 TypeScript 文件
+    "**/*.tsx", // 所有 TypeScript React 文件
+    ".next/types/**/*.ts" // Next.js 生成的类型文件
+  ],
+
+  // 排除的文件和目录
+  "exclude": [
+    "node_modules" // 排除 node_modules 目录
+  ]
+}

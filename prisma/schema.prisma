@@ -1,0 +1,238 @@
+// Prisma Schema 文件
+// 文档: https://pris.ly/d/prisma-schema
+
+/**
+ * Prisma Client 生成器配置
+ * 
+ * 定义如何生成 Prisma Client 代码
+ * Client 提供类型安全的数据库访问方法
+ */
+generator client {
+  provider = "prisma-client-js"
+  // output = "./generated/client"  // 自定义输出路径（可选）
+}
+
+/**
+ * 数据源配置
+ * 
+ * 定义数据库连接信息
+ * 支持 PostgreSQL, MySQL, SQLite, SQL Server, MongoDB, CockroachDB
+ */
+datasource db {
+  provider = "sqlite"                 // 开发环境使用 SQLite
+  url      = env("DATABASE_URL")      // 从环境变量读取数据库 URL
+  
+  // 生产环境可以切换为 PostgreSQL:
+  // provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// 用户管理系统
+// ============================================================================
+
+/**
+ * 用户模型 - 系统核心用户实体
+ * 
+ * 存储用户基础信息和认证凭据
+ * 支持多角色权限管理
+ */
+model User {
+  // === 基础字段 ===
+  id        String   @id @default(cuid())    // 主键，使用 CUID 生成唯一 ID
+  username  String   @unique                 // 用户名，全局唯一
+  email     String?  @unique                 // 邮箱，可选但如果提供必须唯一
+  password  String                           // 加密后的密码哈希值
+  role      Role     @default(USER)          // 用户角色，默认为普通用户
+  createdAt DateTime @default(now())         // 创建时间，自动设置为当前时间
+  updatedAt DateTime @updatedAt              // 更新时间，每次修改时自动更新
+
+  // === 关系字段 ===
+  profile Profile?                           // 一对一：用户详细资料（可选）
+  posts   Post[]                            // 一对多：用户发布的文章
+
+  // === 数据库映射 ===
+  @@map("users")                            // 映射到数据库表名
+}
+
+/**
+ * 用户角色枚举
+ * 
+ * 定义系统支持的用户角色类型
+ * 用于权限控制和功能访问限制
+ */
+enum Role {
+  ADMIN   // 管理员 - 拥有所有权限
+  USER    // 普通用户 - 基础读取权限
+}
+
+/**
+ * 用户资料模型 - 扩展用户信息
+ * 
+ * 存储用户的详细资料和社交信息
+ * 与 User 表分离，避免核心用户表过于臃肿
+ */
+model Profile {
+  // === 基础字段 ===
+  id          String  @id @default(cuid())  // 主键
+  displayName String?                       // 显示名称（昵称）
+  bio         String?                       // 个人简介
+  avatar      String?                       // 头像 URL
+  
+  // === 社交链接 ===
+  website     String?                       // 个人网站
+  github      String?                       // GitHub 用户名
+  twitter     String?                       // Twitter 用户名
+  
+  // === 关系字段 ===
+  userId String @unique                     // 外键，指向 User.id（一对一）
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // === 数据库映射 ===
+  @@map("profiles")
+}
+
+// ============================================================================
+// 内容管理系统
+// ============================================================================
+
+/**
+ * 文章模型 - 博客文章核心实体
+ * 
+ * 存储文章的所有信息，包括内容、元数据和状态
+ * 支持草稿、发布、精选等多种状态管理
+ */
+model Post {
+  // === 基础信息 ===
+  id          String      @id @default(cuid())     // 主键
+  title       String                               // 文章标题
+  slug        String      @unique                  // URL 友好的唯一标识符
+  content     String                               // Markdown 格式的文章内容
+  excerpt     String?                              // 文章摘要，用于列表页展示
+  coverImage  String?                              // 封面图片 URL
+  
+  // === 发布状态 ===
+  published   Boolean     @default(false)         // 发布状态：false=草稿，true=已发布
+  featured    Boolean     @default(false)         // 是否为精选文章
+  
+  // === 统计信息 ===
+  views       Int         @default(0)             // 浏览次数
+  readingTime Int?                                // 预计阅读时间（分钟）
+  
+  // === 时间戳 ===
+  createdAt   DateTime    @default(now())         // 创建时间
+  updatedAt   DateTime    @updatedAt              // 最后更新时间
+  publishedAt DateTime?                           // 发布时间（仅在发布时设置）
+
+  // === 关系字段 ===
+  authorId   String                               // 外键，指向作者
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  categoryId String?                              // 外键，指向分类（可选）
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  
+  tags       PostTag[]                            // 多对多：文章标签关系
+
+  // === 数据库映射 ===
+  @@map("posts")
+}
+
+/**
+ * 分类模型 - 文章分类管理
+ * 
+ * 用于组织和分类文章内容
+ * 支持颜色和图标自定义，提升用户体验
+ */
+model Category {
+  // === 基础信息 ===
+  id          String  @id @default(cuid())       // 主键
+  name        String  @unique                    // 分类名称，全局唯一
+  slug        String  @unique                    // URL 友好的标识符
+  description String?                            // 分类描述
+  
+  // === 显示配置 ===
+  color       String?                            // 颜色代码（如 #3B82F6）
+  icon        String?                            // 图标（如 emoji 或图标类名）
+  sortOrder   Int     @default(0)               // 排序权重，数值越小越靠前
+  
+  // === 时间戳 ===
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // === 关系字段 ===
+  posts Post[]                                  // 一对多：分类下的文章
+
+  // === 数据库映射 ===
+  @@map("categories")
+}
+
+/**
+ * 标签模型 - 文章标签系统
+ * 
+ * 用于细粒度的内容标记和检索
+ * 与分类不同，一篇文章可以有多个标签
+ */
+model Tag {
+  // === 基础信息 ===
+  id        String    @id @default(cuid())      // 主键
+  name      String    @unique                   // 标签名称，全局唯一
+  slug      String    @unique                   // URL 友好的标识符
+  color     String?                             // 标签颜色代码
+  
+  // === 时间戳 ===
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // === 关系字段 ===
+  posts PostTag[]                               // 多对多：标签关联的文章
+
+  // === 数据库映射 ===
+  @@map("tags")
+}
+
+/**
+ * 文章标签关联模型 - 多对多关系表
+ * 
+ * 实现 Post 和 Tag 之间的多对多关系
+ * 一篇文章可以有多个标签，一个标签可以被多篇文章使用
+ */
+model PostTag {
+  // === 基础字段 ===
+  id String @id @default(cuid())               // 主键
+
+  // === 关系字段 ===
+  postId String                                // 外键，指向文章
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  tagId String                                 // 外键，指向标签
+  tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  // === 唯一约束 ===
+  @@unique([postId, tagId])                   // 确保同一文章和标签的组合唯一
+  
+  // === 数据库映射 ===
+  @@map("post_tags")
+}
+
+// ============================================================================
+// 数据库设计说明
+// ============================================================================
+
+/**
+ * ER 关系图：
+ * 
+ * User 1 ←→ 1 Profile
+ * User 1 ←→ N Post
+ * Post N ←→ 1 Category
+ * Post N ←→ M Tag (通过 PostTag)
+ * 
+ * 索引策略：
+ * - 所有 @unique 字段自动创建唯一索引
+ * - 外键字段自动创建索引
+ * - 可根据查询需求添加复合索引
+ * 
+ * 数据完整性：
+ * - 使用 onDelete: Cascade 确保数据一致性
+ * - 用户删除时，相关文章和资料也会被删除
+ * - 分类删除时，文章的 categoryId 会被设为 null
+ */
