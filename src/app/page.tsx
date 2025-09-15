@@ -11,17 +11,14 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <PublicLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* 左侧：管理员信息 */}
-        <aside className="lg:col-span-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* 左侧：个人信息 */}
+        <aside className="lg:col-span-3">
           <AdminProfileCard />
         </aside>
 
         {/* 右侧：文章列表 */}
-        <main className="lg:col-span-8">
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900">最新文章</h2>
-          </div>
+        <main className="lg:col-span-9">
           <PostList />
         </main>
       </div>

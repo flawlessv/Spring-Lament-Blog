@@ -21,26 +21,24 @@ export async function GET(request: NextRequest) {
     };
 
     if (category) {
-      where.categories = {
-        some: {
-          slug: category,
-        },
+      where.category = {
+        slug: category,
       };
     }
 
     if (tag) {
       where.tags = {
         some: {
-          slug: tag,
+          tag: {
+            slug: tag,
+          },
         },
       };
     }
 
     // 获取文章列表
     const posts = await prisma.post.findMany({
-      where: {
-        published: true,
-      },
+      where,
       include: {
         author: {
           select: {
@@ -48,19 +46,42 @@ export async function GET(request: NextRequest) {
             username: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+          },
+        },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                color: true,
+              },
+            },
+          },
+        },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: [
+        {
+          featured: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
       skip,
       take: limit,
     });
 
     // 获取总数
     const total = await prisma.post.count({
-      where: {
-        published: true,
-      },
+      where,
     });
 
     // 格式化返回数据
@@ -70,12 +91,13 @@ export async function GET(request: NextRequest) {
       excerpt: post.excerpt,
       slug: post.slug,
       featured: post.featured,
+      coverImage: post.coverImage,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       author: post.author,
-      categories: [],
-      tags: [],
-      commentsCount: 0,
+      categories: post.category ? [post.category] : [],
+      tags: post.tags.map((postTag) => postTag.tag),
+      commentsCount: 0, // TODO: 实现评论计数
     }));
 
     return NextResponse.json({

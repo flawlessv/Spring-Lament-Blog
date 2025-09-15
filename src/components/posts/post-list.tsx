@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { ImageIcon, Clock, MessageCircle } from "lucide-react";
 
 interface Post {
   id: string;
@@ -11,6 +12,7 @@ interface Post {
   excerpt: string;
   slug: string;
   featured: boolean;
+  coverImage?: string;
   createdAt: string;
   updatedAt: string;
   author: {
@@ -75,14 +77,16 @@ export default function PostList({ className = "" }: PostListProps) {
     return (
       <div className={`space-y-4 ${className}`}>
         {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="p-6 bg-white border border-gray-200 rounded-lg animate-pulse"
-          >
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-1"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
-            <div className="h-3 bg-gray-200 rounded w-32"></div>
+          <div key={i} className="overflow-hidden rounded-lg animate-pulse">
+            <div className="flex space-x-4">
+              <div className="w-24 h-24 bg-gray-200 rounded-lg flex-shrink-0"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-3 bg-gray-200 rounded w-32"></div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -98,37 +102,59 @@ export default function PostList({ className = "" }: PostListProps) {
   }
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-6 ${className}`}>
       {posts.map((post) => (
         <article key={post.id} className="group">
           <Link href={`/posts/${post.slug}`}>
-            <div className="p-6 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-              {/* 文章标题 */}
-              <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-3">
-                {post.featured && (
-                  <span className="inline-block w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-                )}
-                {post.title}
-              </h2>
-
-              {/* 文章摘要 */}
-              {post.excerpt && (
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  {post.excerpt}
-                </p>
+            <div className="relative h-64 md:h-72 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
+              {/* 背景图片或渐变 */}
+              {post.coverImage ? (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${post.coverImage})` }}
+                >
+                  <div className="absolute inset-0 bg-black/40"></div>
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600">
+                  <div className="absolute inset-0 bg-black/20"></div>
+                </div>
               )}
 
-              {/* 文章信息 */}
-              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                <span>{post.author.username}</span>
-                <span>
-                  {format(new Date(post.createdAt), "yyyy年MM月dd日", {
-                    locale: zhCN,
-                  })}
-                </span>
-                {post.commentsCount > 0 && (
-                  <span>{post.commentsCount} 条评论</span>
-                )}
+              {/* 文章内容覆盖层 */}
+              <div className="relative h-full p-8 flex flex-col justify-between text-white">
+                {/* 顶部：日期和精选标识 */}
+                <div className="flex items-start justify-between">
+                  <div className="text-sm opacity-90 font-medium tracking-wider">
+                    {format(new Date(post.createdAt), "MMM dd, yyyy", {
+                      locale: zhCN,
+                    }).toUpperCase()}
+                  </div>
+                  {post.featured && (
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  )}
+                </div>
+
+                {/* 底部：标题和分类 */}
+                <div className="space-y-4">
+                  <h2 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 group-hover:text-blue-200 transition-colors">
+                    {post.title}
+                  </h2>
+
+                  {/* 分类标签 */}
+                  {post.categories.length > 0 && (
+                    <div className="flex items-center space-x-3">
+                      {post.categories.slice(0, 2).map((category) => (
+                        <span
+                          key={category.id}
+                          className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full"
+                        >
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </Link>
@@ -137,7 +163,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
       {/* 加载更多 */}
       {hasMore && (
-        <div className="text-center pt-6">
+        <div className="text-center pt-8">
           <button
             onClick={loadMore}
             disabled={loading}

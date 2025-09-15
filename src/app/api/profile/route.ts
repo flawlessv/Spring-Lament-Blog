@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
  */
 export async function GET() {
   try {
-    // 获取管理员用户信息
+    // 获取管理员用户信息及关联的个人资料
     const admin = await prisma.user.findFirst({
       where: {
         role: "ADMIN",
@@ -17,6 +17,26 @@ export async function GET() {
         username: true,
         email: true,
         createdAt: true,
+        profile: {
+          select: {
+            displayName: true,
+            bio: true,
+            avatar: true,
+            email: true,
+            phone: true,
+            wechat: true,
+            qq: true,
+            website: true,
+            github: true,
+            twitter: true,
+            weibo: true,
+            bilibili: true,
+            youtube: true,
+            location: true,
+            company: true,
+            position: true,
+          },
+        },
       },
     });
 
@@ -42,8 +62,7 @@ export async function GET() {
       id: admin.id,
       username: admin.username,
       email: admin.email,
-      bio: "这个人很懒，什么都没有留下...",
-      avatar: "/default-avatar.png",
+      profile: admin.profile,
       joinedAt: admin.createdAt,
       stats: {
         posts: stats[0],
