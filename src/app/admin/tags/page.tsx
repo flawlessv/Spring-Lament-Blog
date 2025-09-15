@@ -10,7 +10,7 @@ import { useState } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import UnifiedTagsTable from "@/components/admin/unified-tags-table";
 import TagDialog from "@/components/admin/tag-dialog";
-import { ModernButton } from "@/components/ui/modern-button";
+import { Button } from "@/components/ui/button";
 import { Plus, Tags } from "lucide-react";
 
 export default function TagsPage() {

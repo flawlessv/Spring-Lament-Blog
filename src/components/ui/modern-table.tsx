@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
+import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -173,8 +173,8 @@ export function ModernTable<T = any>({
   // 错误状态
   if (error && data.length === 0) {
     return (
-      <ModernCard variant="gradient">
-        <ModernCardContent className="text-center py-12">
+      <Card>
+        <CardContent className="text-center py-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-2xl mb-4">
             <RefreshCw className="h-8 w-8 text-red-600" />
           </div>
@@ -186,8 +186,8 @@ export function ModernTable<T = any>({
               重试
             </Button>
           )}
-        </ModernCardContent>
-      </ModernCard>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -249,8 +249,8 @@ export function ModernTable<T = any>({
 
       {/* 表格内容 */}
       {data.length === 0 && !loading ? (
-        <ModernCard variant="gradient">
-          <ModernCardContent className="text-center py-16">
+        <Card>
+          <CardContent className="text-center py-16">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-2xl mb-6">
               {emptyIcon}
             </div>
@@ -268,8 +268,8 @@ export function ModernTable<T = any>({
                 </Button>
               </Link>
             )}
-          </ModernCardContent>
-        </ModernCard>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-4">
           {/* 表头 */}
@@ -300,13 +300,8 @@ export function ModernTable<T = any>({
           {data.map((record) => {
             const recordId = getRecordId(record);
             return (
-              <ModernCard
-                key={recordId}
-                variant="gradient"
-                hover
-                className="overflow-hidden"
-              >
-                <ModernCardContent className="p-4">
+              <Card key={recordId} className="overflow-hidden hover:shadow-md">
+                <CardContent className="p-4">
                   <div className="flex items-center space-x-4">
                     {selectable && (
                       <div>
@@ -388,8 +383,8 @@ export function ModernTable<T = any>({
                       </div>
                     )}
                   </div>
-                </ModernCardContent>
-              </ModernCard>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

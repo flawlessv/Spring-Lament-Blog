@@ -49,7 +49,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import MarkdownPreview from "./markdown-preview";
+import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
 // 表单验证 schema
 const postSchema = z.object({
@@ -458,7 +458,7 @@ export default function PostEditor({ mode, postId }: PostEditorProps) {
 
                   {showPreview && (
                     <div className="border border-border rounded-md p-4 min-h-[400px] bg-background">
-                      <MarkdownPreview content={content} />
+                      <MarkdownRenderer content={content} showToc={false} />
                     </div>
                   )}
 

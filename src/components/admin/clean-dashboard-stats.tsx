@@ -3,7 +3,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { ModernCard, ModernCardContent } from "@/components/ui/modern-card";
+import { Card, CardContent } from "@/components/ui/card";
 import { FileText, FolderOpen, Tags, Eye } from "lucide-react";
 
 interface StatCardProps {
@@ -22,11 +22,11 @@ function StatCard({
   gradient,
 }: StatCardProps) {
   return (
-    <ModernCard variant="gradient" hover className="overflow-hidden relative">
+    <Card className="overflow-hidden relative hover:shadow-md">
       <div
         className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5`}
       />
-      <ModernCardContent className="relative">
+      <CardContent className="relative">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-3 mb-3">
@@ -43,8 +43,8 @@ function StatCard({
             <p className="text-xs text-gray-500">{description}</p>
           </div>
         </div>
-      </ModernCardContent>
-    </ModernCard>
+      </CardContent>
+    </Card>
   );
 }
 

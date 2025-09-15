@@ -3,17 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import {
-  Calendar,
-  User,
-  ArrowLeft,
-  Tag,
-  Folder,
-  MessageCircle,
-  Star,
-} from "lucide-react";
+
 import PublicLayout from "@/components/layout/public-layout";
-import { Badge } from "@/components/ui/badge";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
 interface Post {

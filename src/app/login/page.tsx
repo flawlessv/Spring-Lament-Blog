@@ -194,13 +194,6 @@ function LoginForm() {
                     </>
                   )}
                 </Button>
-
-                {/* 提示信息 */}
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    默认管理员账户: admin / 0919
-                  </p>
-                </div>
               </form>
             </Form>
           </CardContent>
