@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 导入 MD Editor 样式 */
+@import "@uiw/react-md-editor/markdown-editor.css";
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -269,5 +272,154 @@
 
   .hljs-strong {
     @apply font-bold;
+  }
+}
+
+/* MD Editor 自定义样式 */
+@layer components {
+  /* 编辑器容器样式 */
+  .w-md-editor {
+    @apply bg-background border-border;
+    height: 100% !important;
+    min-height: calc(100vh - 120px) !important;
+  }
+
+  .w-md-editor.w-md-editor-fullscreen {
+    z-index: 999 !important;
+  }
+
+  /* 工具栏样式 */
+  .w-md-editor-toolbar {
+    @apply bg-muted border-border;
+    min-height: 48px !important;
+    padding: 8px 12px !important;
+  }
+
+  .w-md-editor-toolbar ul {
+    align-items: center !important;
+    min-height: 32px !important;
+  }
+
+  .w-md-editor-toolbar ul li button {
+    @apply text-muted-foreground hover:text-foreground hover:bg-accent;
+    min-height: 32px !important;
+    padding: 6px 8px !important;
+  }
+
+  .w-md-editor-toolbar ul li button.active {
+    @apply text-primary bg-primary/10;
+  }
+
+  .w-md-editor-toolbar-divider {
+    @apply bg-border;
+  }
+
+  /* 编辑区域和预览区域样式 */
+  .w-md-editor-text,
+  .w-md-editor-preview {
+    height: calc(100vh - 220px) !important;
+    min-height: calc(100vh - 220px) !important;
+  }
+
+  /* 编辑区域样式 */
+  .w-md-editor-text-textarea,
+  .w-md-editor-text-input {
+    @apply bg-background text-foreground border-border;
+    font-family:
+      "SF Mono", Monaco, "Inconsolata", "Roboto Mono", "Source Code Pro",
+      monospace !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    height: 100% !important;
+    min-height: calc(100vh - 220px) !important;
+  }
+
+  .w-md-editor-text-textarea:focus,
+  .w-md-editor-text-input:focus {
+    @apply outline-none ring-2 ring-primary/20;
+  }
+
+  /* 预览区域样式 */
+  .w-md-editor-preview {
+    @apply bg-background text-foreground border-border;
+    height: 100% !important;
+    min-height: calc(100vh - 220px) !important;
+  }
+
+  /* 分割线样式 */
+  .w-md-editor-split {
+    @apply border-border;
+  }
+
+  /* 预览内容样式优化 */
+  .w-md-editor-preview .wmde-markdown {
+    @apply text-foreground;
+  }
+
+  .w-md-editor-preview .wmde-markdown h1,
+  .w-md-editor-preview .wmde-markdown h2,
+  .w-md-editor-preview .wmde-markdown h3,
+  .w-md-editor-preview .wmde-markdown h4,
+  .w-md-editor-preview .wmde-markdown h5,
+  .w-md-editor-preview .wmde-markdown h6 {
+    @apply text-foreground font-semibold;
+  }
+
+  .w-md-editor-preview .wmde-markdown p {
+    @apply text-foreground/90 leading-7;
+  }
+
+  .w-md-editor-preview .wmde-markdown code {
+    @apply text-sm bg-muted px-1 py-0.5 rounded font-mono text-foreground;
+  }
+
+  .w-md-editor-preview .wmde-markdown pre {
+    @apply bg-muted border border-border rounded-lg overflow-x-auto;
+  }
+
+  .w-md-editor-preview .wmde-markdown pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+
+  .w-md-editor-preview .wmde-markdown blockquote {
+    @apply border-l-4 border-primary/50 pl-4 italic text-muted-foreground bg-muted/50 py-2 my-4 rounded-r;
+  }
+
+  .w-md-editor-preview .wmde-markdown ul,
+  .w-md-editor-preview .wmde-markdown ol {
+    @apply text-foreground/90;
+  }
+
+  .w-md-editor-preview .wmde-markdown li::marker {
+    @apply text-muted-foreground;
+  }
+
+  .w-md-editor-preview .wmde-markdown hr {
+    @apply border-border my-6;
+  }
+
+  .w-md-editor-preview .wmde-markdown img {
+    @apply rounded-lg border border-border;
+  }
+
+  .w-md-editor-preview .wmde-markdown a {
+    @apply text-primary hover:text-primary/80 underline;
+  }
+
+  .w-md-editor-preview .wmde-markdown table {
+    @apply w-full border-collapse border border-border my-4;
+  }
+
+  .w-md-editor-preview .wmde-markdown th,
+  .w-md-editor-preview .wmde-markdown td {
+    @apply border border-border px-4 py-2;
+  }
+
+  .w-md-editor-preview .wmde-markdown th {
+    @apply bg-muted font-semibold text-foreground;
+  }
+
+  .w-md-editor-preview .wmde-markdown td {
+    @apply text-foreground/90;
   }
 }
