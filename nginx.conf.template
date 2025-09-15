@@ -1,0 +1,140 @@
+# Spring Lament Blog - Nginx 配置
+# 适用于宝塔面板
+# 
+# 使用方法:
+# 1. 在宝塔面板中创建网站
+# 2. 将此配置添加到网站的 Nginx 配置中
+# 3. 替换 powder.icu 为实际域名
+# 4. 配置 SSL 证书 (推荐)
+
+# HTTP 重定向到 HTTPS (如果启用了 SSL)
+server {
+    listen 80;
+    server_name powder.icu www.powder.icu;
+    
+    # 如果不使用 SSL，删除下面这行，启用后面的 location 配置
+    return 301 https://$server_name$request_uri;
+    
+    # 如果不使用 HTTPS，取消注释下面的配置
+    # location / {
+    #     proxy_pass http://127.0.0.1:3000;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Upgrade $http_upgrade;
+    #     proxy_set_header Connection 'upgrade';
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    #     proxy_cache_bypass $http_upgrade;
+    #     proxy_read_timeout 86400;
+    # }
+}
+
+# HTTPS 配置
+server {
+    listen 443 ssl http2;
+    server_name powder.icu www.powder.icu;
+    
+    # SSL 证书配置 (宝塔面板会自动配置)
+    # ssl_certificate /path/to/certificate.crt;
+    # ssl_certificate_key /path/to/private.key;
+    
+    # SSL 安全配置
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    # 安全头
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    
+    # Gzip 压缩
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/xml+rss
+        application/atom+xml
+        image/svg+xml;
+    
+    # Next.js 应用代理
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+        
+        # 超时设置
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # Next.js 静态资源缓存优化
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_cache_valid 200 1y;
+        add_header Cache-Control "public, immutable";
+        expires 1y;
+        access_log off;
+    }
+    
+    # 图片和媒体文件缓存
+    location ~* \.(jpg|jpeg|png|gif|ico|svg|webp|woff|woff2|ttf|eot|otf)$ {
+        proxy_pass http://127.0.0.1:3000;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+    }
+    
+    # robots.txt 和 sitemap.xml
+    location ~* \.(txt|xml)$ {
+        proxy_pass http://127.0.0.1:3000;
+        expires 1d;
+        add_header Cache-Control "public";
+    }
+    
+    # 防止访问敏感文件
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+    
+    location ~ \.(log|conf)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
+
+# 针对宝塔面板的额外配置
+# 如果使用宝塔面板的 PHP 环境，可能需要添加以下配置
+
+# 错误页面
+error_page 502 503 504 /50x.html;
+location = /50x.html {
+    root /usr/share/nginx/html;
+}
+
+# 日志配置
+access_log /www/wwwlogs/powder.icu.log;
+error_log /www/wwwlogs/powder.icu.error.log;

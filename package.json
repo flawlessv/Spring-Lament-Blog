@@ -6,14 +6,22 @@
     "dev": "next dev -p 7777",
     "build": "next build",
     "start": "next start",
+    "start:prod": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
     "prepare": "husky",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "deploy:build": "npm run db:generate && npm run build",
+    "deploy:setup": "npm run db:push && npm run db:seed",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:restart": "pm2 restart spring-lament-blog",
+    "pm2:stop": "pm2 stop spring-lament-blog",
+    "pm2:delete": "pm2 delete spring-lament-blog"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
