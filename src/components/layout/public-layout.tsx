@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Home, User, FileText, Settings } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -10,55 +9,33 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* 顶部导航 */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <div className="min-h-screen bg-white">
+      {/* 极简顶部导航 */}
+      <header className="border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="text-xl font-bold text-gray-900 hover:text-gray-700 transition-colors"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Home className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900">
-                SpringLament
-              </h1>
-              <p className="text-xs text-slate-500 -mt-1">个人博客</p>
-            </div>
+            SpringLament
           </Link>
-
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/"
-              className="text-sm text-slate-600 hover:text-slate-900 transition-colors flex items-center space-x-1"
-            >
-              <Home className="h-4 w-4" />
-              <span>首页</span>
-            </Link>
-            <Link
-              href="/admin"
-              className="text-sm text-slate-600 hover:text-slate-900 transition-colors flex items-center space-x-1"
-            >
-              <Settings className="h-4 w-4" />
-              <span>管理</span>
-            </Link>
-          </nav>
+          <Link
+            href="/admin"
+            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            管理
+          </Link>
         </div>
       </header>
 
       {/* 主要内容 */}
-      <main className="container mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-4xl mx-auto px-6 py-12">{children}</main>
 
-      {/* 底部 */}
-      <footer className="bg-white/50 border-t border-slate-200/50 mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-slate-500">
-            <p>&copy; 2024 SpringLament Blog. 专注于高效创作和优雅展示.</p>
-            <p className="mt-2">
-              Built with Next.js 15 + TypeScript + Tailwind CSS
-            </p>
+      {/* 极简底部 */}
+      <footer className="border-t border-gray-100 mt-20">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="text-center text-sm text-gray-500">
+            <p>&copy; 2024 SpringLament Blog</p>
           </div>
         </div>
       </footer>

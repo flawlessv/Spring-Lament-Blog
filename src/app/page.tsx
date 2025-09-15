@@ -13,15 +13,14 @@ export default function Home() {
     <PublicLayout>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* 左侧：管理员信息 */}
-        <aside className="lg:col-span-4 xl:col-span-3">
+        <aside className="lg:col-span-4">
           <AdminProfileCard />
         </aside>
 
         {/* 右侧：文章列表 */}
-        <main className="lg:col-span-8 xl:col-span-9">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">最新文章</h1>
-            <p className="text-slate-600">分享技术见解，记录成长足迹</p>
+        <main className="lg:col-span-8">
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-gray-900">最新文章</h2>
           </div>
           <PostList />
         </main>

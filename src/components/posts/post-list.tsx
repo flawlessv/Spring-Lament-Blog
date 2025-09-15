@@ -4,14 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import {
-  Calendar,
-  User,
-  MessageCircle,
-  Star,
-  ChevronRight,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface Post {
   id: string;
@@ -81,30 +73,16 @@ export default function PostList({ className = "" }: PostListProps) {
 
   if (loading && page === 1) {
     return (
-      <div className={`space-y-6 ${className}`}>
+      <div className={`space-y-4 ${className}`}>
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 p-6"
+            className="p-6 bg-white border border-gray-200 rounded-lg animate-pulse"
           >
-            <div className="animate-pulse">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-3 bg-slate-200 rounded w-16"></div>
-                <div className="h-3 bg-slate-200 rounded w-20"></div>
-              </div>
-              <div className="h-6 bg-slate-200 rounded w-3/4 mb-3"></div>
-              <div className="space-y-2 mb-4">
-                <div className="h-3 bg-slate-200 rounded"></div>
-                <div className="h-3 bg-slate-200 rounded w-5/6"></div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="h-3 bg-slate-200 rounded w-20"></div>
-                  <div className="h-3 bg-slate-200 rounded w-16"></div>
-                </div>
-                <div className="h-3 bg-slate-200 rounded w-12"></div>
-              </div>
-            </div>
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-full mb-1"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
+            <div className="h-3 bg-gray-200 rounded w-32"></div>
           </div>
         ))}
       </div>
@@ -114,118 +92,56 @@ export default function PostList({ className = "" }: PostListProps) {
   if (!posts.length) {
     return (
       <div className={`text-center py-12 ${className}`}>
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 p-8">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="h-8 w-8 text-slate-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
-            暂无文章
-          </h3>
-          <p className="text-slate-500">还没有发布任何文章，请稍后再来查看。</p>
-        </div>
+        <p className="text-gray-500">还没有发布任何文章</p>
       </div>
     );
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {posts.map((post) => (
-        <article
-          key={post.id}
-          className="bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 p-6 hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-200 group"
-        >
-          {/* 文章标签 */}
-          <div className="flex items-center space-x-2 mb-3">
-            {post.featured && (
-              <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs">
-                <Star className="h-3 w-3 mr-1" />
-                精选
-              </Badge>
-            )}
-            {post.categories.map((category) => (
-              <Badge
-                key={category.id}
-                style={{ backgroundColor: category.color || "#6B7280" }}
-                className="text-white text-xs"
-              >
-                {category.name}
-              </Badge>
-            ))}
-          </div>
-
-          {/* 文章标题 */}
+        <article key={post.id} className="group">
           <Link href={`/posts/${post.slug}`}>
-            <h2 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-              {post.title}
-            </h2>
-          </Link>
+            <div className="p-6 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+              {/* 文章标题 */}
+              <h2 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-3">
+                {post.featured && (
+                  <span className="inline-block w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
+                )}
+                {post.title}
+              </h2>
 
-          {/* 文章摘要 */}
-          {post.excerpt && (
-            <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
-              {post.excerpt}
-            </p>
-          )}
-
-          {/* 标签 */}
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag.id}
-                  className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-slate-100 text-slate-600"
-                >
-                  #{tag.name}
-                </span>
-              ))}
-              {post.tags.length > 3 && (
-                <span className="text-xs text-slate-500">
-                  +{post.tags.length - 3}
-                </span>
+              {/* 文章摘要 */}
+              {post.excerpt && (
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  {post.excerpt}
+                </p>
               )}
-            </div>
-          )}
 
-          {/* 文章信息 */}
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1">
-                <User className="h-3 w-3" />
+              {/* 文章信息 */}
+              <div className="flex items-center space-x-4 text-sm text-gray-500">
                 <span>{post.author.username}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Calendar className="h-3 w-3" />
                 <span>
-                  {format(new Date(post.createdAt), "MM月dd日", {
+                  {format(new Date(post.createdAt), "yyyy年MM月dd日", {
                     locale: zhCN,
                   })}
                 </span>
+                {post.commentsCount > 0 && (
+                  <span>{post.commentsCount} 条评论</span>
+                )}
               </div>
-              {post.commentsCount > 0 && (
-                <div className="flex items-center space-x-1">
-                  <MessageCircle className="h-3 w-3" />
-                  <span>{post.commentsCount}</span>
-                </div>
-              )}
             </div>
-            <Link
-              href={`/posts/${post.slug}`}
-              className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              <span>阅读更多</span>
-              <ChevronRight className="h-3 w-3" />
-            </Link>
-          </div>
+          </Link>
         </article>
       ))}
 
-      {/* 加载更多按钮 */}
+      {/* 加载更多 */}
       {hasMore && (
         <div className="text-center pt-6">
           <button
             onClick={loadMore}
             disabled={loading}
-            className="px-6 py-3 bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-xl text-sm font-medium text-slate-700 hover:bg-white/80 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-white border border-gray-200 rounded-lg text-blue-600 hover:text-blue-700 hover:border-gray-300 transition-colors disabled:opacity-50"
           >
             {loading ? "加载中..." : "加载更多"}
           </button>
