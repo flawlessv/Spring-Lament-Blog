@@ -216,16 +216,10 @@ export default function AdminProfileCard() {
             {bio}
           </p>
         )}
-
-        {/* Subscribe 按钮 */}
-        <button className="px-6 py-2 bg-gray-900 text-white text-sm rounded-full hover:bg-gray-800 transition-colors">
-          Subscribe
-        </button>
       </div>
 
       {/* 分类导航 */}
       <div>
-        <h3 className="text-sm font-medium text-gray-900 mb-3">📂 月刊</h3>
         <div className="space-y-1">
           {categories.slice(0, 6).map((category) => (
             <a
@@ -244,51 +238,6 @@ export default function AdminProfileCard() {
               )}
             </a>
           ))}
-        </div>
-      </div>
-
-      {/* 社交链接 */}
-      {socialLinks.length > 0 && (
-        <div className="flex justify-center space-x-4">
-          {socialLinks.map((link, index) => {
-            const Icon = link.icon;
-            return (
-              <a
-                key={index}
-                href={link.url!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
-                title={link.label}
-              >
-                <Icon className="w-4 h-4" />
-              </a>
-            );
-          })}
-        </div>
-      )}
-
-      {/* 统计信息 */}
-      <div className="text-center">
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <div className="font-semibold text-gray-900">
-              {profile.stats.posts}
-            </div>
-            <div className="text-gray-500">文章</div>
-          </div>
-          <div>
-            <div className="font-semibold text-gray-900">
-              {profile.stats.categories}
-            </div>
-            <div className="text-gray-500">分类</div>
-          </div>
-          <div>
-            <div className="font-semibold text-gray-900">
-              {profile.stats.tags}
-            </div>
-            <div className="text-gray-500">标签</div>
-          </div>
         </div>
       </div>
     </div>

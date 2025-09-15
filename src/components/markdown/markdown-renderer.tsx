@@ -19,17 +19,49 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-// ReactMarkdown: 将 Markdown 文本转换为 React 组件的核心库
+import { useState, useEffect, useMemo, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-// remarkGfm: 支持 GitHub Flavored Markdown，如表格、删除线、任务列表等扩展语法
 import remarkGfm from "remark-gfm";
-// rehypeHighlight: 为代码块提供语法高亮功能，基于 highlight.js
-import rehypeHighlight from "rehype-highlight";
-// rehypeRaw: 允许在 Markdown 中使用原始 HTML 标签
 import rehypeRaw from "rehype-raw";
-// Lucide React: 提供美观的 SVG 图标组件
-import { List, ChevronRight } from "lucide-react";
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import {
+  oneDark,
+  oneLight,
+} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { List, ChevronRight, Copy, Check } from "lucide-react";
+
+// Import specific languages to reduce bundle size
+import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
+import typescript from "react-syntax-highlighter/dist/cjs/languages/prism/typescript";
+import jsx from "react-syntax-highlighter/dist/cjs/languages/prism/jsx";
+import tsx from "react-syntax-highlighter/dist/cjs/languages/prism/tsx";
+import css from "react-syntax-highlighter/dist/cjs/languages/prism/css";
+import scss from "react-syntax-highlighter/dist/cjs/languages/prism/scss";
+import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
+import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
+import python from "react-syntax-highlighter/dist/cjs/languages/prism/python";
+import java from "react-syntax-highlighter/dist/cjs/languages/prism/java";
+import sql from "react-syntax-highlighter/dist/cjs/languages/prism/sql";
+import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
+import markdown from "react-syntax-highlighter/dist/cjs/languages/prism/markdown";
+
+// Register languages
+SyntaxHighlighter.registerLanguage("javascript", javascript);
+SyntaxHighlighter.registerLanguage("typescript", typescript);
+SyntaxHighlighter.registerLanguage("jsx", jsx);
+SyntaxHighlighter.registerLanguage("tsx", tsx);
+SyntaxHighlighter.registerLanguage("css", css);
+SyntaxHighlighter.registerLanguage("scss", scss);
+SyntaxHighlighter.registerLanguage("bash", bash);
+SyntaxHighlighter.registerLanguage("json", json);
+SyntaxHighlighter.registerLanguage("python", python);
+SyntaxHighlighter.registerLanguage("java", java);
+SyntaxHighlighter.registerLanguage("sql", sql);
+SyntaxHighlighter.registerLanguage("yaml", yaml);
+SyntaxHighlighter.registerLanguage("markdown", markdown);
+
+import Mermaid from "./mermaid";
+import CodeBlock from "./code-block";
 
 // 组件属性接口定义
 interface MarkdownRendererProps {
@@ -179,12 +211,29 @@ export default function MarkdownRenderer({
       )}
 
       {/* Markdown 内容渲染区域 */}
-      <div className="prose prose-gray max-w-none">
+      <div
+        className="prose prose-lg prose-gray max-w-none 
+        prose-headings:text-gray-900 prose-headings:font-semibold
+        prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-2
+        prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-6 
+        prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-5
+        prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-4
+        prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
+        prose-li:text-gray-700 prose-li:mb-1
+        prose-strong:text-gray-900 prose-strong:font-semibold
+        prose-code:text-pink-600 prose-code:font-mono prose-code:text-sm
+        prose-pre:bg-transparent prose-pre:p-0
+        prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:text-gray-700
+        prose-table:text-sm
+        prose-th:bg-gray-50 prose-th:border-gray-300 prose-th:font-medium
+        prose-td:border-gray-300
+      "
+      >
         <ReactMarkdown
           // remark 插件：处理 Markdown 语法解析阶段
           remarkPlugins={[remarkGfm]} // 支持 GitHub Flavored Markdown 扩展语法
           // rehype 插件：处理 HTML 输出阶段
-          rehypePlugins={[rehypeHighlight, rehypeRaw]} // 代码高亮 + 原始HTML支持
+          rehypePlugins={[rehypeRaw]} // 原始HTML支持
           // 自定义组件：覆盖默认的 HTML 元素渲染
           components={{
             // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
@@ -267,17 +316,18 @@ export default function MarkdownRenderer({
                 </h6>
               );
             },
-            // 自定义代码渲染 - 区分行内代码和代码块
+            // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
             code: ({ className, children, ...props }: any) => {
-              // 通过 className 判断是否为代码块（代码块会有 language-xxx 类名）
               const match = /language-(\w+)/.exec(className || "");
-              const isInline = !match; // 没有语言类名说明是行内代码
+              const language = match ? match[1] : "";
+              const code = String(children).replace(/\n$/, "");
+              const isInline = !match;
 
               // 行内代码：如 `console.log()`
               if (isInline) {
                 return (
                   <code
-                    className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm"
+                    className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
                     {...props}
                   >
                     {children}
@@ -285,14 +335,18 @@ export default function MarkdownRenderer({
                 );
               }
 
-              // 代码块：如 ```javascript ... ```
-              return (
-                <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                </pre>
-              );
+              // Mermaid 图表
+              if (language === "mermaid") {
+                return (
+                  <Mermaid
+                    chart={code}
+                    id={Math.random().toString(36).substr(2, 9)}
+                  />
+                );
+              }
+
+              // 代码块
+              return <CodeBlock className={className}>{code}</CodeBlock>;
             },
             // 自定义链接样式 - 外部链接在新窗口打开
             a: ({ children, ...props }) => (

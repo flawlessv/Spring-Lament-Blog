@@ -24,6 +24,26 @@ export async function GET(
             username: true,
           },
         },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+          },
+        },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                color: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -45,8 +65,8 @@ export async function GET(
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       author: post.author,
-      categories: [],
-      tags: [],
+      categories: post.category ? [post.category] : [],
+      tags: post.tags.map((postTag) => postTag.tag),
       commentsCount: 0,
     };
 

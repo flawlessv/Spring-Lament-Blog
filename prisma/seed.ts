@@ -240,6 +240,247 @@ AI 将使前端开发变得更加高效和智能化。`,
     }
 
     console.log("✅ 创建示例文章:", post2.title);
+
+    // 创建第三篇文章 - 测试复杂 Markdown 渲染
+    const post3 = await prisma.post.upsert({
+      where: { slug: "markdown-rendering-test" },
+      update: {},
+      create: {
+        title: "详细讲解Form组件的依赖关系",
+        slug: "markdown-rendering-test",
+        content: `# 详细讲解Form组件的依赖关系
+
+## 🏗️ 整体架构概览
+
+Schema-Components 的 Form 依赖系统基于以下核心组件构建：
+
+\`\`\`mermaid
+graph TD
+    A[字段创建器 FieldCreator] --> B[依赖配置 dependency]
+    B --> C[值依赖 value]
+    B --> D[Props依赖 props]
+    B --> E[字段依赖 fields]
+    
+    F[订阅系统 Subscription] --> G[useSubscribe Hook]
+    G --> H[FormItemElWrapper]
+    H --> I[依赖监听与处理]
+    
+    J[批量更新 BatchDepUpdate] --> K[性能优化]
+    
+    I --> L[动态字段渲染]
+    I --> M[动态值计算]
+    I --> N[动态属性更新]
+\`\`\`
+
+## 📋 一、值依赖 (Value Dependency) 实现机制
+
+### 1.1 核心原理
+
+值依赖通过监听指定字段的变化，自动计算并更新当前字段的值。
+
+### 1.2 API 设计
+
+\`\`\`typescript
+// 字段创建器中的值依赖方法
+DependencyValue<Key extends string>(
+  deps: Key[], 
+  depFn: DependencyValueFn<AnyObject, Key>
+) {
+  this._mergeVal({ dependency: { deps, value: depFn } })
+  return this
+}
+\`\`\`
+
+### 1.3 使用示例
+
+\`\`\`typescript
+F('值依赖字段', 'combinedValue')
+  .DependencyValue(['gender', 'hobby'], (depValues, ctx) => {
+    // depValues: { gender: 'male', hobby: 'basketball' }
+    // ctx: { allValues, changedDepKeys, formRef, batchUpdate }
+    return [depValues.gender, depValues.hobby].filter(Boolean).join('-')
+  })
+\`\`\`
+
+### 1.4 特性与优势
+
+- **自动计算**: 依赖字段变化时自动触发值计算
+- **批量更新**: 支持一次性更新多个字段值
+- **异步更新**: 避免循环依赖和性能问题
+- **类型安全**: TypeScript 完整类型支持
+
+## ⚡ 表格示例
+
+| 特性 | 值依赖 | Props依赖 | 字段依赖 |
+|------|--------|-----------|----------|
+| **计算值** | ✅ | ❌ | ❌ |
+| **动态属性** | ❌ | ✅ | ❌ |
+| **字段切换** | ❌ | ❌ | ✅ |
+| **性能** | 高 | 中 | 低 |
+
+## 🎯 行内代码示例
+
+在使用过程中，你可以通过 \`useSubscribe\` hook 来监听字段变化，也可以使用 \`BatchDepUpdate.update\` 来进行批量更新操作。
+
+> **注意**: 字段依赖会完全替换原字段配置，因此与其他依赖类型互斥。
+
+## 🔍 代码块示例
+
+以下是一个完整的实现示例：
+
+\`\`\`javascript
+// 订阅系统核心实现
+export class Subscription {
+  constructor(initialValue) {
+    this.value = initialValue;
+    this.listeners = new Set();
+  }
+
+  setValue(newValue) {
+    const prevValue = this.value;
+    this.value = typeof newValue === 'function' 
+      ? newValue(prevValue) 
+      : newValue;
+    
+    // 通知所有监听器
+    this.listeners.forEach(listener => {
+      listener(this.value, prevValue);
+    });
+  }
+
+  subscribe(listener) {
+    this.listeners.add(listener);
+    
+    // 返回取消订阅函数
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+}
+\`\`\`
+
+## 🐍 Python 示例
+
+\`\`\`python
+class DependencyManager:
+    def __init__(self):
+        self.dependencies = {}
+        self.subscribers = {}
+    
+    def add_dependency(self, field, deps, callback):
+        """添加字段依赖"""
+        self.dependencies[field] = {
+            'deps': deps,
+            'callback': callback
+        }
+        
+        for dep in deps:
+            if dep not in self.subscribers:
+                self.subscribers[dep] = []
+            self.subscribers[dep].append(field)
+    
+    def update_field(self, field, value):
+        """更新字段值并触发依赖"""
+        # 更新字段值
+        self.values[field] = value
+        
+        # 触发依赖该字段的其他字段
+        if field in self.subscribers:
+            for dependent_field in self.subscribers[field]:
+                self._calculate_dependent_value(dependent_field)
+\`\`\`
+
+## 📊 JSON 配置示例
+
+\`\`\`json
+{
+  "formConfig": {
+    "fields": [
+      {
+        "key": "username",
+        "type": "text",
+        "label": "用户名",
+        "required": true
+      },
+      {
+        "key": "email", 
+        "type": "email",
+        "label": "邮箱",
+        "dependency": {
+          "deps": ["username"],
+          "value": "(depValues) => \`\${depValues.username}@example.com\`"
+        }
+      }
+    ]
+  }
+}
+\`\`\`
+
+## 🎨 CSS 样式
+
+\`\`\`css
+.form-field {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.form-field--dependent {
+  background-color: #f8f9fa;
+  border-left: 3px solid #007bff;
+}
+
+.form-field__label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.form-field__input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+\`\`\`
+
+## ✨ 总结
+
+通过这套完整的依赖系统，我们可以轻松实现：
+
+1. **响应式表单**: 字段间的智能联动
+2. **动态验证**: 基于其他字段值的条件验证  
+3. **智能填充**: 自动计算和填充字段值
+4. **条件渲染**: 根据依赖动态显示/隐藏字段
+
+这个设计充分体现了现代前端框架的响应式编程思想，为复杂表单场景提供了优雅的解决方案。`,
+        excerpt:
+          "深入解析 schema-components 组件库中 Form 的依赖实现机制，包含值依赖、Props依赖、字段依赖等核心概念",
+        published: true,
+        featured: true,
+        readingTime: 10,
+        publishedAt: new Date(),
+        authorId: adminUser.id,
+        categoryId: frontendCategory.id,
+      },
+    });
+
+    // 为文章添加标签
+    if (reactTag && typescriptTag && jsTag) {
+      const existingTags3 = await prisma.postTag.findMany({
+        where: { postId: post3.id },
+      });
+
+      if (existingTags3.length === 0) {
+        await prisma.postTag.createMany({
+          data: [
+            { postId: post3.id, tagId: reactTag.id },
+            { postId: post3.id, tagId: typescriptTag.id },
+            { postId: post3.id, tagId: jsTag.id },
+          ],
+        });
+      }
+    }
+
+    console.log("✅ 创建测试文章:", post3.title);
   }
 
   console.log("🎉 数据库种子完成!");
