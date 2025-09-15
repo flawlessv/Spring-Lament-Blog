@@ -15,7 +15,6 @@ import {
   FileText,
   FolderOpen,
   Tags,
-  Settings,
   ExternalLink,
   LogOut,
   User,
@@ -61,10 +60,10 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
       current: pathname?.startsWith("/admin/tags"),
     },
     {
-      name: "系统设置",
-      href: "/admin/settings",
-      icon: Settings,
-      current: pathname?.startsWith("/admin/settings"),
+      name: "个人信息",
+      href: "/admin/profile",
+      icon: User,
+      current: pathname?.startsWith("/admin/profile"),
     },
   ];
 

@@ -79,10 +79,28 @@ model Profile {
   bio         String?                       // 个人简介
   avatar      String?                       // 头像 URL
   
+  // === 联系信息 ===
+  email       String?                       // 公开邮箱
+  phone       String?                       // 联系电话
+  wechat      String?                       // 微信号
+  qq          String?                       // QQ号
+  
   // === 社交链接 ===
   website     String?                       // 个人网站
   github      String?                       // GitHub 用户名
   twitter     String?                       // Twitter 用户名
+  weibo       String?                       // 微博用户名
+  bilibili    String?                       // B站用户名
+  youtube     String?                       // YouTube 频道
+  
+  // === 地址信息 ===
+  location    String?                       // 所在地
+  company     String?                       // 公司/组织
+  position    String?                       // 职位
+  
+  // === 时间戳 ===
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now())
   
   // === 关系字段 ===
   userId String @unique                     // 外键，指向 User.id（一对一）
