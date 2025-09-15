@@ -22,20 +22,17 @@ function StatCard({
   gradient,
 }: StatCardProps) {
   return (
-    <Card className="overflow-hidden relative hover:shadow-md">
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5`}
-      />
-      <CardContent className="relative">
-        <div className="flex items-start justify-between">
+    <Card className="hover:shadow-sm transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
           <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-3">
-              <div className={`p-2.5 rounded-xl bg-gradient-to-br ${gradient}`}>
+            <div className="flex items-center space-x-3 mb-2">
+              <div className={`p-2 rounded-lg bg-gradient-to-br ${gradient}`}>
                 <div className="text-white">{icon}</div>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-600">{title}</h3>
-                <div className="text-2xl font-bold text-gray-900 mt-1">
+                <div className="text-2xl font-bold text-gray-900">
                   {value.toLocaleString()}
                 </div>
               </div>
@@ -91,7 +88,7 @@ export default async function CleanDashboardStats() {
   const stats = await getStats();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
         title="文章总数"
         value={stats.totalPosts}
