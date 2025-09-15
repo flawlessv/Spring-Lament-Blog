@@ -187,3 +187,87 @@
     @apply rounded-lg border border-border;
   }
 }
+
+/* 自定义代码高亮样式 */
+@layer components {
+  .hljs {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto;
+  }
+
+  /* 代码高亮主题 */
+  .hljs-comment,
+  .hljs-quote {
+    @apply text-gray-400 italic;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-subst {
+    @apply text-blue-400;
+  }
+
+  .hljs-number,
+  .hljs-literal,
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-tag .hljs-attr {
+    @apply text-orange-400;
+  }
+
+  .hljs-string,
+  .hljs-doctag {
+    @apply text-green-400;
+  }
+
+  .hljs-title,
+  .hljs-section,
+  .hljs-selector-id {
+    @apply text-yellow-400 font-bold;
+  }
+
+  .hljs-type,
+  .hljs-class .hljs-title {
+    @apply text-purple-400;
+  }
+
+  .hljs-tag,
+  .hljs-name,
+  .hljs-attribute {
+    @apply text-red-400;
+  }
+
+  .hljs-regexp,
+  .hljs-link {
+    @apply text-cyan-400;
+  }
+
+  .hljs-symbol,
+  .hljs-bullet {
+    @apply text-pink-400;
+  }
+
+  .hljs-built_in,
+  .hljs-builtin-name {
+    @apply text-indigo-400;
+  }
+
+  .hljs-meta {
+    @apply text-gray-500;
+  }
+
+  .hljs-deletion {
+    @apply bg-red-900;
+  }
+
+  .hljs-addition {
+    @apply bg-green-900;
+  }
+
+  .hljs-emphasis {
+    @apply italic;
+  }
+
+  .hljs-strong {
+    @apply font-bold;
+  }
+}

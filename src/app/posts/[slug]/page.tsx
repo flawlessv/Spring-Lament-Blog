@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import PublicLayout from "@/components/layout/public-layout";
 import { Badge } from "@/components/ui/badge";
+import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
 interface Post {
   id: string;
@@ -138,11 +139,8 @@ export default async function PostPage({
       </header>
 
       {/* 文章内容 */}
-      <article className="prose prose-gray max-w-none mb-12">
-        <div
-          className="text-gray-800 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.content || "暂无内容" }}
-        />
+      <article className="mb-12">
+        <MarkdownRenderer content={post.content || "暂无内容"} showToc={true} />
       </article>
 
       {/* 底部导航 */}
