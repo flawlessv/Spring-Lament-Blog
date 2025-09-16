@@ -28,7 +28,14 @@ import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { List, ChevronRight, Copy, Check } from "lucide-react";
+import {
+  List,
+  ChevronRight,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+} from "lucide-react";
 
 // Import specific languages to reduce bundle size
 import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
@@ -85,6 +92,8 @@ export default function MarkdownRenderer({
   // 状态管理
   const [activeHeading, setActiveHeading] = useState<string>(""); // 当前激活的标题 ID
   const [tocOpen, setTocOpen] = useState(false); // 移动端目录是否展开
+  const [desktopTocCollapsed, setDesktopTocCollapsed] = useState(false); // 桌面端目录是否折叠
+  const [readingProgress, setReadingProgress] = useState(0); // 阅读进度
 
   // 使用 useMemo 优化性能，只在 content 变化时重新计算目录
   const toc = useMemo(() => {
@@ -117,13 +126,22 @@ export default function MarkdownRenderer({
     return headings;
   }, [safeContent]); // 依赖数组：只有 content 变化时才重新计算
 
-  // 使用 useEffect 监听滚动事件，实现目录高亮功能
+  // 使用 useEffect 监听滚动事件，实现目录高亮功能和阅读进度
   useEffect(() => {
     const handleScroll = () => {
       // 获取页面中所有的标题元素
       const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
       // 当前滚动位置，加上100px的偏移量（避免标题刚好在顶部时的边界问题）
       const scrollTop = window.scrollY + 100;
+
+      // 计算阅读进度
+      const documentHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.min(
+        100,
+        Math.max(0, (window.scrollY / documentHeight) * 100)
+      );
+      setReadingProgress(progress);
 
       // 从最后一个标题开始向前检查，找到当前应该高亮的标题
       // 这样可以确保找到的是用户正在阅读的章节
@@ -161,34 +179,292 @@ export default function MarkdownRenderer({
   };
 
   return (
-    <div className="flex gap-8">
-      {/* 文章内容区域 */}
-      <div className="flex-1">
-        {/* 移动端目录切换按钮 */}
-        {showToc && toc.length > 0 && (
-          <div className="mb-6 xl:hidden">
-            <button
-              onClick={() => setTocOpen(!tocOpen)}
-              className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 transition-colors"
-            >
-              <List className="w-4 h-4" />
-              <span>目录</span>
-              <ChevronRight
-                className={`w-4 h-4 transition-transform ${tocOpen ? "rotate-90" : ""}`}
-              />
-            </button>
+    <>
+      {/* 顶部阅读进度条 */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
+        <div
+          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150 ease-out"
+          style={{ width: `${readingProgress}%` }}
+        />
+      </div>
 
-            {/* 移动端目录内容面板 */}
-            {tocOpen && (
-              <div className="mt-4">
-                <nav className="space-y-1">
+      <div className="flex gap-8">
+        {/* 文章内容区域 */}
+        <div className="flex-1">
+          {/* 移动端目录切换按钮 */}
+          {showToc && toc.length > 0 && (
+            <div className="mb-6 xl:hidden">
+              <button
+                onClick={() => setTocOpen(!tocOpen)}
+                className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 transition-colors"
+              >
+                <List className="w-4 h-4" />
+                <span>目录</span>
+                <ChevronRight
+                  className={`w-4 h-4 transition-transform ${tocOpen ? "rotate-90" : ""}`}
+                />
+              </button>
+
+              {/* 移动端目录内容面板 */}
+              {tocOpen && (
+                <div className="mt-4">
+                  <nav className="space-y-1">
+                    {toc.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => scrollToHeading(item.id)}
+                        className={`block w-full text-left py-1 text-sm transition-colors ${
+                          activeHeading === item.id
+                            ? "text-blue-600"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                        style={{
+                          paddingLeft: `${(item.level - 1) * 12 + 8}px`,
+                        }}
+                      >
+                        {item.text}
+                      </button>
+                    ))}
+                  </nav>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Markdown 内容渲染区域 */}
+          <div
+            className="prose prose-lg prose-gray max-w-none font-serif
+          prose-headings:text-gray-900 prose-headings:font-bold prose-headings:font-sans
+          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3
+          prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-8 prose-h2:text-gray-800
+          prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-6 prose-h3:text-gray-800
+          prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-5 prose-h4:text-gray-800
+          prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base
+          prose-li:text-gray-700 prose-li:mb-2 prose-li:leading-relaxed
+          prose-strong:text-gray-900 prose-strong:font-semibold
+          prose-em:text-gray-600 prose-em:italic
+          prose-code:text-pink-600 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+          prose-pre:bg-transparent prose-pre:p-0
+          prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:text-gray-700 prose-blockquote:font-serif prose-blockquote:italic
+          prose-table:text-sm prose-table:font-sans
+          prose-th:bg-gray-50 prose-th:border-gray-300 prose-th:font-medium
+          prose-td:border-gray-300
+          prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+        "
+          >
+            <ReactMarkdown
+              // remark 插件：处理 Markdown 语法解析阶段
+              remarkPlugins={[remarkGfm]} // 支持 GitHub Flavored Markdown 扩展语法
+              // rehype 插件：处理 HTML 输出阶段
+              rehypePlugins={[rehypeRaw]} // 原始HTML支持
+              // 自定义组件：覆盖默认的 HTML 元素渲染
+              components={{
+                // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
+                h1: ({ children, ...props }) => {
+                  // 提取标题文本内容
+                  const text = children?.toString() || "";
+                  // 生成 URL 友好的 ID（与目录生成逻辑保持一致）
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 保留字母、数字、中文、空格、连字符
+                    .replace(/\s+/g, "-"); // 空格转连字符
+                  return (
+                    <h1
+                      id={id} // 设置 ID 用于锚点跳转
+                      className="scroll-mt-20" // 滚动时顶部留出20的空间，避免被固定导航遮挡
+                      {...props}
+                    >
+                      {children}
+                    </h1>
+                  );
+                },
+                // h2-h6 标题渲染（逻辑与 h1 相同，为了避免重复，这里简化注释）
+                h2: ({ children, ...props }) => {
+                  const text = children?.toString() || "";
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  return (
+                    <h2 id={id} className="scroll-mt-20" {...props}>
+                      {children}
+                    </h2>
+                  );
+                },
+                h3: ({ children, ...props }) => {
+                  const text = children?.toString() || "";
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  return (
+                    <h3 id={id} className="scroll-mt-20" {...props}>
+                      {children}
+                    </h3>
+                  );
+                },
+                h4: ({ children, ...props }) => {
+                  const text = children?.toString() || "";
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  return (
+                    <h4 id={id} className="scroll-mt-20" {...props}>
+                      {children}
+                    </h4>
+                  );
+                },
+                h5: ({ children, ...props }) => {
+                  const text = children?.toString() || "";
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  return (
+                    <h5 id={id} className="scroll-mt-20" {...props}>
+                      {children}
+                    </h5>
+                  );
+                },
+                h6: ({ children, ...props }) => {
+                  const text = children?.toString() || "";
+                  const id = text
+                    .toLowerCase()
+                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  return (
+                    <h6 id={id} className="scroll-mt-20" {...props}>
+                      {children}
+                    </h6>
+                  );
+                },
+                // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
+                code: ({ className, children, ...props }: any) => {
+                  const match = /language-(\w+)/.exec(className || "");
+                  const language = match ? match[1] : "";
+                  const code = String(children).replace(/\n$/, "");
+                  const isInline = !match;
+
+                  // 行内代码：如 `console.log()`
+                  if (isInline) {
+                    return (
+                      <code
+                        className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
+                        {...props}
+                      >
+                        {children}
+                      </code>
+                    );
+                  }
+
+                  // Mermaid 图表
+                  if (language === "mermaid") {
+                    return (
+                      <Mermaid
+                        chart={code}
+                        id={Math.random().toString(36).substr(2, 9)}
+                      />
+                    );
+                  }
+
+                  // 代码块
+                  return <CodeBlock className={className}>{code}</CodeBlock>;
+                },
+                // 自定义链接样式 - 外部链接在新窗口打开
+                a: ({ children, ...props }) => (
+                  <a
+                    className="text-blue-600 hover:text-blue-700 underline"
+                    target="_blank" // 在新窗口打开链接
+                    rel="noopener noreferrer" // 安全属性：防止新窗口访问原窗口对象
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                ),
+                // 自定义表格样式 - 响应式表格，支持水平滚动
+                table: ({ children, ...props }) => (
+                  <div className="overflow-x-auto">
+                    {" "}
+                    {/* 水平滚动容器，防止表格在小屏幕上溢出 */}
+                    <table
+                      className="min-w-full border border-gray-200"
+                      {...props}
+                    >
+                      {children}
+                    </table>
+                  </div>
+                ),
+                // 表格头部单元格样式
+                th: ({ children, ...props }) => (
+                  <th
+                    className="px-4 py-2 bg-gray-50 border-b border-gray-200 text-left font-medium text-gray-900"
+                    {...props}
+                  >
+                    {children}
+                  </th>
+                ),
+                // 表格数据单元格样式
+                td: ({ children, ...props }) => (
+                  <td
+                    className="px-4 py-2 border-b border-gray-200 text-gray-700"
+                    {...props}
+                  >
+                    {children}
+                  </td>
+                ),
+                // 自定义引用块样式 - 左侧蓝色边框，浅蓝背景
+                blockquote: ({ children, ...props }) => (
+                  <blockquote
+                    className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 text-gray-700 italic"
+                    {...props}
+                  >
+                    {children}
+                  </blockquote>
+                ),
+              }}
+            >
+              {content || ""}
+            </ReactMarkdown>
+          </div>
+        </div>
+
+        {/* 桌面端右侧目录 */}
+        {showToc && toc.length > 0 && (
+          <div
+            className={`hidden xl:block flex-shrink-0 pl-4 transition-all duration-300 ${
+              desktopTocCollapsed ? "w-8" : "w-48"
+            }`}
+          >
+            <div className="sticky top-8">
+              {/* 目录折叠按钮 */}
+              <div className="flex items-center justify-between mb-3">
+                {!desktopTocCollapsed && (
+                  <h4 className="text-sm font-medium text-gray-900">目录</h4>
+                )}
+                <button
+                  onClick={() => setDesktopTocCollapsed(!desktopTocCollapsed)}
+                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors group"
+                  title={desktopTocCollapsed ? "展开目录" : "折叠目录"}
+                >
+                  {desktopTocCollapsed ? (
+                    <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-gray-900" />
+                  ) : (
+                    <ChevronLeft className="w-4 h-4 text-gray-600 group-hover:text-gray-900" />
+                  )}
+                </button>
+              </div>
+
+              {/* 目录内容 */}
+              {!desktopTocCollapsed && (
+                <nav className="space-y-1 animate-in fade-in duration-200">
                   {toc.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => scrollToHeading(item.id)}
-                      className={`block w-full text-left py-1 text-sm transition-colors ${
+                      className={`block w-full text-left py-1.5 px-2 text-sm rounded transition-all hover:bg-gray-50 ${
                         activeHeading === item.id
-                          ? "text-blue-600"
+                          ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600"
                           : "text-gray-600 hover:text-gray-900"
                       }`}
                       style={{
@@ -199,233 +475,11 @@ export default function MarkdownRenderer({
                     </button>
                   ))}
                 </nav>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
-
-        {/* Markdown 内容渲染区域 */}
-        <div
-          className="prose prose-lg prose-gray max-w-none 
-          prose-headings:text-gray-900 prose-headings:font-semibold
-          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-2
-          prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-6 
-          prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-5
-          prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-4
-          prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-          prose-li:text-gray-700 prose-li:mb-1
-          prose-strong:text-gray-900 prose-strong:font-semibold
-          prose-code:text-pink-600 prose-code:font-mono prose-code:text-sm
-          prose-pre:bg-transparent prose-pre:p-0
-          prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:text-gray-700
-          prose-table:text-sm
-          prose-th:bg-gray-50 prose-th:border-gray-300 prose-th:font-medium
-          prose-td:border-gray-300
-        "
-        >
-          <ReactMarkdown
-            // remark 插件：处理 Markdown 语法解析阶段
-            remarkPlugins={[remarkGfm]} // 支持 GitHub Flavored Markdown 扩展语法
-            // rehype 插件：处理 HTML 输出阶段
-            rehypePlugins={[rehypeRaw]} // 原始HTML支持
-            // 自定义组件：覆盖默认的 HTML 元素渲染
-            components={{
-              // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
-              h1: ({ children, ...props }) => {
-                // 提取标题文本内容
-                const text = children?.toString() || "";
-                // 生成 URL 友好的 ID（与目录生成逻辑保持一致）
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 保留字母、数字、中文、空格、连字符
-                  .replace(/\s+/g, "-"); // 空格转连字符
-                return (
-                  <h1
-                    id={id} // 设置 ID 用于锚点跳转
-                    className="scroll-mt-20" // 滚动时顶部留出20的空间，避免被固定导航遮挡
-                    {...props}
-                  >
-                    {children}
-                  </h1>
-                );
-              },
-              // h2-h6 标题渲染（逻辑与 h1 相同，为了避免重复，这里简化注释）
-              h2: ({ children, ...props }) => {
-                const text = children?.toString() || "";
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                return (
-                  <h2 id={id} className="scroll-mt-20" {...props}>
-                    {children}
-                  </h2>
-                );
-              },
-              h3: ({ children, ...props }) => {
-                const text = children?.toString() || "";
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                return (
-                  <h3 id={id} className="scroll-mt-20" {...props}>
-                    {children}
-                  </h3>
-                );
-              },
-              h4: ({ children, ...props }) => {
-                const text = children?.toString() || "";
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                return (
-                  <h4 id={id} className="scroll-mt-20" {...props}>
-                    {children}
-                  </h4>
-                );
-              },
-              h5: ({ children, ...props }) => {
-                const text = children?.toString() || "";
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                return (
-                  <h5 id={id} className="scroll-mt-20" {...props}>
-                    {children}
-                  </h5>
-                );
-              },
-              h6: ({ children, ...props }) => {
-                const text = children?.toString() || "";
-                const id = text
-                  .toLowerCase()
-                  .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                return (
-                  <h6 id={id} className="scroll-mt-20" {...props}>
-                    {children}
-                  </h6>
-                );
-              },
-              // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
-              code: ({ className, children, ...props }: any) => {
-                const match = /language-(\w+)/.exec(className || "");
-                const language = match ? match[1] : "";
-                const code = String(children).replace(/\n$/, "");
-                const isInline = !match;
-
-                // 行内代码：如 `console.log()`
-                if (isInline) {
-                  return (
-                    <code
-                      className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  );
-                }
-
-                // Mermaid 图表
-                if (language === "mermaid") {
-                  return (
-                    <Mermaid
-                      chart={code}
-                      id={Math.random().toString(36).substr(2, 9)}
-                    />
-                  );
-                }
-
-                // 代码块
-                return <CodeBlock className={className}>{code}</CodeBlock>;
-              },
-              // 自定义链接样式 - 外部链接在新窗口打开
-              a: ({ children, ...props }) => (
-                <a
-                  className="text-blue-600 hover:text-blue-700 underline"
-                  target="_blank" // 在新窗口打开链接
-                  rel="noopener noreferrer" // 安全属性：防止新窗口访问原窗口对象
-                  {...props}
-                >
-                  {children}
-                </a>
-              ),
-              // 自定义表格样式 - 响应式表格，支持水平滚动
-              table: ({ children, ...props }) => (
-                <div className="overflow-x-auto">
-                  {" "}
-                  {/* 水平滚动容器，防止表格在小屏幕上溢出 */}
-                  <table
-                    className="min-w-full border border-gray-200"
-                    {...props}
-                  >
-                    {children}
-                  </table>
-                </div>
-              ),
-              // 表格头部单元格样式
-              th: ({ children, ...props }) => (
-                <th
-                  className="px-4 py-2 bg-gray-50 border-b border-gray-200 text-left font-medium text-gray-900"
-                  {...props}
-                >
-                  {children}
-                </th>
-              ),
-              // 表格数据单元格样式
-              td: ({ children, ...props }) => (
-                <td
-                  className="px-4 py-2 border-b border-gray-200 text-gray-700"
-                  {...props}
-                >
-                  {children}
-                </td>
-              ),
-              // 自定义引用块样式 - 左侧蓝色边框，浅蓝背景
-              blockquote: ({ children, ...props }) => (
-                <blockquote
-                  className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 text-gray-700 italic"
-                  {...props}
-                >
-                  {children}
-                </blockquote>
-              ),
-            }}
-          >
-            {content || ""}
-          </ReactMarkdown>
-        </div>
       </div>
-
-      {/* 桌面端右侧目录 */}
-      {showToc && toc.length > 0 && (
-        <div className="hidden xl:block w-48 flex-shrink-0 pl-4">
-          <div className="sticky top-8">
-            <h4 className="text-sm font-medium text-gray-900 mb-3">目录</h4>
-            <nav className="space-y-1">
-              {toc.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToHeading(item.id)}
-                  className={`block w-full text-left py-1 text-sm transition-colors ${
-                    activeHeading === item.id
-                      ? "text-blue-600"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                  style={{
-                    paddingLeft: `${(item.level - 1) * 12 + 8}px`,
-                  }}
-                >
-                  {item.text}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

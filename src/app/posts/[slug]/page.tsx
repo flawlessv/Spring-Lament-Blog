@@ -94,37 +94,70 @@ export default async function PostPage({
       <div className="mb-8">
         <Link
           href="/"
-          className="text-blue-600 hover:text-blue-700 transition-colors"
+          className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors group"
         >
-          ← 返回首页
+          <span className="mr-2 group-hover:-translate-x-1 transition-transform">
+            ←
+          </span>
+          返回首页
         </Link>
       </div>
 
       {/* 文章头部 */}
-      <header className="mb-12">
+      <header className="mb-8">
         {/* 标题 */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+        <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight font-sans">
           {post.featured && (
-            <span className="inline-block w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+            <span className="inline-flex items-center mr-4">
+              <span className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></span>
+              <span className="ml-2 text-xs font-medium text-orange-600 uppercase tracking-wide">
+                精选
+              </span>
+            </span>
           )}
           {post.title}
         </h1>
 
         {/* 文章信息 */}
-        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-6">
-          <span>{post.author.username}</span>
-          <span>
-            {format(new Date(post.createdAt), "yyyy年MM月dd日", {
-              locale: zhCN,
-            })}
+        <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-100">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+              {post.author.username.charAt(0).toUpperCase()}
+            </div>
+            <span className="font-medium">{post.author.username}</span>
+          </div>
+          <span className="flex items-center space-x-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>
+              {format(new Date(post.createdAt), "yyyy年MM月dd日", {
+                locale: zhCN,
+              })}
+            </span>
           </span>
-          {post.commentsCount > 0 && <span>{post.commentsCount} 条评论</span>}
+          {post.commentsCount > 0 && (
+            <span className="flex items-center space-x-1">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>{post.commentsCount} 条评论</span>
+            </span>
+          )}
         </div>
 
         {/* 摘要 */}
         {post.excerpt && (
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <p className="text-gray-700 leading-relaxed italic">
+          <div className="relative bg-gray-50 p-6 rounded-lg mb-8 border-l-4 border-gray-300">
+            <p className="text-gray-700 leading-relaxed text-base italic">
               {post.excerpt}
             </p>
           </div>
@@ -132,24 +165,36 @@ export default async function PostPage({
       </header>
 
       {/* 文章内容 */}
-      <article className="mb-12">
+      <article className="mb-16">
         <MarkdownRenderer content={post.content || "暂无内容"} showToc={true} />
       </article>
 
       {/* 底部导航 */}
       <div className="pt-8 border-t border-gray-100">
         <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            最后更新:{" "}
-            {format(new Date(post.updatedAt), "yyyy年MM月dd日", {
-              locale: zhCN,
-            })}
+          <div className="text-sm text-gray-500 flex items-center space-x-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>
+              最后更新:{" "}
+              {format(new Date(post.updatedAt), "yyyy年MM月dd日", {
+                locale: zhCN,
+              })}
+            </span>
           </div>
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-700 transition-colors"
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors group"
           >
-            查看更多文章 →
+            查看更多文章
+            <span className="ml-2 group-hover:translate-x-1 transition-transform">
+              →
+            </span>
           </Link>
         </div>
       </div>
