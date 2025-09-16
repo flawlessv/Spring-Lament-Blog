@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SpringLament Blog",
-  description: "个人博客系统 - 高效创作与优雅展示",
+  title: "SpringLament-春光摧折",
+  description: "春光摧折，夏花凋零，秋叶飘零，冬雪纷飞",
 };
 
 export default function RootLayout({

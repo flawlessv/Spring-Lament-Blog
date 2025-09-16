@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { ImageIcon, Clock, MessageCircle } from "lucide-react";
 
 interface Post {
   id: string;
@@ -104,9 +103,9 @@ export default function PostList({ className = "" }: PostListProps) {
   return (
     <div className={`space-y-6 ${className}`}>
       {posts.map((post) => (
-        <article key={post.id} className="group">
+        <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative h-64 md:h-72 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
+            <div className="relative h-56 md:h-56 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
               {/* 背景图片或渐变 */}
               {post.coverImage ? (
                 <div

@@ -280,30 +280,30 @@
   /* 编辑器容器样式 */
   .w-md-editor {
     @apply bg-background border-border;
-    height: 100% !important;
-    min-height: calc(100vh - 120px) !important;
+    height: 100%;
+    min-height: calc(100vh - 120px);
   }
 
   .w-md-editor.w-md-editor-fullscreen {
-    z-index: 999 !important;
+    z-index: 999;
   }
 
   /* 工具栏样式 */
   .w-md-editor-toolbar {
     @apply bg-muted border-border;
-    min-height: 48px !important;
-    padding: 8px 12px !important;
+    height: 60px;
+    padding: 8px 12px;
   }
 
   .w-md-editor-toolbar ul {
-    align-items: center !important;
-    min-height: 32px !important;
+    align-items: center;
+    min-height: 32px;
   }
 
   .w-md-editor-toolbar ul li button {
     @apply text-muted-foreground hover:text-foreground hover:bg-accent;
-    min-height: 32px !important;
-    padding: 6px 8px !important;
+    min-height: 32px;
+    padding: 6px 8px;
   }
 
   .w-md-editor-toolbar ul li button.active {
@@ -317,8 +317,8 @@
   /* 编辑区域和预览区域样式 */
   .w-md-editor-text,
   .w-md-editor-preview {
-    height: calc(100vh - 220px) !important;
-    min-height: calc(100vh - 220px) !important;
+    height: calc(100vh - 220px);
+    min-height: calc(100vh - 220px);
   }
 
   /* 编辑区域样式 */
@@ -327,11 +327,11 @@
     @apply bg-background text-foreground border-border;
     font-family:
       "SF Mono", Monaco, "Inconsolata", "Roboto Mono", "Source Code Pro",
-      monospace !important;
-    font-size: 16px !important;
-    line-height: 1.6 !important;
-    height: 100% !important;
-    min-height: calc(100vh - 220px) !important;
+      monospace;
+    font-size: 16px;
+    line-height: 1.6;
+    height: 100%;
+    min-height: calc(100vh - 220px);
   }
 
   .w-md-editor-text-textarea:focus,
@@ -342,8 +342,8 @@
   /* 预览区域样式 */
   .w-md-editor-preview {
     @apply bg-background text-foreground border-border;
-    height: 100% !important;
-    min-height: calc(100vh - 220px) !important;
+    height: 100%;
+    min-height: calc(100vh - 220px);
   }
 
   /* 分割线样式 */

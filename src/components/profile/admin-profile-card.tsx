@@ -116,54 +116,7 @@ export default function AdminProfileCard() {
     return null;
   }
 
-  const displayName = profile.profile?.displayName || profile.username;
-  const bio = profile.profile?.bio;
-  const avatar = profile.profile?.avatar;
-
-  // 获取社交链接
-  const socialLinks = [
-    {
-      icon: Mail,
-      url: profile.profile?.email ? `mailto:${profile.profile.email}` : null,
-      label: "邮箱",
-    },
-    {
-      icon: Github,
-      url: profile.profile?.github
-        ? `https://github.com/${profile.profile.github}`
-        : null,
-      label: "GitHub",
-    },
-    {
-      icon: Globe,
-      url: profile.profile?.website,
-      label: "网站",
-    },
-    {
-      icon: Twitter,
-      url: profile.profile?.twitter
-        ? `https://twitter.com/${profile.profile.twitter}`
-        : null,
-      label: "Twitter",
-    },
-    {
-      icon: MessageSquare,
-      url: profile.profile?.weibo
-        ? `https://weibo.com/${profile.profile.weibo}`
-        : null,
-      label: "微博",
-    },
-  ].filter((link) => link.url);
-
-  // 默认分类图标映射
-  const categoryIcons: { [key: string]: string } = {
-    年报: "🏮",
-    随笔: "📝",
-    编程: "💻",
-    友链: "🔗",
-    关于: "👤",
-    咨询: "📞",
-  };
+  const { displayName, bio, avatar } = profile.profile || {};
 
   return (
     <div className="sticky top-8 space-y-6">
@@ -227,9 +180,6 @@ export default function AdminProfileCard() {
               href={`/categories/${category.slug}`}
               className="flex items-center space-x-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded px-2 transition-colors"
             >
-              <span className="text-base">
-                {categoryIcons[category.name] || "📋"}
-              </span>
               <span className="flex-1">{category.name}</span>
               {category._count?.posts && (
                 <span className="text-xs text-gray-500">
