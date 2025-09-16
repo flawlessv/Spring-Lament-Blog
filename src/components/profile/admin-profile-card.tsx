@@ -119,7 +119,7 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-8 space-y-6">
+    <div className="sticky top-8 space-y-6 mr-16">
       {/* 个人信息卡片 */}
       <div className="text-center">
         {/* 头像 */}

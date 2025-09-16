@@ -120,7 +120,7 @@ export default function PostList({ className = "" }: PostListProps) {
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative h-72 md:h-72 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
+            <div className="relative h-72 md:h-72 overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
               {/* 背景图片或渐变 */}
               {post.coverImage ? (
                 <div

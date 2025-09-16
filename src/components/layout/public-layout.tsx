@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
+import { Settings, Moon, Sun } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -10,26 +11,30 @@ interface PublicLayoutProps {
 export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
-      {/* 极简顶部导航 */}
-      <header className="border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-xl font-bold text-gray-900 hover:text-gray-700 transition-colors"
-          >
-            SpringLament
-          </Link>
-          <Link
-            href="/admin"
-            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            管理
-          </Link>
-        </div>
+      {/* 右上角固定按钮 */}
+      <header className="fixed top-6 right-6 z-50 flex items-center space-x-2">
+        <Link
+          href="/admin"
+          className="p-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-white group"
+          title="后台管理"
+        >
+          <Settings className="w-4 h-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+        </Link>
+
+        <button
+          className="p-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-white group"
+          title="切换主题"
+          onClick={() => {
+            // TODO: 实现主题切换逻辑
+            console.log("切换主题");
+          }}
+        >
+          <Sun className="w-4 h-4 text-gray-600 group-hover:text-yellow-500 transition-colors" />
+        </button>
       </header>
 
       {/* 主要内容 */}
-      <main className="max-w-6xl mx-auto px-1 py-8">{children}</main>
+      <main className="max-w-6xl mx-auto px-4 py-16">{children}</main>
 
       {/* 极简底部 */}
       <footer className="border-t border-gray-100 mt-20">
