@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
@@ -42,35 +42,50 @@ export default function PostList({ className = "" }: PostListProps) {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const fetchPosts = useCallback(async (pageNum: number) => {
+    try {
+      if (pageNum > 1) setLoadingMore(true);
+      const response = await fetch(`/api/posts?page=${pageNum}&limit=10`);
+      if (response.ok) {
+        const data = await response.json();
+        if (pageNum === 1) {
+          setPosts(data.posts);
+        } else {
+          setPosts((prev) => [...prev, ...data.posts]);
+        }
+        setHasMore(data.pagination.current < data.pagination.pages);
+      }
+    } catch (error) {
+      console.error("获取文章列表失败:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const response = await fetch(`/api/posts?page=${page}&limit=10`);
-        if (response.ok) {
-          const data = await response.json();
-          if (page === 1) {
-            setPosts(data.posts);
-          } else {
-            setPosts((prev) => [...prev, ...data.posts]);
-          }
-          setHasMore(data.pagination.current < data.pagination.pages);
-        }
-      } catch (error) {
-        console.error("获取文章列表失败:", error);
-      } finally {
-        setLoading(false);
+    fetchPosts(page);
+  }, [page, fetchPosts]);
+
+  // 滚动监听自动加载
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 1000 &&
+        hasMore &&
+        !loading &&
+        !loadingMore
+      ) {
+        setPage((prev) => prev + 1);
       }
-    }
+    };
 
-    fetchPosts();
-  }, [page]);
-
-  const loadMore = () => {
-    if (hasMore && !loading) {
-      setPage((prev) => prev + 1);
-    }
-  };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loading, loadingMore]);
 
   if (loading && page === 1) {
     return (
@@ -105,7 +120,7 @@ export default function PostList({ className = "" }: PostListProps) {
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative h-56 md:h-56 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
+            <div className="relative h-72 md:h-72 rounded-lg overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
               {/* 背景图片或渐变 */}
               {post.coverImage ? (
                 <div
@@ -134,11 +149,18 @@ export default function PostList({ className = "" }: PostListProps) {
                   )}
                 </div>
 
-                {/* 底部：标题和分类 */}
-                <div className="space-y-4">
+                {/* 底部：标题、摘要和分类 */}
+                <div className="space-y-3">
                   <h2 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 group-hover:text-blue-200 transition-colors">
                     {post.title}
                   </h2>
+
+                  {/* 摘要 */}
+                  {post.excerpt && (
+                    <p className="text-sm opacity-80 leading-relaxed line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  )}
 
                   {/* 分类标签 */}
                   {post.categories.length > 0 && (
@@ -160,16 +182,19 @@ export default function PostList({ className = "" }: PostListProps) {
         </article>
       ))}
 
-      {/* 加载更多 */}
-      {hasMore && (
-        <div className="text-center pt-8">
-          <button
-            onClick={loadMore}
-            disabled={loading}
-            className="px-6 py-2 bg-white border border-gray-200 rounded-lg text-blue-600 hover:text-blue-700 hover:border-gray-300 transition-colors disabled:opacity-50"
-          >
-            {loading ? "加载中..." : "加载更多"}
-          </button>
+      {/* 自动加载指示器 */}
+      {loadingMore && (
+        <div className="text-center py-8">
+          <div className="inline-flex items-center space-x-2 text-gray-500">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+            <span className="text-sm">加载中...</span>
+          </div>
+        </div>
+      )}
+
+      {!hasMore && posts.length > 0 && (
+        <div className="text-center py-8">
+          <p className="text-sm text-gray-500">没有更多文章了</p>
         </div>
       )}
     </div>
