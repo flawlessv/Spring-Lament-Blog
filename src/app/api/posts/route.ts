@@ -44,6 +44,11 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             username: true,
+            profile: {
+              select: {
+                displayName: true,
+              },
+            },
           },
         },
         category: {

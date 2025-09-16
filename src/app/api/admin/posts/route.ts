@@ -134,6 +134,7 @@ export async function GET(request: NextRequest) {
       publishedAt: post.publishedAt,
       author: {
         username: post.author.username,
+        displayName: post.author.profile?.displayName,
         profile: post.author.profile,
       },
       category: post.category,

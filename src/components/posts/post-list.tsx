@@ -17,6 +17,9 @@ interface Post {
   author: {
     id: string;
     username: string;
+    profile?: {
+      displayName?: string;
+    };
   };
   categories: Array<{
     id: string;

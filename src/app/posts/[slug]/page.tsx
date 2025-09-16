@@ -19,6 +19,9 @@ interface Post {
   author: {
     id: string;
     username: string;
+    profile?: {
+      displayName?: string;
+    };
   };
   categories: Array<{
     id: string;
@@ -122,9 +125,13 @@ export default async function PostPage({
         <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-100">
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-              {post.author.username.charAt(0).toUpperCase()}
+              {(post.author.profile?.displayName || post.author.username)
+                .charAt(0)
+                .toUpperCase()}
             </div>
-            <span className="font-medium">{post.author.username}</span>
+            <span className="font-medium">
+              {post.author.profile?.displayName || post.author.username}
+            </span>
           </div>
           <span className="flex items-center space-x-1">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

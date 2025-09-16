@@ -85,6 +85,7 @@ export async function GET(
       publishedAt: post.publishedAt,
       author: {
         username: post.author.username,
+        displayName: post.author.profile?.displayName,
         profile: post.author.profile,
       },
       categoryId: post.categoryId,
