@@ -38,39 +38,68 @@ interface Post {
 
 interface PostListProps {
   className?: string;
+  categorySlug?: string;
 }
 
-export default function PostList({ className = "" }: PostListProps) {
+export default function PostList({
+  className = "",
+  categorySlug,
+}: PostListProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchPosts = useCallback(async (pageNum: number) => {
-    try {
-      if (pageNum > 1) setLoadingMore(true);
-      const response = await fetch(`/api/posts?page=${pageNum}&limit=10`);
-      if (response.ok) {
-        const data = await response.json();
-        if (pageNum === 1) {
-          setPosts(data.posts);
-        } else {
-          setPosts((prev) => [...prev, ...data.posts]);
+  const fetchPosts = useCallback(
+    async (pageNum: number) => {
+      try {
+        if (pageNum > 1) setLoadingMore(true);
+
+        const params = new URLSearchParams({
+          page: pageNum.toString(),
+          limit: "10",
+        });
+
+        if (categorySlug) {
+          params.append("category", categorySlug);
         }
-        setHasMore(data.pagination.current < data.pagination.pages);
+
+        const response = await fetch(`/api/posts?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (pageNum === 1) {
+            setPosts(data.posts);
+          } else {
+            setPosts((prev) => [...prev, ...data.posts]);
+          }
+          setHasMore(data.pagination.current < data.pagination.pages);
+        }
+      } catch (error) {
+        console.error("获取文章列表失败:", error);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error("获取文章列表失败:", error);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, []);
+    },
+    [categorySlug]
+  );
 
   useEffect(() => {
     fetchPosts(page);
   }, [page, fetchPosts]);
+
+  // 当分类变化时重置页面并重新加载
+  useEffect(() => {
+    // 避免初始化时重复加载
+    if (categorySlug !== undefined) {
+      setPage(1);
+      setHasMore(true);
+      setLoading(true);
+      // 不立即清空posts，等新数据加载完成后再更新，减少页面抖动
+      fetchPosts(1);
+    }
+  }, [categorySlug, fetchPosts]);
 
   // 滚动监听自动加载
   useEffect(() => {

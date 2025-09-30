@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Mail,
   Github,
@@ -97,7 +98,7 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="sticky top-8 bg-white rounded-lg p-6 shadow-sm">
+      <div className="sticky top-8 bg-white rounded-lg p-6 shadow-sm w-full max-w-sm">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
           <div className="text-center">
@@ -109,7 +110,7 @@ export default function AdminProfileCard() {
           </div>
 
           {/* 分类 */}
-          <div>
+          <div className="min-h-[200px]">
             <div className="space-y-2">
               {[...Array(6)].map((_, i) => (
                 <div
@@ -141,7 +142,7 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-8 space-y-6 bg-white rounded-lg p-6 shadow-sm">
+    <div className="sticky top-8 space-y-6 bg-white rounded-lg p-6 shadow-sm w-full max-w-sm">
       {/* 个人信息卡片 */}
       <div className="text-center">
         {/* 头像 */}
@@ -165,17 +166,17 @@ export default function AdminProfileCard() {
         </h1>
 
         {/* 职业和位置信息 */}
-        <div className="text-sm text-gray-500 mb-4">
+        <div className="text-sm text-gray-500 mb-4 min-h-[1.25rem]">
           {profile.profile?.position && <div>{profile.profile.position}</div>}
           {profile.profile?.company && <div>{profile.profile.company}</div>}
         </div>
 
         {/* 个人简介 */}
-        {bio && (
-          <p className="text-gray-700 text-sm leading-relaxed mb-4 px-2">
-            {bio}
-          </p>
-        )}
+        <div className="min-h-[3rem] mb-4">
+          {bio && (
+            <p className="text-gray-700 text-sm leading-relaxed px-2">{bio}</p>
+          )}
+        </div>
 
         {/* Subscribe 按钮 */}
         <button className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors mb-6">
@@ -184,12 +185,12 @@ export default function AdminProfileCard() {
       </div>
 
       {/* 分类导航 */}
-      <div>
+      <div className="min-h-[200px]">
         <div className="space-y-1">
           {categories.map((category) => (
-            <a
+            <Link
               key={category.id}
-              href={`/categories/${category.slug}`}
+              href={`/category/${category.slug}`}
               className="flex items-center space-x-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded px-2 transition-colors"
             >
               {category.icon ? (
@@ -203,7 +204,7 @@ export default function AdminProfileCard() {
                   {category._count.posts}
                 </span>
               )}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

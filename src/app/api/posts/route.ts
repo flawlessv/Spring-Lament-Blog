@@ -21,9 +21,15 @@ export async function GET(request: NextRequest) {
     };
 
     if (category) {
-      where.category = {
-        slug: category,
-      };
+      // 支持通过category ID或slug筛选
+      const isId = /^[a-zA-Z0-9_-]+$/.test(category) && category.length > 10;
+      if (isId) {
+        where.categoryId = category;
+      } else {
+        where.category = {
+          slug: category,
+        };
+      }
     }
 
     if (tag) {
