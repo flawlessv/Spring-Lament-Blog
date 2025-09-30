@@ -98,14 +98,14 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="sticky top-8 bg-white rounded-lg p-6 shadow-sm w-full max-w-sm">
+      <div className="sticky top-8 w-full max-w-sm">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
           <div className="text-center">
-            <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4"></div>
-            <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-24 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-40 mx-auto mb-4"></div>
+            <div className="w-28 h-28 bg-gray-200 rounded-full mx-auto mb-3"></div>
+            <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-1"></div>
+            <div className="h-4 bg-gray-200 rounded w-24 mx-auto mb-1"></div>
+            <div className="h-4 bg-gray-200 rounded w-40 mx-auto mb-3"></div>
             <div className="h-8 bg-gray-200 rounded-full w-24 mx-auto mb-6"></div>
           </div>
 
@@ -142,40 +142,38 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-8 space-y-6 bg-white rounded-lg p-6 shadow-sm w-full max-w-sm">
+    <div className="sticky top-8 space-y-6 w-full max-w-sm">
       {/* 个人信息卡片 */}
       <div className="text-center">
         {/* 头像 */}
-        <div className="mb-4">
+        <div className="mb-3">
           {avatar ? (
             <img
               src={avatar}
               alt={displayName}
-              className="w-20 h-20 rounded-full mx-auto border-4 border-blue-100"
+              className="w-28 h-28 rounded-full mx-auto border-4 border-blue-100"
             />
           ) : (
-            <div className="w-20 h-20 rounded-full mx-auto bg-blue-100 flex items-center justify-center border-4 border-blue-200">
-              <User className="w-8 h-8 text-blue-600" />
+            <div className="w-28 h-28 rounded-full mx-auto bg-blue-100 flex items-center justify-center border-4 border-blue-200">
+              <User className="w-12 h-12 text-blue-600" />
             </div>
           )}
         </div>
 
         {/* 名称 */}
-        <h1 className="text-lg font-bold text-gray-900 mb-1">
+        <h1 className="text-xl font-semibold text-gray-900 mb-0.5">
           {displayName || profile.username} 的博客
         </h1>
 
         {/* 职业和位置信息 */}
-        <div className="text-sm text-gray-500 mb-4 min-h-[1.25rem]">
+        <div className="text-gray-500 mb-1">
           {profile.profile?.position && <div>{profile.profile.position}</div>}
           {profile.profile?.company && <div>{profile.profile.company}</div>}
         </div>
 
         {/* 个人简介 */}
-        <div className="min-h-[3rem] mb-4">
-          {bio && (
-            <p className="text-gray-700 text-sm leading-relaxed px-2">{bio}</p>
-          )}
+        <div className="mb-3">
+          {bio && <p className="text-gray-500 leading-relaxed">{bio}</p>}
         </div>
 
         {/* Subscribe 按钮 */}
