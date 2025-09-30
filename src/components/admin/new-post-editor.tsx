@@ -16,6 +16,9 @@ export default function NewPostEditor({ mode, postId }: NewPostEditorProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [initialPublishData, setInitialPublishData] = useState<
+    Partial<PublishData> | undefined
+  >();
 
   const loadPost = useCallback(async () => {
     try {
@@ -29,6 +32,16 @@ export default function NewPostEditor({ mode, postId }: NewPostEditorProps) {
       const post = await response.json();
       setTitle(post.title);
       setContent(post.content);
+
+      // 保存发布相关的数据
+      setInitialPublishData({
+        categoryId: post.categoryId || undefined,
+        tags: post.tags?.map((tag: any) => tag.id) || [],
+        coverImage: post.coverImage || "",
+        excerpt: post.excerpt || "",
+        published: post.published ?? true,
+        featured: post.featured ?? false,
+      });
     } catch (error) {
       console.error("加载文章失败:", error);
       toast({
@@ -200,6 +213,7 @@ export default function NewPostEditor({ mode, postId }: NewPostEditorProps) {
       onPublish={handlePublish}
       isLoading={isLoading}
       mode={mode}
+      initialPublishData={initialPublishData}
     />
   );
 }

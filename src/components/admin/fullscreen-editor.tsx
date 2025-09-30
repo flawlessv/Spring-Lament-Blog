@@ -27,6 +27,7 @@ interface FullscreenEditorProps {
   onPublish: (data: PublishData) => void;
   isLoading?: boolean;
   mode?: "create" | "edit";
+  initialPublishData?: Partial<PublishData>;
 }
 
 export interface PublishData {
@@ -48,6 +49,7 @@ export default function FullscreenEditor({
   onPublish,
   isLoading = false,
   mode = "create",
+  initialPublishData,
 }: FullscreenEditorProps) {
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [wordCount, setWordCount] = useState(0);
@@ -200,6 +202,7 @@ export default function FullscreenEditor({
         onOpenChange={setShowPublishDialog}
         onPublish={handlePublish}
         mode={mode}
+        initialData={initialPublishData}
       />
     </div>
   );

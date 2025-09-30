@@ -158,9 +158,20 @@ export default function PublishDialog({
           featured: initialData.featured ?? false,
         });
         setSelectedTags(initialData.tags || []);
+      } else {
+        // 如果没有初始数据，重置为默认值
+        form.reset({
+          categoryId: undefined,
+          coverImage: "",
+          excerpt: "",
+          published: true,
+          featured: false,
+        });
+        setSelectedTags([]);
       }
     }
-  }, [open, initialData, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialData]);
 
   const handleSubmit = async (data: PublishFormData) => {
     setIsLoading(true);
