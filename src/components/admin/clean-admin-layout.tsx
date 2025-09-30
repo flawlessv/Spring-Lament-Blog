@@ -21,7 +21,7 @@ import {
   User,
   Menu,
   X,
-  Home,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -127,8 +127,8 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
             </Button>
 
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Home className="h-4 w-4 text-white" />
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center shadow-sm">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">

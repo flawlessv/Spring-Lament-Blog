@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Settings, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, Moon, Sun } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -18,7 +18,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           className="p-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-white group"
           title="后台管理"
         >
-          <Settings className="w-4 h-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+          <LayoutDashboard className="w-4 h-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
         </Link>
 
         <button
