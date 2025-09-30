@@ -123,7 +123,7 @@ export default function PostList({ className = "" }: PostListProps) {
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative h-72 md:h-72 overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
+            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
               {/* 背景图片或渐变 */}
               {post.coverImage ? (
                 <div
@@ -154,7 +154,7 @@ export default function PostList({ className = "" }: PostListProps) {
 
                 {/* 底部：标题、摘要和分类 */}
                 <div className="space-y-3">
-                  <h2 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-2 group-hover:text-blue-200 transition-colors">
+                  <h2 className="text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-blue-200 transition-colors">
                     {post.title}
                   </h2>
 
