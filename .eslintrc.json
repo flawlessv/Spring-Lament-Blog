@@ -60,7 +60,11 @@
 
     // 禁止使用 any 类型 - 设为警告
     // 鼓励使用具体类型，但在某些情况下 any 是必要的
-    "@typescript-eslint/no-explicit-any": "warn"
+    "@typescript-eslint/no-explicit-any": "warn",
+
+    // 允许在 server.js 等 Node.js 文件中使用 require
+    // server.js 是生产环境启动文件，需要使用 CommonJS 格式
+    "@typescript-eslint/no-require-imports": "off"
 
     /**
      * 其他可配置的规则（示例）：
