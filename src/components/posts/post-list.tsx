@@ -41,6 +41,131 @@ interface PostListProps {
   categorySlug?: string;
 }
 
+// 随机图片API列表
+const RANDOM_IMAGE_APIS = [
+  // 次元API系列
+  "https://t.alcy.cc/",
+  "https://t.alcy.cc/fj",
+  "https://t.alcy.cc/mp",
+
+  // 樱花系列
+  "https://www.dmoe.cc/random.php",
+
+  // 搏天API
+  "https://api.btstu.cn/sjbz/api.php",
+
+  // 三秋API系列
+  "https://api.ghser.com/random/api.php",
+  "https://api.ghser.com/random/pc.php",
+  "https://api.ghser.com/random/bg.php",
+
+  // LoliAPI系列
+  "https://www.loliapi.com/acg/",
+
+  // 小歪API
+  "https://api.ixiaowai.cn/api/api.php",
+
+  // 如诗API
+  "https://api.likepoems.com/img/pc",
+
+  // 超级小兔
+  "https://imgapi.xl0408.top/index.php",
+
+  // 呓喵酱
+  "https://api.yimian.xyz/img",
+
+  // 韩小韩API
+  "https://api.vvhan.com/api/wallpaper/acg",
+
+  // 东方Project
+  "https://img.paulzzh.com/touhou/random",
+
+  // 保罗API
+  "https://api.paugram.com/wallpaper/",
+
+  // 墨天逸
+  "https://api.mtyqx.cn/tapi/random.php",
+
+  // Jitsu随机图
+  "https://moe.jitsu.top/api",
+
+  // 零七生活
+  "https://api.oick.cn/random/api.php",
+
+  // 桑帛云系列
+  "https://api.lolimi.cn/API/dmt/api.php?type=image",
+  "https://api.lolimi.cn/API/yuan/?type=image",
+
+  // 星河API系列
+  "https://api.asxe.vip/random.php",
+  "https://api.asxe.vip/scenery.php",
+
+  // 魅影API
+  "https://tuapi.eees.cc/api.php?category=dongman&type=302",
+
+  // 赫萝API
+  "https://api.horosama.com/random.php",
+
+  // 狗哥API系列
+  "https://www.ggapi.cn/api/acg/",
+  "https://www.ggapi.cn/api/aiimg/",
+  "https://www.ggapi.cn/api/gancheng/",
+
+  // 小小API
+  "https://v2.xxapi.cn/api/randomAcgPic?type=pc&return=302",
+
+  // 素颜API系列
+  "https://api.suyanw.cn/api/ys",
+  "https://api.suyanw.cn/api/mao",
+  "https://api.suyanw.cn/api/comic/api.php",
+
+  // 无铭API
+  "https://jkapi.com/api/acg_img",
+
+  // 御坂API系列
+  "https://ybapi.cn/API/dmt.php",
+  "https://ybapi.cn/API/pc_acgimg.php",
+
+  // seamee API系列
+  "https://api.seaya.link/web?type=file",
+  "https://api.seaya.link/random?type=file",
+
+  // 浪心API系列
+  "https://api.lxtu.cn/api.php?category=ecy",
+  "https://api.lxtu.cn/api.php?category=ys",
+  "https://api.lxtu.cn/api.php?category=ecyfj",
+  "https://api.lxtu.cn/api.php?category=mn",
+  "https://api.lxtu.cn/api.php?category=smn",
+
+  // unsplash
+  "https://source.unsplash.com/random",
+
+  // 缙哥哥原神
+  "https://api.dujin.org/pic/yuanshen/",
+
+  // NyanCat
+  "https://sex.nyan.run/api/v2/img",
+
+  // 无缺博客
+  "https://api.wuque.cc/random/images",
+
+  // 云调用岁月小筑
+  "https://cloud.qqshabi.cn/api/images/api.php",
+
+  // TenAPI
+  "https://tenapi.cn/v2/acg",
+
+  // ALAPI
+  "https://v2.alapi.cn/api/acg?token=KA6k5H7oBNZavgEJ",
+];
+
+// 获取随机API
+const getRandomImageApi = () => {
+  return RANDOM_IMAGE_APIS[
+    Math.floor(Math.random() * RANDOM_IMAGE_APIS.length)
+  ];
+};
+
 export default function PostList({
   className = "",
   categorySlug,
@@ -152,23 +277,22 @@ export default function PostList({
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg">
-              {/* 背景图片或渐变 */}
-              {post.coverImage ? (
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${post.coverImage})` }}
-                >
-                  <div className="absolute inset-0 bg-black/40"></div>
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600">
-                  <div className="absolute inset-0 bg-black/20"></div>
-                </div>
-              )}
+            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg group">
+              {/* 背景图片 */}
+              <div
+                className="absolute inset-0 bg-cover bg-center brightness-105"
+                style={{
+                  backgroundImage: `url(${post.coverImage || getRandomImageApi()})`,
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60 transition-opacity duration-200"></div>
+              </div>
 
               {/* 文章内容覆盖层 */}
-              <div className="relative h-full p-8 flex flex-col justify-between text-white">
+              <div
+                className="relative h-full p-8 flex flex-col justify-between text-white"
+                style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
+              >
                 {/* 顶部：日期和精选标识 */}
                 <div className="flex items-start justify-between">
                   <div className="text-sm opacity-90 font-medium tracking-wider">
