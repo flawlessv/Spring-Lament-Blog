@@ -216,21 +216,21 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
       {/* 侧边栏 */}
       <aside
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200/80 transform transition-transform duration-200 ease-in-out z-40",
+          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-56 bg-white border-r border-gray-200/80 transform transition-transform duration-200 ease-in-out z-40",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="h-full flex flex-col">
           {/* 导航菜单 */}
           <nav className="flex-1 px-3 py-6">
-            <div className="space-y-1">
+            <div className="space-y-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link key={item.name} href={item.href as any}>
                     <div
                       className={cn(
-                        "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
+                        "group flex items-center px-3 py-3 text-[15px] font-medium rounded-lg transition-all duration-200",
                         item.current
                           ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-200"
                           : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
@@ -238,7 +238,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                     >
                       <Icon
                         className={cn(
-                          "mr-3 h-[18px] w-[18px] transition-transform",
+                          "mr-3 h-5 w-5 transition-transform",
                           item.current
                             ? "text-white"
                             : "text-gray-400 group-hover:text-gray-600 group-hover:scale-110"
@@ -263,10 +263,8 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
       )}
 
       {/* 主内容区 */}
-      <main className="lg:ml-64 mt-16 min-h-[calc(100vh-4rem)]">
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">{children}</div>
-        </div>
+      <main className="lg:ml-56 mt-16 min-h-[calc(100vh-4rem)]">
+        <div className="p-6">{children}</div>
       </main>
     </div>
   );

@@ -10,11 +10,11 @@ import ProfileForm from "@/components/admin/profile-form";
 export default function ProfilePage() {
   return (
     <CleanAdminLayout>
-      <div className="space-y-6">
-        {/* 页面头部 */}
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">个人信息</h1>
-          <p className="text-muted-foreground">管理您的个人资料和联系信息</p>
+      <div className="space-y-4">
+        {/* 页面标题 */}
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+          <h1 className="text-xl font-semibold text-gray-900">个人信息</h1>
         </div>
 
         {/* 个人信息表单 */}

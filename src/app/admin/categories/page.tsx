@@ -34,24 +34,25 @@ export default function CategoriesPage() {
 
   return (
     <CleanAdminLayout>
-      <div className="space-y-8">
+      <div className="space-y-4">
         {/* 页面标题 */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">分类管理</h2>
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+          <h1 className="text-xl font-semibold text-gray-900">分类管理</h1>
         </div>
 
         {/* 分类列表 */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <UnifiedCategoriesTable onEdit={handleEdit} />
         </div>
-
-        {/* 创建/编辑对话框 */}
-        <CategoryDialog
-          open={showDialog}
-          onClose={handleCloseDialog}
-          category={editingCategory}
-        />
       </div>
+
+      {/* 创建/编辑对话框 */}
+      <CategoryDialog
+        open={showDialog}
+        onClose={handleCloseDialog}
+        category={editingCategory}
+      />
     </CleanAdminLayout>
   );
 }

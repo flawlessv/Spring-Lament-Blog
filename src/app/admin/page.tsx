@@ -14,9 +14,9 @@ export default function AdminDashboard() {
     <CleanAdminLayout>
       <div className="space-y-6">
         {/* 页面标题 */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">管理概览</h1>
-          <p className="mt-1 text-gray-600">内容管理中心</p>
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+          <h1 className="text-xl font-semibold text-gray-900">管理概览</h1>
         </div>
 
         {/* 统计卡片 */}
