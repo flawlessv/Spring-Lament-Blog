@@ -12,6 +12,14 @@ import {
   Phone,
   User,
   Briefcase,
+  Send,
+  Instagram,
+  Youtube,
+  FileText,
+  Gamepad2,
+  Code,
+  Heart,
+  Info,
 } from "lucide-react";
 
 interface AdminProfile {
@@ -89,23 +97,37 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="sticky top-8">
+      <div className="sticky top-8 bg-white rounded-lg p-6 shadow-sm">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
           <div className="text-center">
-            <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4"></div>
-            <div className="h-6 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div>
+            <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-24 mx-auto mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-40 mx-auto mb-4"></div>
+            <div className="h-8 bg-gray-200 rounded-full w-24 mx-auto mb-6"></div>
           </div>
 
           {/* 分类 */}
           <div>
-            <div className="h-4 bg-gray-200 rounded w-16 mb-3"></div>
             <div className="space-y-2">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-8 bg-gray-200 rounded"></div>
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-8 bg-gray-200 rounded flex items-center space-x-2"
+                >
+                  <div className="w-4 h-4 bg-gray-300 rounded"></div>
+                  <div className="flex-1 h-4 bg-gray-300 rounded"></div>
+                </div>
               ))}
             </div>
+          </div>
+
+          {/* 社交媒体图标 */}
+          <div className="flex justify-center space-x-3 pt-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="w-5 h-5 bg-gray-200 rounded"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -119,7 +141,7 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-8 space-y-6 mr-16">
+    <div className="sticky top-8 space-y-6 bg-white rounded-lg p-6 shadow-sm">
       {/* 个人信息卡片 */}
       <div className="text-center">
         {/* 头像 */}
@@ -128,39 +150,24 @@ export default function AdminProfileCard() {
             <img
               src={avatar}
               alt={displayName}
-              className="w-24 h-24 rounded-full mx-auto border-4 border-gray-100"
+              className="w-20 h-20 rounded-full mx-auto border-4 border-blue-100"
             />
           ) : (
-            <div className="w-24 h-24 rounded-full mx-auto bg-gray-100 flex items-center justify-center border-4 border-gray-100">
-              <User className="w-10 h-10 text-gray-400" />
+            <div className="w-20 h-20 rounded-full mx-auto bg-blue-100 flex items-center justify-center border-4 border-blue-200">
+              <User className="w-8 h-8 text-blue-600" />
             </div>
           )}
         </div>
 
-        {/* 名称和描述 */}
-        <h1 className="text-xl font-bold text-gray-900 mb-2">
-          {displayName} 的博客
+        {/* 名称 */}
+        <h1 className="text-lg font-bold text-gray-900 mb-1">
+          {displayName || profile.username} 的博客
         </h1>
 
         {/* 职业和位置信息 */}
-        <div className="text-sm text-gray-600 space-y-1 mb-4">
-          {(profile.profile?.position || profile.profile?.company) && (
-            <div className="flex items-center justify-center space-x-1">
-              <Briefcase className="w-3 h-3" />
-              <span>
-                {[profile.profile?.position, profile.profile?.company]
-                  .filter(Boolean)
-                  .join(" | ")}
-              </span>
-            </div>
-          )}
-
-          {profile.profile?.location && (
-            <div className="flex items-center justify-center space-x-1">
-              <MapPin className="w-3 h-3" />
-              <span>{profile.profile.location}</span>
-            </div>
-          )}
+        <div className="text-sm text-gray-500 mb-4">
+          {profile.profile?.position && <div>{profile.profile.position}</div>}
+          {profile.profile?.company && <div>{profile.profile.company}</div>}
         </div>
 
         {/* 个人简介 */}
@@ -169,17 +176,27 @@ export default function AdminProfileCard() {
             {bio}
           </p>
         )}
+
+        {/* Subscribe 按钮 */}
+        <button className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors mb-6">
+          Subscribe
+        </button>
       </div>
 
       {/* 分类导航 */}
       <div>
         <div className="space-y-1">
-          {categories.slice(0, 6).map((category) => (
+          {categories.map((category) => (
             <a
               key={category.id}
               href={`/categories/${category.slug}`}
               className="flex items-center space-x-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded px-2 transition-colors"
             >
+              {category.icon ? (
+                <span className="w-4 h-4 text-center">{category.icon}</span>
+              ) : (
+                <FileText className="w-4 h-4 text-gray-500" />
+              )}
               <span className="flex-1">{category.name}</span>
               {category._count?.posts && (
                 <span className="text-xs text-gray-500">
@@ -189,6 +206,16 @@ export default function AdminProfileCard() {
             </a>
           ))}
         </div>
+      </div>
+
+      {/* 社交媒体图标 */}
+      <div className="flex justify-center space-x-3 pt-4">
+        <Mail className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <Send className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <Github className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <Instagram className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <Twitter className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        <MessageSquare className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
       </div>
     </div>
   );

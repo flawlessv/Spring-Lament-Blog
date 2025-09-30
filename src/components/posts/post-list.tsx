@@ -119,7 +119,7 @@ export default function PostList({ className = "" }: PostListProps) {
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-[60px] ${className}`}>
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
