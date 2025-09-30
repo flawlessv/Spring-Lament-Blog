@@ -14,7 +14,7 @@ import { NextResponse } from "next/server";
 /**
  * 受保护的路由配置
  *
- * 这些路由需要用户登录且具有管理员权限才能访问
+ * 这些路由需要用户登录才能访问
  */
 const protectedRoutes = [
   "/admin", // 管理员主页
@@ -40,33 +40,8 @@ export default withAuth(
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
 
-    // 检查是否为受保护的路由
-    const isProtectedRoute = protectedRoutes.some((route) => {
-      if (route.includes(":path*")) {
-        // 处理动态路由匹配
-        const baseRoute = route.replace("/:path*", "");
-        return pathname.startsWith(baseRoute);
-      }
-      return pathname === route || pathname.startsWith(route + "/");
-    });
-
-    // 如果是受保护路由但用户未登录或不是管理员
-    if (isProtectedRoute) {
-      if (!token) {
-        // 未登录，重定向到登录页
-        const loginUrl = new URL("/login", req.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(loginUrl);
-      }
-
-      if (token.role !== "ADMIN") {
-        // 不是管理员，重定向到首页
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-    }
-
     // 如果用户已登录且访问登录页，重定向到管理员页面
-    if (pathname === "/login" && token?.role === "ADMIN") {
+    if (pathname === "/login" && token) {
       return NextResponse.redirect(new URL("/admin", req.url));
     }
 
@@ -83,28 +58,23 @@ export default withAuth(
       /**
        * 授权回调
        *
-       * 返回 true 表示允许中间件运行
-       * 返回 false 表示跳过中间件
+       * 返回 true 表示允许访问
+       * 返回 false 表示重定向到登录页
        */
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
 
-        // 对于公开路由，总是允许访问
-        const isPublicRoute = publicRoutes.some((route) => {
-          if (route.includes(":path*")) {
-            const baseRoute = route.replace("/:path*", "");
-            return pathname.startsWith(baseRoute);
-          }
-          return pathname === route || pathname.startsWith(route + "/");
-        });
-
-        if (isPublicRoute) {
-          return true;
+        // 如果访问管理员路由，必须已登录
+        if (pathname.startsWith("/admin")) {
+          return !!token;
         }
 
-        // 对于受保护路由，检查用户是否为管理员
-        return token?.role === "ADMIN";
+        // 其他路由都允许访问
+        return true;
       },
+    },
+    pages: {
+      signIn: "/login", // 确保重定向到正确的登录页面
     },
   }
 );

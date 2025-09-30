@@ -6,8 +6,9 @@
  * 去除不必要的功能，专注于核心内容管理
  */
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -24,15 +25,50 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "@/components/ui/loading";
 
 interface CleanAdminLayoutProps {
   children: ReactNode;
 }
 
 export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // 简单的权限检查 - 只检查是否登录
+  useEffect(() => {
+    if (status === "loading") return; // 还在加载中，等待
+
+    if (status === "unauthenticated") {
+      // 未登录，重定向到登录页
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+  }, [status, router, pathname]);
+
+  // 显示加载状态
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // 未登录
+  if (status === "unauthenticated") {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">请先登录</h1>
+          <p className="text-gray-600 mb-4">您需要登录才能访问管理后台</p>
+          <Button onClick={() => router.push("/login")}>前往登录</Button>
+        </div>
+      </div>
+    );
+  }
 
   const navigation = [
     {
