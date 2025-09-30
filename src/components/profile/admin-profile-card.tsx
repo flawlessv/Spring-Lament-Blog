@@ -6,21 +6,11 @@ import {
   Mail,
   Github,
   Globe,
-  MapPin,
-  Calendar,
   MessageSquare,
-  Twitter,
   Phone,
   User,
-  Briefcase,
-  Send,
-  Instagram,
-  Youtube,
   FileText,
-  Gamepad2,
-  Code,
-  Heart,
-  Info,
+  Tv,
 } from "lucide-react";
 
 interface AdminProfile {
@@ -104,7 +94,6 @@ export default function AdminProfileCard() {
           <div className="text-center">
             <div className="w-28 h-28 bg-gray-200 rounded-full mx-auto mb-3"></div>
             <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-1"></div>
-            <div className="h-4 bg-gray-200 rounded w-24 mx-auto mb-1"></div>
             <div className="h-4 bg-gray-200 rounded w-40 mx-auto mb-3"></div>
             <div className="h-8 bg-gray-200 rounded-full w-24 mx-auto mb-6"></div>
           </div>
@@ -165,12 +154,6 @@ export default function AdminProfileCard() {
           {displayName || profile.username} 的博客
         </h1>
 
-        {/* 职业和位置信息 */}
-        <div className="text-gray-500 mb-1">
-          {profile.profile?.position && <div>{profile.profile.position}</div>}
-          {profile.profile?.company && <div>{profile.profile.company}</div>}
-        </div>
-
         {/* 个人简介 */}
         <div className="mb-3">
           {bio && <p className="text-gray-500 leading-relaxed">{bio}</p>}
@@ -209,12 +192,74 @@ export default function AdminProfileCard() {
 
       {/* 社交媒体图标 */}
       <div className="flex justify-center space-x-3 pt-4">
-        <Mail className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        <Send className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        <Github className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        <Instagram className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        <Twitter className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        <MessageSquare className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        {profile.profile?.email && (
+          <a
+            href={`mailto:${profile.profile.email}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative"
+          >
+            <Mail className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              邮箱
+            </span>
+          </a>
+        )}
+        {profile.profile?.phone && (
+          <a href={`tel:${profile.profile.phone}`} className="group relative">
+            <Phone className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              电话
+            </span>
+          </a>
+        )}
+        {profile.profile?.wechat && (
+          <div className="group relative cursor-pointer">
+            <MessageSquare className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              微信：{profile.profile.wechat}
+            </span>
+          </div>
+        )}
+        {profile.profile?.website && (
+          <a
+            href={profile.profile.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative"
+          >
+            <Globe className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              个人网站
+            </span>
+          </a>
+        )}
+        {profile.profile?.github && (
+          <a
+            href={`https://github.com/${profile.profile.github}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative"
+          >
+            <Github className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              GitHub
+            </span>
+          </a>
+        )}
+        {profile.profile?.bilibili && (
+          <a
+            href={`https://space.bilibili.com/${profile.profile.bilibili}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative"
+          >
+            <Tv className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              B站
+            </span>
+          </a>
+        )}
       </div>
     </div>
   );
