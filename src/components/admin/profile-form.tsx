@@ -34,7 +34,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const profileSchema = z.object({
   // 基础信息
@@ -48,15 +47,11 @@ const profileSchema = z.object({
   email: z.string().email("请输入有效的邮箱地址").optional().or(z.literal("")),
   phone: z.string().optional(),
   wechat: z.string().optional(),
-  qq: z.string().optional(),
 
   // 社交链接
   website: z.string().url("请输入有效的网站URL").optional().or(z.literal("")),
   github: z.string().optional(),
-  twitter: z.string().optional(),
-  weibo: z.string().optional(),
   bilibili: z.string().optional(),
-  youtube: z.string().optional(),
 
   // 地址信息
   location: z.string().optional(),
@@ -83,13 +78,9 @@ export default function ProfileForm() {
       email: "",
       phone: "",
       wechat: "",
-      qq: "",
       website: "",
       github: "",
-      twitter: "",
-      weibo: "",
       bilibili: "",
-      youtube: "",
       location: "",
       company: "",
       position: "",
@@ -119,13 +110,9 @@ export default function ProfileForm() {
           email: data.profile?.email || "",
           phone: data.profile?.phone || "",
           wechat: data.profile?.wechat || "",
-          qq: data.profile?.qq || "",
           website: data.profile?.website || "",
           github: data.profile?.github || "",
-          twitter: data.profile?.twitter || "",
-          weibo: data.profile?.weibo || "",
           bilibili: data.profile?.bilibili || "",
-          youtube: data.profile?.youtube || "",
           location: data.profile?.location || "",
           company: data.profile?.company || "",
           position: data.profile?.position || "",
@@ -192,358 +179,285 @@ export default function ProfileForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="basic">基础信息</TabsTrigger>
-            <TabsTrigger value="contact">联系信息</TabsTrigger>
-            <TabsTrigger value="social">社交链接</TabsTrigger>
-            <TabsTrigger value="work">工作信息</TabsTrigger>
-          </TabsList>
+        {/* 基础信息 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <User className="h-5 w-5" />
+              <span>基础信息</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>用户名</FormLabel>
+                    <FormControl>
+                      <Input placeholder="输入用户名" {...field} />
+                    </FormControl>
+                    <FormDescription>用于登录的用户名</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* 基础信息 */}
-          <TabsContent value="basic" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <User className="h-5 w-5" />
-                  <span>基础信息</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>用户名</FormLabel>
-                        <FormControl>
-                          <Input placeholder="输入用户名" {...field} />
-                        </FormControl>
-                        <FormDescription>用于登录的用户名</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>密码</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type={showPassword ? "text" : "password"}
-                              placeholder="留空则不修改密码"
-                              {...field}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormDescription>留空则不修改当前密码</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="displayName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>显示名称</FormLabel>
-                      <FormControl>
-                        <Input placeholder="输入显示名称" {...field} />
-                      </FormControl>
-                      <FormDescription>在前台显示的昵称</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>个人简介</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="介绍一下自己..."
-                          rows={4}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>最多500字符</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="avatar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>头像URL</FormLabel>
-                      <FormControl>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>密码</FormLabel>
+                    <FormControl>
+                      <div className="relative">
                         <Input
-                          placeholder="https://example.com/avatar.jpg"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="留空则不修改密码"
                           {...field}
                         />
-                      </FormControl>
-                      <FormDescription>头像图片的URL地址</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormDescription>留空则不修改当前密码</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          {/* 联系信息 */}
-          <TabsContent value="contact" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5" />
-                  <span>联系信息</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>邮箱</FormLabel>
-                        <FormControl>
-                          <Input placeholder="example@example.com" {...field} />
-                        </FormControl>
-                        <FormDescription>公开展示的邮箱地址</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>显示名称</FormLabel>
+                  <FormControl>
+                    <Input placeholder="输入显示名称" {...field} />
+                  </FormControl>
+                  <FormDescription>在前台显示的昵称</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>电话</FormLabel>
-                        <FormControl>
-                          <Input placeholder="手机号码" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>个人简介</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="介绍一下自己..."
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>最多500字符</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                  <FormField
-                    control={form.control}
-                    name="wechat"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>微信号</FormLabel>
-                        <FormControl>
-                          <Input placeholder="微信号" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <FormField
+              control={form.control}
+              name="avatar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>头像URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://example.com/avatar.jpg"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>头像图片的URL地址</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="qq"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>QQ号</FormLabel>
-                        <FormControl>
-                          <Input placeholder="QQ号码" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        {/* 联系信息 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Mail className="h-5 w-5" />
+              <span>联系信息</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>邮箱</FormLabel>
+                    <FormControl>
+                      <Input placeholder="example@example.com" {...field} />
+                    </FormControl>
+                    <FormDescription>公开展示的邮箱地址</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* 社交链接 */}
-          <TabsContent value="social" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Globe className="h-5 w-5" />
-                  <span>社交链接</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="website"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>个人网站</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>电话</FormLabel>
+                    <FormControl>
+                      <Input placeholder="手机号码" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="github"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>GitHub</FormLabel>
-                        <FormControl>
-                          <Input placeholder="GitHub用户名" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="wechat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>微信号</FormLabel>
+                    <FormControl>
+                      <Input placeholder="微信号" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="twitter"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Twitter</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Twitter用户名" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        {/* 社交链接 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Globe className="h-5 w-5" />
+              <span>社交链接</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>个人网站</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="weibo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>微博</FormLabel>
-                        <FormControl>
-                          <Input placeholder="微博用户名" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="github"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GitHub</FormLabel>
+                    <FormControl>
+                      <Input placeholder="GitHub用户名" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="bilibili"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>B站</FormLabel>
-                        <FormControl>
-                          <Input placeholder="B站用户名" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="bilibili"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>B站</FormLabel>
+                    <FormControl>
+                      <Input placeholder="B站用户名" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="youtube"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>YouTube</FormLabel>
-                        <FormControl>
-                          <Input placeholder="YouTube频道名" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        {/* 工作信息 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Briefcase className="h-5 w-5" />
+              <span>工作信息</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>所在地</FormLabel>
+                  <FormControl>
+                    <Input placeholder="北京, 中国" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* 工作信息 */}
-          <TabsContent value="work" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Briefcase className="h-5 w-5" />
-                  <span>工作信息</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>所在地</FormLabel>
-                      <FormControl>
-                        <Input placeholder="北京, 中国" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>公司/组织</FormLabel>
+                    <FormControl>
+                      <Input placeholder="公司名称" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="company"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>公司/组织</FormLabel>
-                        <FormControl>
-                          <Input placeholder="公司名称" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="position"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>职位</FormLabel>
-                        <FormControl>
-                          <Input placeholder="职位名称" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              <FormField
+                control={form.control}
+                name="position"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>职位</FormLabel>
+                    <FormControl>
+                      <Input placeholder="职位名称" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* 提交按钮 */}
         <div className="flex justify-end">
