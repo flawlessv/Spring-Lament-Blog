@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { Edit, Trash2, Tags, FileText, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ModernTable } from "@/components/ui/modern-table";
 import { useToast } from "@/hooks/use-toast";
 
@@ -120,38 +121,39 @@ export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
   const columns = [
     {
       key: "name",
-      title: "标签信息",
-      width: "flex-1",
-      render: (_, tag: Tag) => (
-        <div className="flex items-center space-x-3">
+      title: "标签",
+      width: "w-48",
+      render: (_: unknown, tag: Tag) => (
+        <div className="flex items-center space-x-2">
           <div
-            className="w-4 h-4 rounded-full"
+            className="w-3 h-3 rounded-full flex-shrink-0"
             style={{ backgroundColor: tag.color || "#6B7280" }}
           />
-          <div className="min-w-0">
-            <div className="flex items-center space-x-2">
-              <Badge
-                style={{ backgroundColor: tag.color || "#6B7280" }}
-                className="text-white font-medium rounded-lg"
-              >
-                {tag.name}
-              </Badge>
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              <code className="bg-gray-100 px-2 py-1 rounded text-gray-600">
-                {tag.slug}
-              </code>
-            </div>
-          </div>
+          <Badge
+            style={{ backgroundColor: tag.color || "#6B7280" }}
+            className="text-white font-medium rounded-lg"
+          >
+            {tag.name}
+          </Badge>
         </div>
+      ),
+    },
+    {
+      key: "slug",
+      title: "URL",
+      width: "flex-1",
+      render: (_: unknown, tag: Tag) => (
+        <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
+          {tag.slug}
+        </code>
       ),
     },
     {
       key: "posts",
       title: "文章数量",
-      width: "w-24",
+      width: "w-32",
       className: "text-center",
-      render: (_, tag: Tag) => (
+      render: (_: unknown, tag: Tag) => (
         <div className="flex items-center justify-center space-x-2">
           <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
             <FileText className="h-4 w-4 text-blue-600" />
@@ -165,31 +167,41 @@ export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
     {
       key: "createdAt",
       title: "创建时间",
-      width: "w-32",
+      width: "w-40",
       className: "text-center",
-      render: (_, tag: Tag) => (
+      render: (_: unknown, tag: Tag) => (
         <span className="text-sm text-gray-500">
           {formatDate(tag.createdAt)}
         </span>
       ),
     },
-  ];
-
-  const actions = [
     {
-      key: "edit",
-      label: "编辑",
-      icon: <Edit className="h-4 w-4" />,
-      onClick: (tag: Tag) => {
-        onEdit?.(tag);
-      },
-    },
-    {
-      key: "delete",
-      label: "删除",
-      icon: <Trash2 className="h-4 w-4" />,
-      onClick: handleDelete,
-      variant: "danger" as const,
+      key: "actions",
+      title: "操作",
+      width: "w-24",
+      className: "text-center",
+      render: (_: unknown, tag: Tag) => (
+        <div className="flex items-center justify-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            onClick={() => onEdit?.(tag)}
+            title="编辑"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => handleDelete(tag)}
+            title="删除"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -213,7 +225,6 @@ export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
       selectable={true}
       selectedIds={selectedIds}
       onSelectionChange={setSelectedIds}
-      actions={actions}
       createButton={{
         label: "新建标签",
         href: "/admin/tags/new",

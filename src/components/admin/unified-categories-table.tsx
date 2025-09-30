@@ -17,6 +17,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ModernTable } from "@/components/ui/modern-table";
 import { useToast } from "@/hooks/use-toast";
 
@@ -131,32 +132,38 @@ export default function UnifiedCategoriesTable({
   const columns = [
     {
       key: "name",
-      title: "分类信息",
-      width: "flex-1",
-      render: (_, category: Category) => (
+      title: "分类名称",
+      width: "w-56",
+      render: (_: unknown, category: Category) => (
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-medium"
-              style={{ backgroundColor: category.color || "#6B7280" }}
-            >
-              {category.icon || "📁"}
-            </div>
-            <div className="min-w-0">
-              <div className="font-medium text-gray-900">{category.name}</div>
-              <div className="text-xs text-gray-500 mt-1">
-                <code className="bg-gray-100 px-2 py-1 rounded text-gray-600">
-                  {category.slug}
-                </code>
-              </div>
-              {category.description && (
-                <div className="text-sm text-gray-600 mt-1 line-clamp-1">
-                  {category.description}
-                </div>
-              )}
-            </div>
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-medium flex-shrink-0"
+            style={{ backgroundColor: category.color || "#6B7280" }}
+          >
+            {category.icon || "📁"}
           </div>
+          <div className="font-medium text-gray-900">{category.name}</div>
         </div>
+      ),
+    },
+    {
+      key: "slug",
+      title: "URL",
+      width: "w-40",
+      render: (_: unknown, category: Category) => (
+        <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
+          {category.slug}
+        </code>
+      ),
+    },
+    {
+      key: "description",
+      title: "描述",
+      width: "flex-1",
+      render: (_: unknown, category: Category) => (
+        <span className="text-sm text-gray-600 line-clamp-2">
+          {category.description || <span className="text-gray-400">-</span>}
+        </span>
       ),
     },
     {
@@ -164,7 +171,7 @@ export default function UnifiedCategoriesTable({
       title: "文章数量",
       width: "w-24",
       className: "text-center",
-      render: (_, category: Category) => (
+      render: (_: unknown, category: Category) => (
         <div className="flex items-center justify-center space-x-2">
           <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
             <FileText className="h-4 w-4 text-green-600" />
@@ -180,7 +187,7 @@ export default function UnifiedCategoriesTable({
       title: "排序",
       width: "w-16",
       className: "text-center",
-      render: (_, category: Category) => (
+      render: (_: unknown, category: Category) => (
         <div className="flex items-center justify-center space-x-1 text-gray-600">
           <ArrowUpDown className="h-3 w-3" />
           <span className="text-sm font-mono">{category.sortOrder}</span>
@@ -192,29 +199,39 @@ export default function UnifiedCategoriesTable({
       title: "创建时间",
       width: "w-32",
       className: "text-center",
-      render: (_, category: Category) => (
+      render: (_: unknown, category: Category) => (
         <span className="text-sm text-gray-500">
           {formatDate(category.createdAt)}
         </span>
       ),
     },
-  ];
-
-  const actions = [
     {
-      key: "edit",
-      label: "编辑",
-      icon: <Edit className="h-4 w-4" />,
-      onClick: (category: Category) => {
-        onEdit?.(category);
-      },
-    },
-    {
-      key: "delete",
-      label: "删除",
-      icon: <Trash2 className="h-4 w-4" />,
-      onClick: handleDelete,
-      variant: "danger" as const,
+      key: "actions",
+      title: "操作",
+      width: "w-24",
+      className: "text-center",
+      render: (_: unknown, category: Category) => (
+        <div className="flex items-center justify-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            onClick={() => onEdit?.(category)}
+            title="编辑"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => handleDelete(category)}
+            title="删除"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -238,7 +255,6 @@ export default function UnifiedCategoriesTable({
       selectable={true}
       selectedIds={selectedIds}
       onSelectionChange={setSelectedIds}
-      actions={actions}
       createButton={{
         label: "新建分类",
         href: "/admin/categories/new",

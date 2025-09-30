@@ -18,8 +18,18 @@ import {
   Calendar,
   FileText,
   Plus,
+  MoreHorizontal,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ModernTable } from "@/components/ui/modern-table";
 import { useToast } from "@/hooks/use-toast";
 
@@ -272,31 +282,19 @@ export default function UnifiedPostsTable({
       key: "title",
       title: "文章信息",
       width: "flex-1",
-      render: (_, post: Post) => (
+      render: (_: unknown, post: Post) => (
         <div className="min-w-0">
           <Link
             href={`/admin/posts/${post.id}/edit`}
-            className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors block truncate"
+            className="text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors block truncate"
           >
             {post.title}
           </Link>
 
-          {post.excerpt && (
-            <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-              {post.excerpt}
-            </p>
-          )}
-
-          <div className="flex items-center space-x-4 mt-3 text-xs text-gray-500">
+          <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500">
             <div className="flex items-center space-x-1">
               <Calendar className="h-3 w-3" />
               <span>{formatDate(post.createdAt)}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <User className="h-3 w-3" />
-              <span>
-                {post.author.profile?.displayName || post.author.username}
-              </span>
             </div>
             {post.category && (
               <div className="flex items-center space-x-1">
@@ -308,25 +306,31 @@ export default function UnifiedPostsTable({
               </div>
             )}
           </div>
-
-          {/* 标签 */}
-          {post.tags.length > 0 && (
-            <div className="flex items-center space-x-2 mt-2">
-              {post.tags.slice(0, 3).map((tag) => (
-                <Badge
-                  key={tag.id}
-                  style={{ backgroundColor: tag.color || "#6B7280" }}
-                  className="text-white text-xs px-2 py-0.5 rounded-lg"
-                >
-                  {tag.name}
-                </Badge>
-              ))}
-              {post.tags.length > 3 && (
-                <span className="text-xs text-gray-500">
-                  +{post.tags.length - 3}
-                </span>
-              )}
-            </div>
+        </div>
+      ),
+    },
+    {
+      key: "tags",
+      title: "标签",
+      width: "w-56",
+      render: (_: unknown, post: Post) => (
+        <div className="flex flex-wrap gap-1">
+          {post.tags.slice(0, 3).map((tag) => (
+            <Badge
+              key={tag.id}
+              style={{ backgroundColor: tag.color || "#6B7280" }}
+              className="text-white text-xs px-2 py-0.5 rounded-lg"
+            >
+              {tag.name}
+            </Badge>
+          ))}
+          {post.tags.length > 3 && (
+            <span className="text-xs text-gray-500">
+              +{post.tags.length - 3}
+            </span>
+          )}
+          {post.tags.length === 0 && (
+            <span className="text-sm text-gray-400">-</span>
           )}
         </div>
       ),
@@ -336,14 +340,14 @@ export default function UnifiedPostsTable({
       title: "状态",
       width: "w-24",
       className: "text-center",
-      render: (_, post: Post) => getStatusBadge(post),
+      render: (_: unknown, post: Post) => getStatusBadge(post),
     },
     {
       key: "views",
       title: "浏览量",
       width: "w-20",
       className: "text-center",
-      render: (_, post: Post) => (
+      render: (_: unknown, post: Post) => (
         <div className="flex items-center justify-center space-x-1 text-gray-600">
           <Eye className="h-4 w-4" />
           <span className="font-medium">{post.views.toLocaleString()}</span>
@@ -355,10 +359,82 @@ export default function UnifiedPostsTable({
       title: "更新时间",
       width: "w-24",
       className: "text-center",
-      render: (_, post: Post) => (
+      render: (_: unknown, post: Post) => (
         <span className="text-sm text-gray-500">
           {formatDate(post.updatedAt)}
         </span>
+      ),
+    },
+    {
+      key: "actions",
+      title: "操作",
+      width: "w-52",
+      className: "text-center",
+      render: (_: unknown, post: Post) => (
+        <div className="flex items-center justify-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+            onClick={() => window.open(`/posts/${post.slug}`, "_blank")}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            预览
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+            onClick={() =>
+              (window.location.href = `/admin/posts/${post.id}/edit`)
+            }
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            编辑
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 hover:bg-gray-100"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="rounded-xl border-gray-200"
+            >
+              <DropdownMenuLabel className="text-gray-700">
+                更多操作
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => handleTogglePublish(post)}
+                className={`rounded-lg ${
+                  post.published ? "text-orange-600" : "text-green-600"
+                }`}
+              >
+                {post.published ? "取消发布" : "发布"}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleToggleFeature(post)}
+                className="rounded-lg"
+              >
+                <Star className="h-4 w-4 mr-2" />
+                {post.featured ? "取消精选" : "设为精选"}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleDelete(post)}
+                className="rounded-lg text-red-600"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                删除
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       ),
     },
   ];
@@ -426,7 +502,6 @@ export default function UnifiedPostsTable({
         setSelectedIds(ids);
         onSelectionChange?.(ids);
       }}
-      actions={actions}
       createButton={{
         label: "新建文章",
         href: "/admin/posts/new",
