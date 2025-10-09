@@ -165,7 +165,7 @@ GitHub Actions 会自动：
    cat > .env.production << 'EOF'
    DATABASE_URL="file:./prisma/dev.db"
    NEXTAUTH_SECRET="your-random-secret"
-   NEXTAUTH_URL="https://your-domain.com"
+   NEXTAUTH_URL="http://powder.icu/"
    NODE_ENV="production"
    EOF
    ```

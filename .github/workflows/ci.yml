@@ -23,7 +23,9 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma client
-        run: npm run db:generate
+        env:
+          PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
+        run: npx prisma@6.16.1 generate
 
       - name: Build Next.js
         run: npm run build

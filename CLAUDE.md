@@ -526,7 +526,7 @@ npm start
 # 生产环境环境变量
 DATABASE_URL="postgresql://username:password@localhost:5432/spring_lament"
 NEXTAUTH_SECRET="your-production-secret-key"
-NEXTAUTH_URL="https://yourdomain.com"
+NEXTAUTH_URL="http://powder.icu/"
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="your-secure-password"
 ```
