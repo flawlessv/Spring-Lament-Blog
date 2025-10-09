@@ -1,0 +1,54 @@
+name: Deploy Next.js
+
+on:
+  push:
+    branches:
+      - main  # 只在 main 分支上触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # 使用 Node.js 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Debian Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}  # 服务器 IP 或域名
+         username: ${{ secrets.SSH_USERNAME }}  # SSH 用户名
+         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
+         source: "."  # 上传整个项目目录
+         target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
+
+      - name: Install dependencies on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /www/wwwroot/my-next-app
+            npm install --production
+
+      - name: Restart PM2 process
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /www/wwwroot/my-next-app
+            pm2 restart ecosystem.config.js --env production
