@@ -17,9 +17,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18  # 使用 Node.js 18
+          cache: 'npm'  # 启用 npm 缓存
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci  # 使用 ci 代替 install，更适合 CI 环境
+
+      - name: Generate Prisma Client
+        run: npm run db:generate  # 生成 Prisma Client
 
       - name: Build project
         run: npm run build
@@ -32,8 +36,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
           source: "."  # 上传整个项目目录
           target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
+          strip_components: 0
+          rm: false
+          overwrite: true
+          # 排除不需要上传的文件
+          tar_tmp_path: "/tmp"
+          tar_exec: "tar -czf - --exclude=node_modules --exclude=.git --exclude=.github --exclude=.next/cache ."
 
-      - name: Install dependencies on server
+      - name: Setup and Restart on server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -41,14 +51,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/my-next-app
+            # 安装生产依赖
             npm install --production
-
-      - name: Restart PM2 process
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /www/wwwroot/my-next-app
-            pm2 restart ecosystem.config.js --env production
+            # 生成 Prisma Client
+            npx prisma generate
+            # 推送数据库架构（首次部署需要）
+            npx prisma db push --accept-data-loss || true
+            # 重启 PM2
+            pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
+            pm2 save
