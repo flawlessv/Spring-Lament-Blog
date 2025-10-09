@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "my-next-app",
+      name: "spring-lament-blog",
       script: "npm",
       args: "start",
       cwd: "/www/wwwroot/my-next-app",

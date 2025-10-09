@@ -6,7 +6,6 @@
     "dev": "next dev -p 7777",
     "build": "next build",
     "start": "next start",
-    "start:prod": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
