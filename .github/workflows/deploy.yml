@@ -20,24 +20,13 @@ jobs:
           cache: 'npm'  # 启用 npm 缓存
 
       - name: Install dependencies
-        run: |
-          npm ci
-          echo "✅ Dependencies installed"
-          echo "📦 Checking Prisma installation:"
-          npm list prisma @prisma/client || true
-          ls -la node_modules/.bin/prisma || true
+        run: npm ci
 
       - name: Generate Prisma Client
-        run: |
-          echo "🔧 Generating Prisma Client..."
-          ./node_modules/.bin/prisma generate
-          echo "✅ Prisma Client generated"
+        run: npm run db:generate
 
       - name: Build project
-        run: |
-          echo "🏗️ Building Next.js project..."
-          npm run build
-          echo "✅ Build completed"
+        run: npm run build
 
       - name: Deploy to Debian Server
         uses: appleboy/scp-action@master
@@ -62,12 +51,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/my-next-app
-            # 安装所有依赖（包括 devDependencies 中的 prisma）
             npm install
-            # 生成 Prisma Client
-            ./node_modules/.bin/prisma generate
-            # 推送数据库架构（首次部署需要）
-            ./node_modules/.bin/prisma db push --accept-data-loss || true
-            # 重启 PM2
+            npm run db:generate
+            npm run db:push || true
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
             pm2 save
