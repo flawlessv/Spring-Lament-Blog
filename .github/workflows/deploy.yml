@@ -17,13 +17,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18  # 使用 Node.js 18
-          cache: 'npm'  # 启用 npm 缓存
 
       - name: Install dependencies
-        run: npm ci --include=dev
+        run: npm ci
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: npm run db:generate
 
       - name: Build project
         run: npm run build
@@ -51,8 +50,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/my-next-app
-            npm ci --include=dev
-            npx prisma generate
+            npm ci
+            npm run db:generate
             npm run db:push || true
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
             pm2 save
