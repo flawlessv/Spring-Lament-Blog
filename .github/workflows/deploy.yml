@@ -30,7 +30,7 @@ jobs:
       - name: Generate Prisma Client
         run: |
           echo "🔧 Generating Prisma Client..."
-          npx prisma@6.16.1 generate
+          ./node_modules/.bin/prisma generate
           echo "✅ Prisma Client generated"
 
       - name: Build project
@@ -62,12 +62,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/my-next-app
-            # 安装生产依赖
-            npm install --production
-            # 生成 Prisma Client（指定版本）
-            npx prisma@6.16.1 generate
+            # 安装所有依赖（包括 devDependencies 中的 prisma）
+            npm install
+            # 生成 Prisma Client
+            ./node_modules/.bin/prisma generate
             # 推送数据库架构（首次部署需要）
-            npx prisma@6.16.1 db push --accept-data-loss || true
+            ./node_modules/.bin/prisma db push --accept-data-loss || true
             # 重启 PM2
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
             pm2 save
