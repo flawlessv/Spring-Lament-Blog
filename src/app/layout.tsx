@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AuthProvider from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/toaster";
+import AdminInit from "@/components/admin-init";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body>
         <AuthProvider>
+          <AdminInit />
           {children}
           <Toaster />
         </AuthProvider>
