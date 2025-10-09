@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 生产环境：默认只安装 dependencies，但我们已将 prisma 移到 dependencies
 
     steps:
       - name: Checkout code
@@ -17,6 +18,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18  # 使用 Node.js 18
+      - name: Print Node/npm versions
+        run: |
+          node -v
+          npm -v
 
       - name: Install dependencies
         run: npm ci
