@@ -28,10 +28,10 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}  # 服务器 IP 或域名
-         username: ${{ secrets.SSH_USERNAME }}  # SSH 用户名
-         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
-         source: "."  # 上传整个项目目录
-         target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
+          username: ${{ secrets.SSH_USERNAME }}  # SSH 用户名
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
+          source: "."  # 上传整个项目目录
+          target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
 
       - name: Install dependencies on server
         uses: appleboy/ssh-action@master
