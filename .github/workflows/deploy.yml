@@ -20,10 +20,10 @@ jobs:
           cache: 'npm'  # 启用 npm 缓存
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Generate Prisma Client
-        run: npm run db:generate
+        run: npx prisma generate
 
       - name: Build project
         run: npm run build
@@ -51,8 +51,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/my-next-app
-            npm install
-            npm run db:generate
+            npm ci --include=dev
+            npx prisma generate
             npm run db:push || true
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
             pm2 save
