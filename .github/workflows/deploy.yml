@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20  # 使用 Node.js 18
+          node-version: 18  # 使用 Node.js 18
       - name: Print Node/npm versions
         run: |
           node -v
