@@ -28,6 +28,8 @@ jobs:
       #   run: npm run db:generate
 
       - name: Build project
+        env:
+          DATABASE_URL: file:./prisma/dev.db
         run: npm run deploy:build
 
       - name: Deploy to Debian Server
