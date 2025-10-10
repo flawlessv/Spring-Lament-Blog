@@ -87,14 +87,8 @@ export default withAuth(
  */
 export const config = {
   matcher: [
-    /**
-     * 匹配所有路径，除了：
-     * - _next/static (静态文件)
-     * - _next/image (图片优化文件)
-     * - favicon.ico (网站图标)
-     * - public 文件夹下的静态资源
-     * - API 路由（除了 /api/auth）
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // 仅保护 admin 路由，避免影响 API 与公开页面
+    "/admin/:path*",
+    "/login",
   ],
 };

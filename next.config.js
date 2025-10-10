@@ -8,6 +8,7 @@
  *
  * 文档：https://nextjs.org/docs/app/api-reference/next-config-js
  */
+const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
   // 实验性功能配置
   experimental: {
@@ -24,7 +25,7 @@ const nextConfig = {
      */
     typedRoutes: true,
   },
-  basePath: "http://powder.icu/",
+  basePath: isProd ? "http://powder.icu/" : "",
   output: "export",
   /**
    * 其他常用配置项（当前未启用）：

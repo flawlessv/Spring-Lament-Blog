@@ -22,10 +22,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma client
-        env:
-          PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
-        run: npm run db:generate
+      # - name: Generate Prisma client
+      #   env:
+      #     PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
+      #   run: npm run db:generate
 
       - name: Build project
         run: npm run deploy:build
