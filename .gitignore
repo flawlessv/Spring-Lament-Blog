@@ -1,44 +1,52 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# 依赖
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
+# 测试
 /coverage
 
-# next.js
+# Next.js
 /.next/
 /out/
 
-# production
+# 生产
 /build
 
-# misc
+# 其他
 .DS_Store
 *.pem
 
-# debug
+# 调试
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# 本地环境变量文件
+.env
 .env*.local
+.env.production
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/prisma/dev.db
-/prisma/migrations/
+# 数据库
+prisma/*.db
+prisma/*.db-journal
 
-# uploads
-/public/uploads
-/generated/prisma
+# PM2
+.pm2
+logs
+*.log
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~

@@ -8,7 +8,6 @@
  *
  * 文档：https://nextjs.org/docs/app/api-reference/next-config-js
  */
-const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
   // 实验性功能配置
   experimental: {
@@ -25,15 +24,22 @@ const nextConfig = {
      */
     typedRoutes: true,
   },
-  basePath: isProd ? "http://powder.icu/" : "",
-  output: "export",
+
+  // 图片优化配置
+  images: {
+    unoptimized: false,
+  },
+
+  // 编译输出配置
+  // output: 'standalone', // 使用 standalone 模式用于 Docker 部署
+
   /**
    * 其他常用配置项（当前未启用）：
    *
-   * // 自定义域名和路径
-   * basePath: '/my-app',
+   * // 自定义域名和路径（仅用于子路径部署）
+   * basePath: '/blog',
    *
-   * // 静态文件导出
+   * // 静态文件导出（不支持 API 路由和 SSR）
    * output: 'export',
    *
    * // 图片优化配置
