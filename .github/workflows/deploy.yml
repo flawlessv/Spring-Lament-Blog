@@ -1,77 +1,60 @@
-name: Deploy Next.js
+name: 部署到腾讯云服务器
 
 on:
   push:
     branches:
-      - main  # 只在 main 分支上触发
+      - main  # 当推送到 main 分支时触发
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # 使用 Node.js 18
-          cache: npm
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: 安装依赖
         run: npm ci
 
-      # - name: Generate Prisma client
-      #   env:
-      #     PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
-      #   run: npm run db:generate
+      - name: 生成 Prisma Client
+        run: npm run db:generate
 
-      - name: Build project
+      - name: 构建项目
+        run: npm run build
         env:
-          DATABASE_URL: file:./prisma/dev.db
-        run: npm run deploy:build
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
 
-      - name: Deploy to Debian Server
+      # 使用 SCP 上传文件到服务器
+      - name: 部署到服务器
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}  # 服务器 IP 或域名
-          username: ${{ secrets.SSH_USERNAME }}  # SSH 用户名
-          key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
-          source: "."  # 上传整个项目目录
-          target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
+          host: ${{ secrets.SERVER_HOST }}          # 服务器 IP 地址
+          username: ${{ secrets.SERVER_USER }}      # SSH 用户名（通常是 root）
+          key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥（推荐使用密钥）
+          port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口（默认 22）
+          source: "." # 上传整个项目目录
+          target: "/www/wwwroot/my-next-app"        # 服务器项目路径
           strip_components: 0
-          rm: false
-          overwrite: true
-          # 排除不需要上传的文件
-          tar_tmp_path: "/tmp"
-          tar_exec: "tar -czf - --exclude=node_modules --exclude=.git --exclude=.github --exclude=.next/cache ."
 
-      - name: Install dependencies on server
-        uses: appleboy/ssh-action@v0.1.7
+      # SSH 连接服务器执行部署命令
+      - name: 在服务器上重启应用
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            # 确保 PM2 可用
-            if ! command -v pm2 >/dev/null 2>&1; then
-              npm i -g pm2
-            fi
-            cd /www/wwwroot/my-next-app
-         
-
-      - name: Start or reload PM2
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SERVER_HOST }}          # 服务器 IP 地址
+          username: ${{ secrets.SERVER_USER }}      # SSH 用户名
+          key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥
+          port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口
           script: |
             cd /www/wwwroot/my-next-app
-            if pm2 describe spring-lament-blog >/dev/null 2>&1; then
-              pm2 reload spring-lament-blog --update-env
-            else
-              pm2 start ecosystem.config.js --env production
-            fi
-            pm2 save
+            npm ci --production
+            npm run db:push
+            pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
