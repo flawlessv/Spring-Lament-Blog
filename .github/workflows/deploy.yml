@@ -21,8 +21,15 @@ jobs:
           cache: 'npm'
 
       - name: 安装依赖并生成 Prisma Client
-        run: npm ci
-        # postinstall 会自动运行 prisma generate
+        run: |
+          echo "=== 开始安装依赖 ==="
+          npm ci
+          echo "=== 检查 next 是否安装 ==="
+          ls -la node_modules/.bin/ | grep next || echo "❌ next 命令不存在"
+          echo "=== 检查 package.json 中的 next ==="
+          cat package.json | grep '"next"'
+          echo "=== 尝试直接运行 next ==="
+          npx next --version || echo "❌ npx next 失败"
 
       - name: 构建项目
         run: npm run build
