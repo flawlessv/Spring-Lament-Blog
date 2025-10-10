@@ -22,9 +22,7 @@ jobs:
 
       - name: 安装依赖
         run: npm ci
-
-      - name: 生成 Prisma Client
-        run: npm run db:generate
+        # postinstall 会自动运行 prisma generate
 
       - name: 构建项目
         run: npm run build
