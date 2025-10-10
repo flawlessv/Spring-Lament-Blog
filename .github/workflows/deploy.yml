@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -25,19 +25,25 @@ jobs:
       - name: Generate Prisma client
         env:
           PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
-        run: npx prisma@6.16.1 generate
+        run: npm run db:generate
 
       - name: Build project
-        run: npm run build
+        run: npm run deploy:build
 
       - name: Deploy to Debian Server
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}  # 服务器 IP 或域名
           username: ${{ secrets.SSH_USERNAME }}  # SSH 用户名
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 私钥
           source: "."  # 上传整个项目目录
           target: "/www/wwwroot/my-next-app"  # 服务器上的目标目录
+          strip_components: 0
+          rm: false
+          overwrite: true
+          # 排除不需要上传的文件
+          tar_tmp_path: "/tmp"
+          tar_exec: "tar -czf - --exclude=node_modules --exclude=.git --exclude=.github --exclude=.next/cache ."
 
       - name: Install dependencies on server
         uses: appleboy/ssh-action@v0.1.7
@@ -52,7 +58,8 @@ jobs:
             fi
             cd /www/wwwroot/my-next-app
             npm ci --omit=dev || npm install --production
-            npm run db:push
+            npm run db:generate
+            npm run db:push || true
 
       - name: Start or reload PM2
         uses: appleboy/ssh-action@v0.1.7

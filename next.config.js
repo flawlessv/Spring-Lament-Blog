@@ -24,7 +24,8 @@ const nextConfig = {
      */
     typedRoutes: true,
   },
-
+  basePath: "http://powder.icu/",
+  output: "export",
   /**
    * 其他常用配置项（当前未启用）：
    *
