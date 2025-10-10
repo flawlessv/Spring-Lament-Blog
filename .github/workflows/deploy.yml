@@ -26,7 +26,7 @@ jobs:
           npm ci --ignore-scripts
           
       - name: 生成 Prisma Client
-        run: npx prisma generate
+        run: ./node_modules/.bin/prisma generate
 
       - name: 构建项目
         run: npm run build
