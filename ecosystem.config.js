@@ -1,3 +1,6 @@
+// 加载环境变量
+require("dotenv").config({ path: ".env.production" });
+
 module.exports = {
   apps: [
     {
@@ -11,7 +14,11 @@ module.exports = {
       max_memory_restart: "1G",
       env: {
         NODE_ENV: "production",
-        PORT: 80,
+        PORT: 3000,
+        // 从 .env.production 加载的环境变量
+        DATABASE_URL: process.env.DATABASE_URL,
+        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
       },
       error_file: "./logs/err.log",
       out_file: "./logs/out.log",
