@@ -25,7 +25,7 @@ jobs:
         # postinstall 会尝试 prisma generate，失败也会继续
       
       - name: 生成 Prisma Client
-        run: npx prisma generate
+        run: npx prisma@6.16.1 generate
 
       - name: 构建项目
         run: npm run build
