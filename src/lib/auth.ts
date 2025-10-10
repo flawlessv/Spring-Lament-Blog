@@ -19,8 +19,11 @@ export const authOptions: NextAuthOptions = {
    *
    * 使用 Prisma 适配器连接到数据库
    * 自动处理用户、会话、账户等表的管理
+   *
+   * 注意：使用 CredentialsProvider 时不能使用 adapter
+   * CredentialsProvider 必须配合 JWT session 使用
    */
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma),
 
   /**
    * 认证提供商配置
