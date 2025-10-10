@@ -22,8 +22,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Prisma client
+        env:
+          PRISMA_GENERATE_SKIP_AUTOINSTALL: 1
+        run: npx prisma@6.16.1 generate
+
       - name: Build project
-        run: npm run deploy:build
+        run: npm run build
 
       - name: Deploy to Debian Server
         uses: appleboy/scp-action@v0.1.7
