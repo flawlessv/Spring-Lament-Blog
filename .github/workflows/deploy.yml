@@ -59,18 +59,7 @@ jobs:
               npm i -g pm2
             fi
             cd /www/wwwroot/my-next-app
-            # 写入生产环境变量文件（如已存在则跳过）
-            if [ ! -f .env.production ]; then
-              cat > .env.production << 'EOF'
-DATABASE_URL="file:./prisma/dev.db"
-NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}"
-NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
-NODE_ENV="production"
-EOF
-            fi
-            npm ci --omit=dev || npm install --production
-            npm run db:generate
-            npm run db:push || true
+         
 
       - name: Start or reload PM2
         uses: appleboy/ssh-action@v0.1.7
