@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "prepare": "husky",
-    "postinstall": "prisma generate --no-warnings || echo 'Prisma Client generation failed, but continuing...'",
+    "postinstall": "prisma generate --no-hints || echo 'Prisma Client generation failed, but continuing...'",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
