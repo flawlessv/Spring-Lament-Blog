@@ -34,7 +34,7 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
 
-      # 使用 SCP 上传文件到服务器
+      # 使用 SCP 上传文件到服务器（只上传必要文件）
       - name: 部署到服务器
         uses: appleboy/scp-action@master
         with:
@@ -42,9 +42,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}      # SSH 用户名（通常是 root）
           key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥（推荐使用密钥）
           port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口（默认 22）
-          source: "." # 上传整个项目目录
+          source: ".next,package.json,package-lock.json,prisma,public,next.config.ts,tsconfig.json,.env.example,ecosystem.config.js"
           target: "/www/wwwroot/my-next-app"        # 服务器项目路径
           strip_components: 0
+          rm: false  # 不删除目标目录的其他文件
 
       # SSH 连接服务器执行部署命令
       - name: 在服务器上重启应用
@@ -56,6 +57,14 @@ jobs:
           port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口
           script: |
             cd /www/wwwroot/my-next-app
-            npm ci --production
+            # 如果是首次部署或依赖有变化，才安装依赖
+            if [ ! -d "node_modules" ] || [ package-lock.json -nt node_modules ]; then
+              echo "安装生产依赖..."
+              npm ci --production --prefer-offline
+            else
+              echo "依赖无变化，跳过安装"
+            fi
+            # 推送数据库变更
             npm run db:push
+            # 重启应用
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
