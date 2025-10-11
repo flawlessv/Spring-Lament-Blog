@@ -22,10 +22,10 @@ jobs:
 
       - name: 安装依赖
         run: npm ci
-        # postinstall 会尝试 prisma generate，失败也会继续
-      
-      - name: 生成 Prisma Client
-        run: npx prisma@6.16.1 generate
+        # postinstall 会自动运行 prisma generate
+
+      - name: 验证 Prisma Client 生成
+        run: npm run db:generate
 
       - name: 构建项目
         run: npm run build
