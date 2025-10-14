@@ -19,6 +19,8 @@ import {
   FileText,
   Plus,
   MoreHorizontal,
+  Download,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,6 +95,7 @@ export default function UnifiedPostsTable({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -274,6 +277,60 @@ export default function UnifiedPostsTable({
         description: "请稍后重试",
         variant: "destructive",
       });
+    }
+  };
+
+  // 导出选中文章
+  const handleExportSelected = async (selectedIds: string[]) => {
+    if (selectedIds.length === 0) {
+      toast({
+        title: "提示",
+        description: "请先选择要导出的文章",
+        variant: "default",
+      });
+      return;
+    }
+
+    setExporting(true);
+    try {
+      const response = await fetch("/api/admin/posts/export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postIds: selectedIds,
+        }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `blog-export-selected-${new Date().toISOString().slice(0, 10)}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        toast({
+          title: "导出成功",
+          description: `已导出 ${selectedIds.length} 篇文章`,
+          variant: "default",
+        });
+      } else {
+        const result = await response.json();
+        throw new Error(result.error || "导出失败");
+      }
+    } catch (error) {
+      toast({
+        title: "导出失败",
+        description: error instanceof Error ? error.message : "未知错误",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -479,6 +536,17 @@ export default function UnifiedPostsTable({
   ];
 
   const batchActions = [
+    {
+      label: exporting ? "导出中..." : "导出选中",
+      onClick: handleExportSelected,
+      variant: "default" as const,
+      icon: exporting ? (
+        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+      ) : (
+        <Download className="h-4 w-4 mr-2" />
+      ),
+      disabled: exporting,
+    },
     {
       label: "批量删除",
       onClick: handleBatchDelete,

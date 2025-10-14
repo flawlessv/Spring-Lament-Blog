@@ -83,6 +83,7 @@ interface ModernTableProps<T = any> {
     onClick: (selectedIds: string[]) => void;
     variant?: "default" | "danger";
     icon?: ReactNode;
+    disabled?: boolean;
   }>;
 
   // 分页
@@ -208,30 +209,47 @@ export function ModernTable<T = any>({
         )}
 
         <div className="flex items-center space-x-3">
-          {/* 批量操作 */}
-          {selectable && selectedIds.length > 0 && batchActions.length > 0 && (
-            <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 rounded-xl">
-              <span className="text-sm text-blue-700 font-medium">
-                已选择 {selectedIds.length} 项
-              </span>
-              {batchActions.map((batchAction, index) => (
-                <Button
-                  key={index}
-                  variant={
-                    batchAction.variant === "danger" ? "destructive" : "default"
-                  }
-                  size="sm"
-                  onClick={() => batchAction.onClick(selectedIds)}
-                  className={cn(
-                    "rounded-lg",
-                    batchAction.variant === "danger" &&
-                      "bg-red-500 hover:bg-red-600"
-                  )}
-                >
-                  {batchAction.icon}
-                  {batchAction.label}
-                </Button>
-              ))}
+          {/* 批量操作区域 - 始终保持空间以避免抖动 */}
+          {selectable && batchActions.length > 0 && (
+            <div
+              className={cn(
+                "transition-all duration-200 ease-in-out",
+                selectedIds.length > 0
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-4 pointer-events-none"
+              )}
+            >
+              <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 rounded-xl min-w-0">
+                <span className="text-sm text-blue-700 font-medium whitespace-nowrap">
+                  已选择 {selectedIds.length} 项
+                </span>
+                {batchActions.map((batchAction, index) => {
+                  const isDisabled =
+                    selectedIds.length === 0 || batchAction.disabled;
+                  return (
+                    <Button
+                      key={index}
+                      variant={
+                        batchAction.variant === "danger"
+                          ? "destructive"
+                          : "default"
+                      }
+                      size="sm"
+                      onClick={() => batchAction.onClick(selectedIds)}
+                      disabled={isDisabled}
+                      className={cn(
+                        "rounded-lg transition-all duration-200",
+                        batchAction.variant === "danger" &&
+                          "bg-red-500 hover:bg-red-600",
+                        isDisabled && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      {batchAction.icon}
+                      {batchAction.label}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
