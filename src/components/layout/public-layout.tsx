@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Moon, Sun } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -10,37 +10,47 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
-    <div className="min-h-screen bg-white">
-      {/* 右上角固定按钮 */}
-      <header className="fixed top-6 right-6 z-50 flex items-center space-x-2">
-        <Link
-          href="/admin"
-          className="p-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-white group"
-          title="后台管理"
-        >
-          <LayoutDashboard className="w-4 h-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
-        </Link>
+    <div className="min-h-screen bg-background">
+      {/* 顶部导航栏 - 固定在顶部 */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+        <nav className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link
+              href="/"
+              className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+            >
+              SpringLament
+            </Link>
 
-        <button
-          className="p-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-white group"
-          title="切换主题"
-          onClick={() => {
-            // TODO: 实现主题切换逻辑
-            console.log("切换主题");
-          }}
-        >
-          <Sun className="w-4 h-4 text-gray-600 group-hover:text-yellow-500 transition-colors" />
-        </button>
+            {/* 右侧按钮 */}
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95"
+              title="后台管理"
+            >
+              <LayoutDashboard className="w-4 h-4" strokeWidth={2} />
+              <span>管理</span>
+            </Link>
+          </div>
+        </nav>
       </header>
 
-      {/* 主要内容 */}
-      <main className="max-w-6xl mx-auto px-4 py-16">{children}</main>
+      {/* 主要内容 - 添加顶部边距以避免被固定导航栏遮挡 */}
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-24 pb-20 animate-fade-in">
+        {children}
+      </main>
 
       {/* 极简底部 */}
-      <footer className="border-t border-gray-100 mt-20">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="text-center text-sm text-gray-500">
-            <p>&copy; 2024 SpringLament Blog</p>
+      <footer className="border-t border-border/40 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <p className="text-sm text-muted-foreground">
+              © 2024 SpringLament Blog. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground/60">
+              春光摧折，夏花凋零，秋叶飘零，冬雪纷飞
+            </p>
           </div>
         </div>
       </footer>

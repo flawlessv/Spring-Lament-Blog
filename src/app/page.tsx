@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import PublicLayout from "@/components/layout/public-layout";
 import AdminProfileCard from "@/components/profile/admin-profile-card";
 import PostList from "@/components/posts/post-list";

@@ -277,15 +277,15 @@ export default function PostList({
       {posts.map((post) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden transition-all duration-200 hover:scale-[1.001] hover:shadow-lg group">
+            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
               {/* 背景图片 */}
               <div
-                className="absolute inset-0 bg-cover bg-center brightness-105"
+                className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${post.coverImage || getRandomImageApi()})`,
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60 transition-opacity duration-200"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/70 transition-opacity duration-300 group-hover:from-black/20 group-hover:via-black/30 group-hover:to-black/80"></div>
               </div>
 
               {/* 文章内容覆盖层 */}
@@ -301,19 +301,19 @@ export default function PostList({
                     }).toUpperCase()}
                   </div>
                   {post.featured && (
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>
                   )}
                 </div>
 
                 {/* 底部：标题、摘要和分类 */}
                 <div className="space-y-3">
-                  <h2 className="text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-blue-200 transition-colors">
+                  <h2 className="text-xl md:text-2xl font-bold leading-tight line-clamp-2 transition-all duration-300 group-hover:scale-[1.02]">
                     {post.title}
                   </h2>
 
                   {/* 摘要 */}
                   {post.excerpt && (
-                    <p className="text-sm opacity-80 leading-relaxed line-clamp-2">
+                    <p className="text-sm opacity-90 leading-relaxed line-clamp-2">
                       {post.excerpt}
                     </p>
                   )}
@@ -324,7 +324,7 @@ export default function PostList({
                       {post.categories.slice(0, 2).map((category) => (
                         <span
                           key={category.id}
-                          className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full"
+                          className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
                         >
                           {category.name}
                         </span>
@@ -341,8 +341,8 @@ export default function PostList({
       {/* 自动加载指示器 */}
       {loadingMore && (
         <div className="text-center py-8">
-          <div className="inline-flex items-center space-x-2 text-gray-500">
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="inline-flex items-center space-x-2 text-muted-foreground">
+            <div className="w-4 h-4 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
             <span className="text-sm">加载中...</span>
           </div>
         </div>
@@ -350,7 +350,7 @@ export default function PostList({
 
       {!hasMore && posts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-sm text-gray-500">没有更多文章了</p>
+          <p className="text-sm text-muted-foreground">没有更多文章了</p>
         </div>
       )}
     </div>

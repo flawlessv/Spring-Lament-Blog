@@ -7,48 +7,70 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* 苹果风格的极简配色 */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --popover-foreground: 0 0% 10%;
+
+    /* 主色调：优雅的深灰蓝 */
+    --primary: 220 13% 18%;
+    --primary-foreground: 0 0% 100%;
+
+    /* 次要色：柔和的灰色 */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    /* 静音色：超浅灰 */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    /* 强调色：极浅灰 */
+    --accent: 0 0% 94%;
+    --accent-foreground: 0 0% 10%;
+
+    /* 危险色：柔和的红色 */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* 边框和输入框 */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 220 13% 18%;
+
+    /* 圆角 */
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 221.2 83.2% 53.3%;
+    /* 暗色模式：深邃优雅 */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 95%;
   }
 }
 
@@ -57,7 +79,43 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 全局平滑过渡 */
+  * {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+
+  /* 滚动条美化 */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
   }
 }
 

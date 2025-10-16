@@ -131,136 +131,166 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-8 space-y-6 w-full max-w-sm">
+    <div className="sticky top-24 space-y-8 w-full max-w-sm">
       {/* 个人信息卡片 */}
-      <div className="text-center">
+      <div className="text-center space-y-6">
         {/* 头像 */}
-        <div className="mb-3">
+        <div className="flex justify-center">
           {avatar ? (
             <img
               src={avatar}
               alt={displayName}
-              className="w-28 h-28 rounded-full mx-auto border-4 border-blue-100"
+              className="w-32 h-32 rounded-full object-cover border-2 border-border shadow-xl"
             />
           ) : (
-            <div className="w-28 h-28 rounded-full mx-auto bg-blue-100 flex items-center justify-center border-4 border-blue-200">
-              <User className="w-12 h-12 text-blue-600" />
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border shadow-xl">
+              <User
+                className="w-16 h-16 text-muted-foreground"
+                strokeWidth={1.5}
+              />
             </div>
           )}
         </div>
 
         {/* 名称 */}
-        <h1 className="text-xl font-semibold text-gray-900 mb-0.5">
-          {displayName || profile.username} 的博客
-        </h1>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">
+            {displayName || profile.username}
+          </h1>
 
-        {/* 个人简介 */}
-        <div className="mb-3">
-          {bio && <p className="text-gray-500 leading-relaxed">{bio}</p>}
+          {/* 个人简介 */}
+          {bio && (
+            <p className="text-sm text-muted-foreground leading-relaxed px-4">
+              {bio}
+            </p>
+          )}
         </div>
 
         {/* Subscribe 按钮 */}
-        <button className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors mb-6">
+        <button className="inline-flex items-center justify-center h-11 px-8 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95 shadow-lg">
           Subscribe
         </button>
-      </div>
 
-      {/* 分类导航 */}
-      <div className="min-h-[200px]">
-        <div className="space-y-1">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/category/${category.slug}`}
-              className="flex items-center space-x-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded px-2 transition-colors"
+        {/* 社交媒体图标 */}
+        <div className="flex justify-center flex-wrap gap-3 pt-2">
+          {profile.profile?.email && (
+            <a
+              href={`mailto:${profile.profile.email}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
+              title="邮箱"
             >
-              {category.icon ? (
-                <span className="w-4 h-4 text-center">{category.icon}</span>
-              ) : (
-                <FileText className="w-4 h-4 text-gray-500" />
-              )}
-              <span className="flex-1">{category.name}</span>
-              {category._count?.posts && (
-                <span className="text-xs text-gray-500">
-                  {category._count.posts}
-                </span>
-              )}
-            </Link>
-          ))}
+              <Mail
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </a>
+          )}
+          {profile.profile?.phone && (
+            <a
+              href={`tel:${profile.profile.phone}`}
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
+              title="电话"
+            >
+              <Phone
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </a>
+          )}
+          {profile.profile?.wechat && (
+            <div
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors cursor-pointer"
+              title={`微信：${profile.profile.wechat}`}
+            >
+              <MessageSquare
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </div>
+          )}
+          {profile.profile?.website && (
+            <a
+              href={profile.profile.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
+              title="个人网站"
+            >
+              <Globe
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </a>
+          )}
+          {profile.profile?.github && (
+            <a
+              href={`https://github.com/${profile.profile.github}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
+              title="GitHub"
+            >
+              <Github
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </a>
+          )}
+          {profile.profile?.bilibili && (
+            <a
+              href={`https://space.bilibili.com/${profile.profile.bilibili}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
+              title="B站"
+            >
+              <Tv
+                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                strokeWidth={1.5}
+              />
+            </a>
+          )}
         </div>
       </div>
 
-      {/* 社交媒体图标 */}
-      <div className="flex justify-center space-x-3 pt-4">
-        {profile.profile?.email && (
-          <a
-            href={`mailto:${profile.profile.email}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative"
-          >
-            <Mail className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              邮箱
-            </span>
-          </a>
-        )}
-        {profile.profile?.phone && (
-          <a href={`tel:${profile.profile.phone}`} className="group relative">
-            <Phone className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              电话
-            </span>
-          </a>
-        )}
-        {profile.profile?.wechat && (
-          <div className="group relative cursor-pointer">
-            <MessageSquare className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              微信：{profile.profile.wechat}
-            </span>
+      {/* 分类导航 */}
+      {categories.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-muted-foreground px-2 mb-4">
+            分类
+          </h2>
+          <div className="space-y-1">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/category/${category.slug}`}
+                className="flex items-center gap-3 py-3 px-4 text-sm rounded-xl hover:bg-accent transition-all duration-200 group"
+              >
+                {category.icon ? (
+                  <span className="w-5 h-5 text-center flex items-center justify-center">
+                    {category.icon}
+                  </span>
+                ) : (
+                  <FileText
+                    className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                )}
+                <span className="flex-1 font-medium group-hover:text-foreground transition-colors">
+                  {category.name}
+                </span>
+                {category._count?.posts ? (
+                  <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-full bg-secondary">
+                    {category._count.posts}
+                  </span>
+                ) : null}
+              </Link>
+            ))}
           </div>
-        )}
-        {profile.profile?.website && (
-          <a
-            href={profile.profile.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative"
-          >
-            <Globe className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              个人网站
-            </span>
-          </a>
-        )}
-        {profile.profile?.github && (
-          <a
-            href={`https://github.com/${profile.profile.github}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative"
-          >
-            <Github className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              GitHub
-            </span>
-          </a>
-        )}
-        {profile.profile?.bilibili && (
-          <a
-            href={`https://space.bilibili.com/${profile.profile.bilibili}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative"
-          >
-            <Tv className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              B站
-            </span>
-          </a>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
