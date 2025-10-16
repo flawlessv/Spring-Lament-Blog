@@ -34,37 +34,62 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
 
-      # 使用 SCP 上传文件到服务器（只上传必要文件）
-      - name: 部署到服务器
+      # 打包构建产物（避免上传问题）
+      - name: 打包构建产物
+        run: |
+          tar -czf build.tar.gz .next package.json package-lock.json prisma public next.config.js ecosystem.config.js middleware.ts
+          ls -lh build.tar.gz
+
+      # 上传打包文件到服务器
+      - name: 上传到服务器
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.SERVER_HOST }}          # 服务器 IP 地址
-          username: ${{ secrets.SERVER_USER }}      # SSH 用户名（通常是 root）
-          key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥（推荐使用密钥）
-          port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口（默认 22）
-          source: ".next,package.json,package-lock.json,prisma,public,next.config.js,ecosystem.config.js,middleware.ts"
-          target: "/www/wwwroot/my-next-app"        # 服务器项目路径
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: "build.tar.gz"
+          target: "/tmp/"
           strip_components: 0
-          rm: false  # 不删除目标目录的其他文件
 
       # SSH 连接服务器执行部署命令
-      - name: 在服务器上重启应用
+      - name: 在服务器上解压并部署
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_HOST }}          # 服务器 IP 地址
-          username: ${{ secrets.SERVER_USER }}      # SSH 用户名
-          key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥
-          port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
             cd /www/wwwroot/my-next-app
-            # 如果是首次部署或依赖有变化，才安装依赖
+            
+            echo "=== 1. 停止应用 ==="
+            pm2 stop spring-lament-blog || true
+            
+            echo "=== 2. 解压构建产物 ==="
+            tar -xzf /tmp/build.tar.gz -C /www/wwwroot/my-next-app
+            rm -f /tmp/build.tar.gz
+            
+            echo "=== 3. 检查 .next 目录 ==="
+            ls -la .next/ | head -10
+            
+            echo "=== 4. 安装/更新依赖 ==="
             if [ ! -d "node_modules" ] || [ package-lock.json -nt node_modules ]; then
               echo "安装生产依赖..."
               npm ci --production --prefer-offline
             else
               echo "依赖无变化，跳过安装"
             fi
-            # 推送数据库变更
+            
+            echo "=== 5. 生成 Prisma Client ==="
+            npm run db:generate
+            
+            echo "=== 6. 推送数据库变更 ==="
             npm run db:push
-            # 重启应用
+            
+            echo "=== 7. 重启应用 ==="
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
+            
+            echo "=== 8. 检查应用状态 ==="
+            sleep 3
+            pm2 status spring-lament-blog
