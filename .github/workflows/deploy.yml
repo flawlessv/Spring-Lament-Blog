@@ -43,25 +43,47 @@ jobs:
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
             cd /www/wwwroot/my-next-app
-            echo "=== 安装生产依赖 ==="
-            npm ci --production
+            echo "=== 安装所有依赖（包括构建工具）==="
+            npm ci
 
-      # 在服务器上构建项目
+      # 在服务器上配置环境变量并构建项目
       - name: 在服务器上构建项目
         uses: appleboy/ssh-action@master
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
+          envs: DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL
           script: |
             cd /www/wwwroot/my-next-app
+            
+            echo "=== 配置环境变量文件 ==="
+            cat > .env.production << EOF
+            DATABASE_URL="${DATABASE_URL}"
+            NEXTAUTH_SECRET="${NEXTAUTH_SECRET}"
+            NEXTAUTH_URL="${NEXTAUTH_URL}"
+            NODE_ENV="production"
+            EOF
+            chmod 600 .env.production
+            echo "环境变量文件已更新"
+            
             echo "=== 生成 Prisma Client ==="
             npm run db:generate
+            
             echo "=== 推送数据库变更 ==="
             npm run db:push
+            
             echo "=== 构建 Next.js 项目 ==="
             npm run build
+            
+            echo "=== 构建后清理 node_modules（可选）==="
+            # 构建完成后，可以删除 devDependencies 节省空间
+            # npm prune --production
 
       # 重启 PM2 应用
       - name: 重启应用
