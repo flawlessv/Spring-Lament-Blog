@@ -25,11 +25,6 @@ export default function PostsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleBatchAction = (action: string, ids: string[]) => {
-    console.log("批量操作:", action, ids);
-    // TODO: 实现批量操作功能
-  };
-
   // 导出所有文章
   const handleExportAll = async () => {
     setExportingAll(true);
