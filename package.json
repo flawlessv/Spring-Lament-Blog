@@ -9,7 +9,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "postinstall": "prisma generate --no-hints || echo 'Prisma Client generation failed, but continuing...'",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
