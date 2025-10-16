@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}      # SSH 用户名（通常是 root）
           key: ${{ secrets.SERVER_SSH_KEY }}        # SSH 私钥（推荐使用密钥）
           port: ${{ secrets.SERVER_PORT || 22 }}    # SSH 端口（默认 22）
-          source: ".next,package.json,package-lock.json,prisma,public,next.config.ts,tsconfig.json,.env.example,ecosystem.config.js"
+          source: ".next,package.json,package-lock.json,prisma,public,next.config.js,ecosystem.config.js,middleware.ts"
           target: "/www/wwwroot/my-next-app"        # 服务器项目路径
           strip_components: 0
           rm: false  # 不删除目标目录的其他文件
