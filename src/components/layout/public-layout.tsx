@@ -1,43 +1,69 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Moon, Sun } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const html = document.documentElement;
+    if (html.classList.contains("dark")) {
+      setTheme("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const html = document.documentElement;
+    if (theme === "light") {
+      html.classList.add("dark");
+      setTheme("dark");
+    } else {
+      html.classList.remove("dark");
+      setTheme("light");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* 顶部导航栏 - 固定在顶部 */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
-        <nav className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity"
-            >
-              SpringLament
-            </Link>
+      {/* 顶部右上角按钮 */}
+      <div className="fixed top-0 right-0 z-50 pt-4 pr-6 lg:pr-8 flex items-center gap-2">
+        {/* 主题切换按钮 */}
+        <button
+          onClick={toggleTheme}
+          className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-accent transition-colors"
+          title={theme === "light" ? "深色模式" : "浅色模式"}
+        >
+          {mounted &&
+            (theme === "light" ? (
+              <Moon className="w-4 h-4 text-foreground" strokeWidth={2} />
+            ) : (
+              <Sun className="w-4 h-4 text-foreground" strokeWidth={2} />
+            ))}
+        </button>
 
-            {/* 右侧按钮 */}
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95"
-              title="后台管理"
-            >
-              <LayoutDashboard className="w-4 h-4" strokeWidth={2} />
-              <span>管理</span>
-            </Link>
-          </div>
-        </nav>
-      </header>
+        {/* 管理按钮 */}
+        <Link
+          href="/admin"
+          className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-accent transition-colors"
+          title="后台管理"
+        >
+          <LayoutDashboard
+            className="w-4 h-4 text-foreground"
+            strokeWidth={2}
+          />
+        </Link>
+      </div>
 
-      {/* 主要内容 - 添加顶部边距以避免被固定导航栏遮挡 */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-24 pb-20 animate-fade-in">
+      {/* 主要内容 */}
+      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-20 animate-fade-in">
         {children}
       </main>
 

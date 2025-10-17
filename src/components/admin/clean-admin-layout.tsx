@@ -161,7 +161,18 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
           </div>
 
           {/* 右侧 */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <Link href="/">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 p-0"
+                title="返回首页"
+              >
+                <ExternalLink className="h-4 w-4 text-gray-600" />
+              </Button>
+            </Link>
+
             {session?.user && (
               <div className="group relative">
                 {/* 头像 */}
@@ -209,6 +220,14 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                 </div>
               </div>
             )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/")}
+              className="lg:hidden h-9 w-9 p-0"
+            >
+              <Sparkles className="h-5 w-5 text-gray-600" />
+            </Button>
           </div>
         </div>
       </header>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { ChevronLeft } from "lucide-react";
 
 import PublicLayout from "@/components/layout/public-layout";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
@@ -21,6 +22,7 @@ interface Post {
     username: string;
     profile?: {
       displayName?: string;
+      avatar?: string;
     };
   };
   categories: Array<{
@@ -93,21 +95,19 @@ export default async function PostPage({
 
   return (
     <PublicLayout>
-      {/* 返回链接 */}
-      <div className="mb-8">
-        <Link
-          href="/"
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors group"
-        >
-          <span className="mr-2 group-hover:-translate-x-1 transition-transform">
-            ←
-          </span>
-          返回首页
-        </Link>
-      </div>
-
       {/* 文章头部 */}
       <header className="mb-8">
+        {/* 返回按钮 */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+            <span>返回</span>
+          </Link>
+        </div>
+
         {/* 标题 */}
         <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight font-sans">
           {post.featured && (
@@ -124,11 +124,19 @@ export default async function PostPage({
         {/* 文章信息 */}
         <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-100">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-              {(post.author.profile?.displayName || post.author.username)
-                .charAt(0)
-                .toUpperCase()}
-            </div>
+            {post.author.profile?.avatar ? (
+              <img
+                src={post.author.profile.avatar}
+                alt={post.author.profile?.displayName || post.author.username}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                {(post.author.profile?.displayName || post.author.username)
+                  .charAt(0)
+                  .toUpperCase()}
+              </div>
+            )}
             <span className="font-medium">
               {post.author.profile?.displayName || post.author.username}
             </span>
@@ -163,8 +171,8 @@ export default async function PostPage({
 
         {/* 摘要 */}
         {post.excerpt && (
-          <div className="relative bg-gray-50 p-6 rounded-lg mb-8 border-l-4 border-gray-300">
-            <p className="text-gray-700 leading-relaxed text-base italic">
+          <div className="bg-slate-50 p-4 rounded-lg mb-8 border border-slate-200">
+            <p className="text-gray-700 leading-relaxed text-base">
               {post.excerpt}
             </p>
           </div>

@@ -25,6 +25,7 @@ export async function GET(
             profile: {
               select: {
                 displayName: true,
+                avatar: true,
               },
             },
           },
