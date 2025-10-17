@@ -196,12 +196,12 @@ export default function MarkdownRenderer({
             <div className="mb-6 xl:hidden">
               <button
                 onClick={() => setTocOpen(!tocOpen)}
-                className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 transition-colors"
+                className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors"
               >
-                <List className="w-4 h-4" />
+                <List className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                 <span>目录</span>
                 <ChevronRight
-                  className={`w-4 h-4 transition-transform ${tocOpen ? "rotate-90" : ""}`}
+                  className={`w-4 h-4 text-gray-700 dark:text-gray-300 transition-transform ${tocOpen ? "rotate-90" : ""}`}
                 />
               </button>
 
@@ -215,8 +215,8 @@ export default function MarkdownRenderer({
                         onClick={() => scrollToHeading(item.id)}
                         className={`block w-full text-left py-1.5 px-3 text-sm rounded transition-all truncate ${
                           activeHeading === item.id
-                            ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600 font-medium"
-                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
+                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                         style={{
                           paddingLeft: `${(item.level - 1) * 10 + 12}px`,
@@ -234,23 +234,23 @@ export default function MarkdownRenderer({
 
           {/* Markdown 内容渲染区域 */}
           <div
-            className="prose prose-lg prose-gray max-w-none font-serif
-          prose-headings:text-gray-900 prose-headings:font-bold prose-headings:font-sans
-          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 prose-h1:pb-3
-          prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-8 prose-h2:text-gray-800
-          prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-6 prose-h3:text-gray-800
-          prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-5 prose-h4:text-gray-800
-          prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base
-          prose-li:text-gray-700 prose-li:mb-2 prose-li:leading-relaxed
-          prose-strong:text-gray-900 prose-strong:font-semibold
-          prose-em:text-gray-600 prose-em:italic
-          prose-code:text-pink-600 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+            className="prose prose-lg prose-gray dark:prose-invert max-w-none font-serif
+          prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-bold prose-headings:font-sans
+          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 dark:prose-h1:border-gray-700 prose-h1:pb-3
+          prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-8 prose-h2:text-gray-800 dark:prose-h2:text-gray-200
+          prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-6 prose-h3:text-gray-800 dark:prose-h3:text-gray-200
+          prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-5 prose-h4:text-gray-800 dark:prose-h4:text-gray-200
+          prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base
+          prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2 prose-li:leading-relaxed
+          prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-strong:font-semibold
+          prose-em:text-gray-600 dark:prose-em:text-gray-400 prose-em:italic
+          prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
           prose-pre:bg-transparent prose-pre:p-0
-          prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:text-gray-700 prose-blockquote:font-serif prose-blockquote:italic
+          prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-950 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:font-serif prose-blockquote:italic
           prose-table:text-sm prose-table:font-sans
-          prose-th:bg-gray-50 prose-th:border-gray-300 prose-th:font-medium
-          prose-td:border-gray-300
-          prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+          prose-th:bg-gray-50 dark:prose-th:bg-gray-800 prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:font-medium
+          prose-td:border-gray-300 dark:prose-td:border-gray-700 dark:prose-td:text-gray-300
+          prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
         "
           >
             <ReactMarkdown
@@ -441,19 +441,19 @@ export default function MarkdownRenderer({
               {/* 目录折叠按钮 */}
               <div className="flex items-center justify-between mb-4">
                 {!desktopTocCollapsed && (
-                  <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wide">
+                  <h4 className="text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
                     目录
                   </h4>
                 )}
                 <button
                   onClick={() => setDesktopTocCollapsed(!desktopTocCollapsed)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors group"
+                  className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                   title={desktopTocCollapsed ? "展开目录" : "折叠目录"}
                 >
                   {desktopTocCollapsed ? (
-                    <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-gray-900" />
+                    <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100" />
                   ) : (
-                    <ChevronLeft className="w-4 h-4 text-gray-600 group-hover:text-gray-900" />
+                    <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100" />
                   )}
                 </button>
               </div>
@@ -465,10 +465,10 @@ export default function MarkdownRenderer({
                     <button
                       key={item.id}
                       onClick={() => scrollToHeading(item.id)}
-                      className={`block w-full text-left py-1 px-2 text-xs rounded transition-all truncate ${
+                      className={`block w-full text-left py-1 px-2 text-sm rounded transition-all truncate ${
                         activeHeading === item.id
-                          ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600 font-medium"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                       }`}
                       style={{
                         paddingLeft: `${(item.level - 1) * 10 + 8}px`,

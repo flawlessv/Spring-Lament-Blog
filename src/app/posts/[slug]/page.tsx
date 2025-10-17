@@ -109,11 +109,11 @@ export default async function PostPage({
         </div>
 
         {/* 标题 */}
-        <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight font-sans">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight font-sans">
           {post.featured && (
             <span className="inline-flex items-center mr-4">
               <span className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></span>
-              <span className="ml-2 text-xs font-medium text-orange-600 uppercase tracking-wide">
+              <span className="ml-2 text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide">
                 精选
               </span>
             </span>
@@ -122,7 +122,7 @@ export default async function PostPage({
         </h1>
 
         {/* 文章信息 */}
-        <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-100">
+        <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center space-x-2">
             {post.author.profile?.avatar ? (
               <img
@@ -171,8 +171,8 @@ export default async function PostPage({
 
         {/* 摘要 */}
         {post.excerpt && (
-          <div className="bg-slate-50 p-4 rounded-lg mb-8 border border-slate-200">
-            <p className="text-gray-700 leading-relaxed text-base">
+          <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg mb-8 border border-slate-200 dark:border-slate-800">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
               {post.excerpt}
             </p>
           </div>
