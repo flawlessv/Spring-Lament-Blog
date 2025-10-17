@@ -213,14 +213,15 @@ export default function MarkdownRenderer({
                       <button
                         key={item.id}
                         onClick={() => scrollToHeading(item.id)}
-                        className={`block w-full text-left py-1 text-sm transition-colors ${
+                        className={`block w-full text-left py-1.5 px-3 text-sm rounded transition-all truncate ${
                           activeHeading === item.id
-                            ? "text-blue-600"
-                            : "text-gray-600 hover:text-gray-900"
+                            ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600 font-medium"
+                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                         }`}
                         style={{
-                          paddingLeft: `${(item.level - 1) * 12 + 8}px`,
+                          paddingLeft: `${(item.level - 1) * 10 + 12}px`,
                         }}
+                        title={item.text}
                       >
                         {item.text}
                       </button>
@@ -433,14 +434,16 @@ export default function MarkdownRenderer({
         {showToc && toc.length > 0 && (
           <div
             className={`hidden xl:block flex-shrink-0 pl-4 transition-all duration-300 ${
-              desktopTocCollapsed ? "w-8" : "w-48"
+              desktopTocCollapsed ? "w-8" : "w-56"
             }`}
           >
-            <div className="sticky top-8">
+            <div className="sticky top-24">
               {/* 目录折叠按钮 */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-4">
                 {!desktopTocCollapsed && (
-                  <h4 className="text-sm font-medium text-gray-900">目录</h4>
+                  <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wide">
+                    目录
+                  </h4>
                 )}
                 <button
                   onClick={() => setDesktopTocCollapsed(!desktopTocCollapsed)}
@@ -457,19 +460,20 @@ export default function MarkdownRenderer({
 
               {/* 目录内容 */}
               {!desktopTocCollapsed && (
-                <nav className="space-y-1 animate-in fade-in duration-200">
+                <nav className="space-y-0.5 animate-in fade-in duration-200">
                   {toc.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => scrollToHeading(item.id)}
-                      className={`block w-full text-left py-1.5 px-2 text-sm rounded transition-all hover:bg-gray-50 ${
+                      className={`block w-full text-left py-1 px-2 text-xs rounded transition-all truncate ${
                         activeHeading === item.id
-                          ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600"
-                          : "text-gray-600 hover:text-gray-900"
+                          ? "text-blue-600 bg-blue-50 border-l-2 border-blue-600 font-medium"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                       }`}
                       style={{
-                        paddingLeft: `${(item.level - 1) * 12 + 8}px`,
+                        paddingLeft: `${(item.level - 1) * 10 + 8}px`,
                       }}
+                      title={item.text}
                     >
                       {item.text}
                     </button>

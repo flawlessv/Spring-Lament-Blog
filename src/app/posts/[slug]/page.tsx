@@ -102,7 +102,7 @@ export default async function PostPage({
           <span className="mr-2 group-hover:-translate-x-1 transition-transform">
             ←
           </span>
-          返回首页1
+          返回首页
         </Link>
       </div>
 
