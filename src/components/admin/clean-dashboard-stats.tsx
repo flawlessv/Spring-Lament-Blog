@@ -97,14 +97,39 @@ async function getStats() {
   }
 }
 
+async function getUserInfo(userId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { profile: true },
+    });
+
+    if (!user) {
+      return { displayName: "博主", username: "user" };
+    }
+
+    return {
+      displayName: user.profile?.displayName || user.username,
+      username: user.username,
+    };
+  } catch (error) {
+    console.error("Failed to fetch user info:", error);
+    return { displayName: "博主", username: "user" };
+  }
+}
+
 export default async function CleanDashboardStats() {
   const stats = await getStats();
   const session = await getServerSession(authOptions);
   const { daysSinceStart, daysUntilTarget } = calculateDays();
   const greeting = getGreeting();
 
-  const displayName =
-    session?.user?.displayName || session?.user?.username || "博主";
+  // 从数据库获取用户信息，确保获取到正确的displayName
+  let displayName = "博主";
+  if (session?.user?.id) {
+    const userInfo = await getUserInfo(session.user.id);
+    displayName = userInfo.displayName;
+  }
 
   return (
     <div className="space-y-8">

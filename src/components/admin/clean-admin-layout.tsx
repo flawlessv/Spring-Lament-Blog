@@ -37,6 +37,10 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [userInfo, setUserInfo] = useState<{
+    displayName: string;
+    username: string;
+  }>({ displayName: "", username: "" });
 
   // 获取用户头像
   useEffect(() => {
@@ -46,6 +50,10 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
         if (response.ok) {
           const data = await response.json();
           setAvatarUrl(data.profile?.avatar || "");
+          setUserInfo({
+            displayName: data.profile?.displayName || data.username || "用户",
+            username: data.username || "用户",
+          });
         }
       } catch (error) {
         console.error("获取头像失败:", error);
@@ -196,7 +204,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                     {/* 用户信息 */}
                     <div className="px-4 py-2 border-b border-gray-100">
                       <div className="text-sm font-medium text-gray-900">
-                        {session.user.displayName || session.user.username}
+                        {userInfo.displayName}
                       </div>
                       <div className="text-xs text-gray-500">管理员</div>
                     </div>
