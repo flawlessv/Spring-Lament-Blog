@@ -43,8 +43,10 @@ jobs:
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
             cd /www/wwwroot/my-next-app
-            echo "=== 安装所有依赖（包括构建工具）==="
-            npm ci
+            echo "=== 清理旧依赖（避免文件损坏）==="
+            rm -rf node_modules package-lock.json
+            echo "=== 安装所有依赖 ==="
+            npm install
 
       # 在服务器上配置环境变量并构建项目
       - name: 在服务器上构建项目
