@@ -153,11 +153,18 @@ npm run dev              # 启动开发服务器（端口 7777）
 npm run build            # 构建生产版本
 npm start                # 启动生产服务器（端口 3000）
 
-# 数据库
+# 数据库（开发环境）
 npm run db:push          # 推送 schema 到数据库
 npm run db:migrate       # 创建数据库迁移
 npm run db:seed          # 填充初始数据
 npm run db:studio        # 打开 Prisma Studio
+npm run db:generate      # 生成 Prisma Client
+
+# 数据库（生产环境）
+npm run db:generate:prod # 生成 Prisma Client（读取 .env.production）
+npm run db:push:prod     # 推送 schema（读取 .env.production）
+npm run db:seed:prod     # 填充初始数据（读取 .env.production）
+npm run deploy:setup:prod # 一键完成所有初始化和构建
 
 # 代码质量
 npm run lint             # 运行 ESLint
@@ -175,9 +182,11 @@ npm run pm2:delete       # 删除应用
 
 本项目支持多种部署方式：
 
-### 1. 服务器部署（推荐）
+### 1. 宝塔面板 + PM2 部署（推荐）
 
-详细部署文档：[部署指南.md](./部署指南.md)
+📚 **完整文档**：[DEPLOYMENT.md](./docs/DEPLOYMENT.md)
+
+适合使用宝塔面板管理服务器的用户，集成了详细的故障排查指南。
 
 **快速部署步骤：**
 
@@ -191,7 +200,7 @@ npm install
 
 # 3. 配置生产环境变量
 cat > .env.production << EOF
-DATABASE_URL="file:./prod.db"
+DATABASE_URL="file:./prisma/prod.db"
 NEXTAUTH_SECRET="your-production-secret-min-32-chars"
 NEXTAUTH_URL="http://your-domain.com"
 ADMIN_USERNAME="admin"
@@ -199,16 +208,32 @@ ADMIN_PASSWORD="your-password"
 NODE_ENV="production"
 EOF
 
-# 4. 初始化数据库
-npm run db:push
-npm run db:seed
+# 4. 初始化数据库（使用生产环境专用命令）
+npm run db:generate:prod
+npm run db:push:prod
+npm run db:seed:prod
 
 # 5. 构建项目
 npm run build
 
 # 6. 使用 PM2 启动
 npm run pm2:start
+
+# 7. 健康检查
+bash scripts/health-check.sh
 ```
+
+**常见问题快速参考：**
+
+| 问题                | 解决方案                               |
+| ------------------- | -------------------------------------- |
+| PM2 应用 errored    | 查看日志 `pm2 logs spring-lament-blog` |
+| 端口占用            | `lsof -i :3000` 找到进程并 kill        |
+| 域名无法访问        | 检查 Nginx 配置和域名解析              |
+| 宝塔占用 80 端口    | 修改宝塔端口为 8888                    |
+| DATABASE_URL 找不到 | 使用 `:prod` 后缀的命令                |
+
+详细的故障排查流程和解决方案请参考 [DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
 ### 2. GitHub Actions 自动部署
 
