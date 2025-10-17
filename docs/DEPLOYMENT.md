@@ -17,7 +17,7 @@
 
 ```bash
 cd /www/wwwroot/your-domain.com
-npm install --production
+npm install
 ```
 
 ### 3. 环境变量配置
@@ -44,15 +44,21 @@ NODE_ENV="production"
 
 ### 4. 数据库设置
 
+**重要说明**：Prisma CLI 工具默认读取 `.env` 文件，而不是 `.env.production`。因此需要使用带 `:prod` 后缀的专用命令。
+
 ```bash
-# 生成 Prisma 客户端
-npx prisma generate
+# 方式 1: 使用生产环境专用命令（推荐）
+npm run db:generate:prod
+npm run db:push:prod
+npm run db:seed:prod
 
-# 推送数据库架构
-npx prisma db push
+# 方式 2: 手动指定环境变量文件
+dotenv -e .env.production -- npx prisma generate
+dotenv -e .env.production -- npx prisma db push
+dotenv -e .env.production -- npm run db:seed
 
-# 填充初始数据
-npm run db:seed
+# 或者一键完成所有设置（包括构建）
+npm run deploy:setup:prod
 ```
 
 ### 5. 构建项目
@@ -153,4 +159,52 @@ pm2 logs spring-lament-blog
 
 # 监控面板
 pm2 monit
+```
+
+## 常见问题
+
+### 1. 为什么需要 .env 和 .env.production 两个文件？
+
+**原因**：不同工具读取不同的环境变量文件
+
+- **Prisma CLI 工具**（`prisma generate`, `prisma db push`, `npm run db:seed`）
+  - 默认只读取 `.env` 文件
+  - 不会自动识别 `NODE_ENV` 或 `.env.production`
+  - 这是 Prisma 的设计决定
+- **Next.js 应用**（`npm run build`, `npm start`）
+  - 在 `NODE_ENV=production` 时读取 `.env.production`
+  - 在开发时读取 `.env.development`
+- **PM2 运行的应用**
+  - 通过 `ecosystem.config.js` 配置读取 `.env.production`
+
+**解决方案**：
+
+1. 使用 `dotenv-cli` 包装命令：`dotenv -e .env.production -- prisma generate`
+2. 使用项目提供的专用命令：`npm run db:generate:prod`
+3. 创建 `.env` 文件（链接到或复制 `.env.production` 的内容）
+
+### 2. DATABASE_URL 找不到错误
+
+**错误信息**：
+
+```
+Environment variable not found: DATABASE_URL
+```
+
+**原因**：运行 Prisma 命令时没有正确加载环境变量
+
+**解决方案**：
+
+```bash
+# 确保 .env.production 文件存在
+ls -la .env.production
+
+# 使用生产环境命令
+npm run db:generate:prod
+npm run db:push:prod
+npm run db:seed:prod
+
+# 或者临时创建 .env 文件
+cp .env.production .env
+npm run db:seed
 ```

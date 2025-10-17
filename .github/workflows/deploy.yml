@@ -73,10 +73,10 @@ jobs:
             echo "环境变量文件已更新"
             
             echo "=== 生成 Prisma Client ==="
-            npm run db:generate
+            npm run db:generate:prod
             
             echo "=== 推送数据库变更 ==="
-            npm run db:push
+            npm run db:push:prod
             
             echo "=== 构建 Next.js 项目 ==="
             npm run build

@@ -28,7 +28,7 @@ Error: Process completed with exit code 127.
 
 ```yaml
 - name: Generate Prisma Client
-  run: npm run db:generate
+  run: npm run db:generate:prod # 使用生产环境命令
 ```
 
 ### 3. 启用 npm 缓存
@@ -52,9 +52,10 @@ tar_exec: "tar -czf - --exclude=node_modules --exclude=.git --exclude=.github --
 ```yaml
 script: |
   cd /www/wwwroot/my-next-app
-  npm install --production
-  npx prisma generate
-  npx prisma db push --accept-data-loss || true
+  npm ci
+  npm run db:generate:prod
+  npm run db:push:prod
+  npm run build
   pm2 restart spring-lament-blog || pm2 start ecosystem.config.js
   pm2 save
 ```
@@ -64,28 +65,34 @@ script: |
 ```
 1. Checkout 代码
    ↓
-2. 设置 Node.js 18 + npm 缓存
+2. 设置 Node.js 20 + npm 缓存
    ↓
-3. 安装依赖 (npm ci)
+3. 上传代码到服务器 (使用 SCP，保留 .env.production)
    ↓
-4. 生成 Prisma Client
+4. 服务器端：安装依赖 (npm ci)
    ↓
-5. 构建项目 (npm run build)
+5. 服务器端：配置环境变量 (.env.production)
    ↓
-6. 上传到服务器 (排除 node_modules)
+6. 服务器端：生成 Prisma Client (npm run db:generate:prod)
    ↓
-7. 服务器端：安装依赖 + 生成 Prisma + 推送数据库
+7. 服务器端：推送数据库变更 (npm run db:push:prod)
    ↓
-8. 重启 PM2 进程
+8. 服务器端：构建项目 (npm run build)
+   ↓
+9. 重启 PM2 进程
 ```
 
 ## 🔑 需要配置的 Secrets
 
 在 GitHub 仓库的 Settings → Secrets → Actions 中添加：
 
-- `SSH_HOST`: 服务器 IP 或域名（例如：`123.456.789.0` 或 `powder.icu`）
-- `SSH_USERNAME`: SSH 用户名（通常是 `root` 或其他用户）
-- `SSH_PRIVATE_KEY`: SSH 私钥（完整的私钥内容）
+- `SERVER_HOST`: 服务器 IP 或域名（例如：`123.456.789.0` 或 `powder.icu`）
+- `SERVER_USER`: SSH 用户名（通常是 `root` 或其他用户）
+- `SERVER_SSH_KEY`: SSH 私钥（完整的私钥内容）
+- `SERVER_PORT`: SSH 端口（默认 22，可选）
+- `DATABASE_URL`: 数据库连接字符串（例如：`file:./prisma/dev.db`）
+- `NEXTAUTH_SECRET`: NextAuth 加密密钥（随机字符串）
+- `NEXTAUTH_URL`: 应用访问地址（例如：`https://powder.icu`）
 
 ### 生成 SSH 密钥
 
@@ -203,9 +210,20 @@ A: 重新生成：
 
 ```bash
 cd /www/wwwroot/my-next-app
-npx prisma generate
+npm run db:generate:prod
 pm2 restart spring-lament-blog
 ```
+
+### Q: 数据库种子脚本找不到 DATABASE_URL？
+
+A: 使用生产环境专用命令：
+
+```bash
+cd /www/wwwroot/my-next-app
+npm run db:seed:prod
+```
+
+**原因**：Prisma CLI 默认只读取 `.env` 文件，不会自动读取 `.env.production`。项目提供了 `:prod` 后缀的命令来解决这个问题。
 
 ## 📝 本地测试 CI 流程
 
@@ -218,8 +236,12 @@ rm -rf node_modules .next
 # 安装
 npm ci
 
-# 生成 Prisma
+# 生成 Prisma（开发环境）
 npm run db:generate
+
+# 或者测试生产环境流程
+npm run db:generate:prod
+npm run db:push:prod
 
 # 构建
 npm run build
