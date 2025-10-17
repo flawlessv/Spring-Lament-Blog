@@ -131,9 +131,9 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-24 space-y-8 w-full max-w-sm">
+    <div className="sticky top-24 space-y-6 w-full max-w-sm">
       {/* 个人信息卡片 */}
-      <div className="text-center space-y-6">
+      <div className="text-center space-y-4">
         {/* 头像 */}
         <div className="flex justify-center">
           {avatar ? (
@@ -160,121 +160,35 @@ export default function AdminProfileCard() {
 
           {/* 个人简介 */}
           {bio && (
-            <p className="text-sm text-muted-foreground leading-relaxed px-4">
+            <p className="text-base text-muted-foreground leading-relaxed px-2">
               {bio}
             </p>
           )}
         </div>
 
         {/* Subscribe 按钮 */}
-        <button className="inline-flex items-center justify-center h-11 px-8 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95 shadow-lg">
+        <button className="inline-flex items-center justify-center h-9 px-6 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95">
           Subscribe
         </button>
-
-        {/* 社交媒体图标 */}
-        <div className="flex justify-center flex-wrap gap-3 pt-2">
-          {profile.profile?.email && (
-            <a
-              href={`mailto:${profile.profile.email}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
-              title="邮箱"
-            >
-              <Mail
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
-          )}
-          {profile.profile?.phone && (
-            <a
-              href={`tel:${profile.profile.phone}`}
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
-              title="电话"
-            >
-              <Phone
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
-          )}
-          {profile.profile?.wechat && (
-            <div
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors cursor-pointer"
-              title={`微信：${profile.profile.wechat}`}
-            >
-              <MessageSquare
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </div>
-          )}
-          {profile.profile?.website && (
-            <a
-              href={profile.profile.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
-              title="个人网站"
-            >
-              <Globe
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
-          )}
-          {profile.profile?.github && (
-            <a
-              href={`https://github.com/${profile.profile.github}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
-              title="GitHub"
-            >
-              <Github
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
-          )}
-          {profile.profile?.bilibili && (
-            <a
-              href={`https://space.bilibili.com/${profile.profile.bilibili}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative p-2 rounded-full hover:bg-accent transition-colors"
-              title="B站"
-            >
-              <Tv
-                className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
-                strokeWidth={1.5}
-              />
-            </a>
-          )}
-        </div>
       </div>
 
       {/* 分类导航 */}
       {categories.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-muted-foreground px-2 mb-4">
-            分类
-          </h2>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/category/${category.slug}`}
-                className="flex items-center gap-3 py-3 px-4 text-sm rounded-xl hover:bg-accent transition-all duration-200 group"
+                className="flex items-center gap-2 py-2 px-3 text-sm rounded-lg hover:bg-accent transition-all duration-200 group"
               >
                 {category.icon ? (
-                  <span className="w-5 h-5 text-center flex items-center justify-center">
+                  <span className="w-4 h-4 text-center flex items-center justify-center flex-shrink-0">
                     {category.icon}
                   </span>
                 ) : (
                   <FileText
-                    className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors"
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
                     strokeWidth={1.5}
                   />
                 )}
@@ -282,7 +196,7 @@ export default function AdminProfileCard() {
                   {category.name}
                 </span>
                 {category._count?.posts ? (
-                  <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-full bg-secondary">
+                  <span className="text-xs text-muted-foreground font-medium px-2 py-0.5 rounded-full bg-secondary">
                     {category._count.posts}
                   </span>
                 ) : null}
@@ -291,6 +205,89 @@ export default function AdminProfileCard() {
           </div>
         </div>
       )}
+
+      {/* 社交媒体图标 */}
+      <div className="flex justify-center flex-wrap gap-2 pt-2">
+        {profile.profile?.email && (
+          <a
+            href={`mailto:${profile.profile.email}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+            title="邮箱"
+          >
+            <Mail
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </a>
+        )}
+        {profile.profile?.phone && (
+          <a
+            href={`tel:${profile.profile.phone}`}
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+            title="电话"
+          >
+            <Phone
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </a>
+        )}
+        {profile.profile?.wechat && (
+          <div
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors cursor-pointer"
+            title={`微信：${profile.profile.wechat}`}
+          >
+            <MessageSquare
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </div>
+        )}
+        {profile.profile?.website && (
+          <a
+            href={profile.profile.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+            title="个人网站"
+          >
+            <Globe
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </a>
+        )}
+        {profile.profile?.github && (
+          <a
+            href={`https://github.com/${profile.profile.github}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+            title="GitHub"
+          >
+            <Github
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </a>
+        )}
+        {profile.profile?.bilibili && (
+          <a
+            href={`https://space.bilibili.com/${profile.profile.bilibili}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+            title="B站"
+          >
+            <Tv
+              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+              strokeWidth={1.5}
+            />
+          </a>
+        )}
+      </div>
     </div>
   );
 }
