@@ -306,6 +306,7 @@ git checkout testing-merge-file features/album/audio-formats # 当前分支的�
 ，`fast-forward`和`git rebase`合并的效果一样，
 
 ```
+
 *A-*B-*C-*D-*E-*F-*G-*H-*I MAIN | BRANCH
 
 ```
@@ -322,6 +323,7 @@ git checkout testing-merge-file features/album/audio-formats # 当前分支的�
 ，就无法使用`fast-forward`，合并之后必须有一个单独的合并节点，但是`git rebase`仍然可以合并，并且能保持提交线的整洁，
 
 ```
+
 *A-*B-*C-*D-*J-*K-*E'-*F'-*G'-*H'-*I'             MAIN | BRANCH
 
 ```
@@ -332,11 +334,15 @@ git checkout testing-merge-file features/album/audio-formats # 当前分支的�
 
 ```
             master
+
              |
+
 *C0-*C1-*C2-*C4
           \
            *C3-*C5
+
                 |
+
                iss53
 
 ```
@@ -420,7 +426,9 @@ pick 4f4a863 add album/types
 # r, reword <提交> = 使用提交，但编辑提交说明
 # e, edit <提交> = 使用提交，但停止以便在 shell 中修补提交
 # s, squash <提交> = 使用提交，但挤压到前一个提交
+
 # f, fixup [-C | -c] <提交> = 类似于 "squash"，但只保留前一个提交
+
 #                    的提交说明，除非使用了 -C 参数，此情况下则只
 #                    保留本提交说明。使用 -c 和 -C 类似，但会打开
 #                    编辑器修改提交说明
@@ -429,7 +437,9 @@ pick 4f4a863 add album/types
 # d, drop <提交> = 删除提交
 # l, label <label> = 为当前 HEAD 打上标记
 # t, reset <label> = 重置 HEAD 到该标记
+
 # m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
+
 # .       创建一个合并提交，并使用原始的合并提交说明（如果没有指定
 # .       原始提交，使用注释部分的 oneline 作为提交说明）。使用
 # .       -c <提交> 可以编辑提交说明。
@@ -578,7 +588,9 @@ git log --oneline --first-parent <branch_name>
 `git log`其它配置的命令：
 
 ```
+
 git log -p [<file-name> | <commit>]# 显示差异
+
 git log -g # 查看所有提交记录，包括 amend 的
 git log --stat # 显示文件更改列表
 git log --pretty=oneline # 一行显示提交信息
@@ -756,6 +768,7 @@ git checkout hot-day
 git show hot-day
 
 # 找到删除的标签所在的 commit
+
 git fsck --unreachable | grep tag
 
 ```

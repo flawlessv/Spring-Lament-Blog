@@ -63,4 +63,4 @@ console.log("console");
 
 事件循环，宏任务，微任务的关系如图所示：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/11/21/15fdcea13361a1ec~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![15fdcea13361a1ec~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2017/11/21/15fdcea13361a1ec~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)

@@ -202,8 +202,10 @@ const exportWithAsyncData = async (
     position: absolute;
     left: -9999px;
     top: -9999px;
+
     width: ${options.width || 800}px;
     background-color: ${options.backgroundColor || "#fff"};
+
   `;
 
   document.body.appendChild(exportContainer);
@@ -238,6 +240,7 @@ const exportWithAsyncData = async (
     const canvas = await html2canvas(exportContainer, {
       backgroundColor: options.backgroundColor || "#fff",
       scale: options.scale || 2,
+
       useCORS: true,
       allowTaint: true,
     });
@@ -247,7 +250,9 @@ const exportWithAsyncData = async (
       if (blob) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
+
         link.download = options.filename || "export.png";
+
         link.href = url;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -311,6 +316,7 @@ const ExportPortal: React.FC<{
           const canvas = await html2canvas(container, {
             backgroundColor: exportOptions.backgroundColor || "#fff",
             scale: exportOptions.scale || 2,
+
             useCORS: true,
             allowTaint: true,
           });
@@ -319,7 +325,9 @@ const ExportPortal: React.FC<{
             if (blob) {
               const url = URL.createObjectURL(blob);
               const link = document.createElement("a");
+
               link.download = exportOptions.filename || "export.png";
+
               link.href = url;
               link.click();
               setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -406,6 +414,7 @@ const DebugableExportPortal: React.FC<{
   onExportComplete: () => void
   children: React.ReactNode
 }> = ({ isVisible, debugMode = false, onExportComplete, children }) => {
+
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -821,6 +830,7 @@ export const exportVirtualDOMWithCSS = async (
 // 使用单例模式管理导出容器
 class ExportManager {
   private static instance: ExportManager;
+
   private container: HTMLElement | null = null;
 
   static getInstance() {
@@ -1072,8 +1082,10 @@ const exportWithAsyncData = async (
     position: absolute;
     left: -9999px;
     top: -9999px;
+
     width: ${options.width || 800}px;
     background-color: ${options.backgroundColor || "#fff"};
+
   `;
 
   document.body.appendChild(exportContainer);
@@ -1108,6 +1120,7 @@ const exportWithAsyncData = async (
     const canvas = await html2canvas(exportContainer, {
       backgroundColor: options.backgroundColor || "#fff",
       scale: options.scale || 2,
+
       useCORS: true,
       allowTaint: true,
     });
@@ -1117,7 +1130,9 @@ const exportWithAsyncData = async (
       if (blob) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
+
         link.download = options.filename || "export.png";
+
         link.href = url;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -1175,6 +1190,7 @@ const ExportPortal: React.FC<{
           const canvas = await html2canvas(container, {
             backgroundColor: exportOptions.backgroundColor || "#fff",
             scale: exportOptions.scale || 2,
+
             useCORS: true,
             allowTaint: true,
           });
@@ -1183,7 +1199,9 @@ const ExportPortal: React.FC<{
             if (blob) {
               const url = URL.createObjectURL(blob);
               const link = document.createElement("a");
+
               link.download = exportOptions.filename || "export.png";
+
               link.href = url;
               link.click();
               setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -1266,6 +1284,7 @@ const DebugableExportPortal: React.FC<{
   onExportComplete: () => void
   children: React.ReactNode
 }> = ({ isVisible, debugMode = false, onExportComplete, children }) => {
+
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -1651,6 +1670,7 @@ export const exportVirtualDOMWithCSS = async (
 // 使用单例模式管理导出容器
 class ExportManager {
   private static instance: ExportManager;
+
   private container: HTMLElement | null = null;
 
   static getInstance() {

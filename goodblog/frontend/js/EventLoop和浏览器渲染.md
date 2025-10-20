@@ -110,7 +110,7 @@ setTimeout(() => {
 });
 ```
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172368a480f5f3ef~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![172368a480f5f3ef~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172368a480f5f3ef~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 可以看出这个结果是非常不可控的，如果这两个 `Task` 之间正好遇到了浏览器认定的渲染机会，那么它会重绘，否则就不会。由于这俩宏任务的间隔周期太短了，所以很大概率是不会的。
 
@@ -140,7 +140,7 @@ req();
 
 这里由于颜色变化太快，`gif` 录制软件没办法截出这么高帧率的颜色变换，所以各位可以放到浏览器中自己执行一下试试，我这边直接抛结论，浏览器会非常规律的把这 10 组也就是 20 次颜色变化绘制出来，可以看下 performance 面板记录的表现：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172369395743293b~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![172369395743293b~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172369395743293b~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 ### 定时器合并
 
@@ -202,13 +202,13 @@ React 的时间分片渲染就想要用到这个 API，不过目前浏览器支�
 
 首先看一张图，很精确的描述了这个 API 的意图：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172362067212340f~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![172362067212340f~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172362067212340f~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 当然，这种有序的 `浏览器 -> 用户 -> 浏览器 -> 用户` 的调度基于一个前提，就是我们要把任务切分成比较小的片，不能说浏览器把空闲时间让给你了，你去执行一个耗时 `10s` 的任务，那肯定也会把浏览器给阻塞住的。这就要求我们去读取 `rIC` 提供给你的 `deadline` 里的时间，去动态的安排我们切分的小任务。浏览器信任了你，你也不能辜负它呀。
 
 #### 渲染长期空闲
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17236209c86c248f~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![17236209c86c248f~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17236209c86c248f~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 还有一种情况，也有可能在几帧的时间内浏览器都是空闲的，并没有发生任何影响视图的操作，它也就不需要去绘制页面： 这种情况下为什么还是会有 `50ms` 的 `deadline` 呢？是因为浏览器为了提前应对一些可能会突发的用户交互操作，比如用户输入文字。如果给的时间太长了，你的任务把主线程卡住了，那么用户的交互就得不到回应了。50ms 可以确保用户在无感知的延迟下得到回应。
 
@@ -231,11 +231,11 @@ MDN 文档中的[幕后任务协作调度 API](https://link.juejin.cn/?target=ht
 
 如果我鼠标不做任何动作和交互，直接在控制台通过 `rIC` 去打印这次空闲任务的剩余时间，一般都稳定维持在 `49.xx` ms，因为此时浏览器没有什么优先级更高的任务要去处理。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172367edc582db9c~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![172367edc582db9c~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172367edc582db9c~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 而如果我不停的滚动浏览器，不断的触发浏览器的重新绘制的话，这个时间就变的非常不稳定了。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172368088eca1422~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![172368088eca1422~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/172368088eca1422~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 通过这个例子，你可以更加有体感的感受到什么样叫做「繁忙」，什么样叫做「空闲」。
 
@@ -287,7 +287,7 @@ MDN 文档中的[幕后任务协作调度 API](https://link.juejin.cn/?target=ht
 
 注意在最后我加了一个 `requestIdleCallback` 的函数，回调里会 `alert('rIC')`，来看一下演示效果：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e089ed53d75~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![17235e089ed53d75~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e089ed53d75~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 `alert` 在最开始的时候就执行了，为什么会这样呢一下，想一下「空闲」的概念，我们每一帧仅仅是把 `left` 的值移动了一下，做了这一个简单的渲染，没有占满空闲时间，所以可能在最开始的时候，浏览器就找到机会去调用 `rIC` 的回调函数了。
 
@@ -311,7 +311,7 @@ function step(timestamp) {
 
 再来看一下它的表现：
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e0b45c0bd6b~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![17235e0b45c0bd6b~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e0b45c0bd6b~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 其实和我们预期的一样，由于浏览器的每一帧都"太忙了",导致它真的就无视我们的 `rIC` 函数了。
 
@@ -327,7 +327,7 @@ window.requestIdleCallback(
 );
 ```
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e30289293f2~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
+![17235e30289293f2~tplv t2oaga2asx zoom in crop mark:3024:0:0:0.image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/21/17235e30289293f2~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.image)
 
 浏览器会在大概 `500ms` 的时候，不管有多忙，都去强制执行 `rIC` 函数，这个机制可以防止我们的空闲任务被“饿死”。
 

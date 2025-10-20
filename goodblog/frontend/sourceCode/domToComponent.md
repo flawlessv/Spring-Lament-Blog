@@ -53,7 +53,9 @@ interface FiberNode {
   name?: string;
   tag: number; // 标识Fiber类型的数字标记
   type: any; // 对于HostComponent是字符串(如'div')，对于组件是类/函数
+
   return: FiberNode | null; // 父Fiber节点的引用
+
   _debugOwner?: {
     name: string;
     env: string;
@@ -114,6 +116,7 @@ while (currentFiber && components.length < maxComponents) {
 ```typescript
 export interface ComponentInfo {
   name: string;
+
   type: "regular" | "rsc";
 }
 
@@ -204,23 +207,29 @@ export function getReactComponentHierarchy(
 graph TD
     A["DOM Element"] --> B["查找Fiber键"]
     B --> C{"找到__reactFiber$键?"}
+
     C -->|否| D["返回null"]
     C -->|是| E["获取Fiber节点"]
+
     E --> F["开始遍历Fiber树"]
     F --> G{"检查Fiber类型"}
+
     G -->|FunctionComponent| H["提取函数组件信息"]
     G -->|ClassComponent| I["提取类组件信息"]
     G -->|HostComponent| J{"检查_debugOwner"}
     J -->|有server标记| K["识别为RSC组件"]
     J -->|无server标记| L["跳过此节点"]
+
     H --> M["添加到组件列表"]
     I --> M
     K --> M
     L --> N["移动到父Fiber"]
     M --> N
     N --> O{"达到最大数量或到达根?"}
+
     O -->|否| F
     O -->|是| P["返回组件列表"]
+
 ```
 
 ## Vue实现方案
@@ -303,6 +312,7 @@ export function getVueComponentHierarchy(
 
   const components: ComponentInfo[] = [];
   const maxComponents = 3;
+
   let currentElement: HTMLElement | null = element;
 
   while (currentElement && components.length < maxComponents) {
@@ -328,6 +338,7 @@ export function getVueComponentHierarchy(
 
     for (const vm of vms) {
       if (!vm || !vm.$options) continue;
+
       let name =
         vm.$options.name ||
         vm.$options.__file ||
@@ -422,36 +433,46 @@ graph TD
     A["DOM Element"] --> B["开始遍历DOM树"]
     B --> C["检查当前元素"]
     C --> D{"检查Vue 3属性"}
+
     D -->|有__vueParentComponent| E["提取Vue 3组件信息"]
     D -->|无| F{"检查Vue 2/1属性"}
     F -->|有__vue__| G["提取Vue 2组件信息"]
     F -->|有__vms__数组| H["遍历Vue 1组件数组"]
     F -->|都没有| I["移动到父元素"]
+
     E --> J["获取组件名称"]
     G --> K["从$options获取组件信息"]
     H --> K
     J --> L{"组件名称来源"}
     K --> M{"组件名称来源"}
+
     L -->|type.__name| N["使用Vue 3组件名"]
     M -->|$options.name| O["使用显式组件名"]
     M -->|$options.__file| P["从文件路径提取名称"]
     M -->|$options._componentTag| Q["使用组件标签名"]
     M -->|都没有| R["使用AnonymousComponent"]
+
     N --> S["检查重复"]
     O --> S
     P --> T["处理文件路径<br/>提取文件名并移除.vue"]
     Q --> S
     R --> S
     T --> S
+
     S -->|不重复| U["添加到组件列表"]
     S -->|重复| I
+
     U --> I
     I --> V{"达到最大数量或到达根?"}
+
     V -->|否| C
     V -->|是| W["返回组件层次结构"]
+
     W --> X{"找到组件?"}
+
     X -->|是| Y["返回组件数组"]
     X -->|否| Z["显示警告并返回null"]
+
 ```
 
 ## 工具函数实现
@@ -491,6 +512,7 @@ export function formatComponentHierarchy(
  */
 export function getSelectedElementAnnotation(
   element: HTMLElement,
+
   framework: "react" | "vue"
 ) {
   const hierarchy =

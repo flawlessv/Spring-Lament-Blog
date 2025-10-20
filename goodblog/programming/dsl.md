@@ -34,6 +34,7 @@ export class FieldCreator<FieldProps = AnyObject, WrapperProps = AnyObject> {
 
   constructor(
     title: string | React.ReactElement,
+
     dataIndex: string,
     titleText?: string
   ) {
@@ -191,7 +192,9 @@ export function getPipeGetterValue<T extends AnyObject, Extra = AnyObject>(
 ### 2. 配置累积机制 - \_setPipeGetter
 
 ```typescript
+
 protected _setPipeGetter<Field extends 'fieldProps' | 'formItemProps'>(
+
   field: Field,
   getter?: Getter
 ) {
@@ -217,11 +220,15 @@ protected _setPipeGetter<Field extends 'fieldProps' | 'formItemProps'>(
 
 ```typescript
 export type FieldConfigType<FieldProps = AnyObject, WrapperProps = AnyObject> = {
+
   title: string | React.ReactElement      // 字段标题
+
   _titleText?: string                     // 纯文本标题(用于生成占位符等)
   dataIndex: string                       // 数据字段名
   key: string                            // 唯一标识
+
   valueType: ValueType                   // 字段类型：'text' | 'number' | 'select' 等
+
   renderer: FieldRendererType            // 自定义渲染器
   fieldProps: PipeGetter<FieldProps>     // 字段组件属性(支持函数)
   wrapperProps?: WrapperProps            // 包装器属性
@@ -336,6 +343,7 @@ export class FieldCreator<FieldProps = AnyObject, WrapperProps = AnyObject> {
 
   constructor(
     title: string | React.ReactElement,
+
     dataIndex: string,
     titleText?: string
   ) {
@@ -481,7 +489,9 @@ export function getPipeGetterValue<T extends AnyObject, Extra = AnyObject>(
 ```
 
 ```typescript
+
 protected _setPipeGetter<Field extends 'fieldProps' | 'formItemProps'>(
+
   field: Field,
   getter?: Getter
 ) {
@@ -503,11 +513,15 @@ protected _setPipeGetter<Field extends 'fieldProps' | 'formItemProps'>(
 
 ```typescript
 export type FieldConfigType<FieldProps = AnyObject, WrapperProps = AnyObject> = {
+
   title: string | React.ReactElement      // 字段标题
+
   _titleText?: string                     // 纯文本标题(用于生成占位符等)
   dataIndex: string                       // 数据字段名
   key: string                            // 唯一标识
+
   valueType: ValueType                   // 字段类型：'text' | 'number' | 'select' 等
+
   renderer: FieldRendererType            // 自定义渲染器
   fieldProps: PipeGetter<FieldProps>     // 字段组件属性(支持函数)
   wrapperProps?: WrapperProps            // 包装器属性
