@@ -4,9 +4,12 @@ slug: auto-merge-tag-tool
 excerpt: 背景介绍
 published: true
 featured: true
-category: happy-life
+category: 前端
 publishedAt: 2025-02-20T00:00:00.000Z
 readingTime: 2
+tags:
+  - js
+  - git
 ---
 
 ## 背景介绍

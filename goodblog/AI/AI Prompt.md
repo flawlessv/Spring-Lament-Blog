@@ -3,9 +3,13 @@ title: 如何编写AI高质量Prompt
 slug: mcpqweqwfuy4npp7
 published: true
 featured: true
-category: AI
+category: ai
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
+excerpt: 背景 在人工智能领域，Prompt工程已经成为提升大规模语言模型（LLM）性能的关键技术之一。Prompt在语言模型中起着决定性作用，因为它直接影响模型输出的内容。
+tags:
+  - prompt
+  - rag
 ---
 
 ## 背景

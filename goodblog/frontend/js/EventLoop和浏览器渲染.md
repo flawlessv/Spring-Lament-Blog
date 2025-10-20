@@ -3,9 +3,11 @@ title: 深入解析EventLoop 和浏览器渲染、帧动画、空闲回调
 slug: eventrok01t
 published: true
 featured: false
-cacategory: 前端
 publishedAt: 2023-01-01T00:00:00.000Z
 readingTime: 4
+category: 前端
+tags:
+  - js
 ---
 
 ### 前言

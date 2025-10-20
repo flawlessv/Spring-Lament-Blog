@@ -4,7 +4,7 @@ slug: sse-websocket-diff
 excerpt: 背景介绍
 published: true
 featured: true
-category: happy-life
+category: 前端
 publishedAt: 2025-07-30T00:00:00.000Z
 readingTime: 2
 ---

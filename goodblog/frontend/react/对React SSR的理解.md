@@ -3,9 +3,11 @@ title: 对React SSR的理解
 slug: reactgdaxcs
 published: true
 featured: false
-cacategory: 前端
 publishedAt: 2023-08-18T00:00:00.000Z
 readingTime: 1
+category: 前端
+tags:
+  - react
 ---
 
 ### 什么是React SSR
