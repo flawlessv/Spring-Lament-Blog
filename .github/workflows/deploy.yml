@@ -83,6 +83,13 @@ jobs:
             echo "=== 构建 Next.js 项目 ==="
             npm run build
             
+            echo "=== 验证构建是否成功 ==="
+            if [ ! -d ".next" ]; then
+                echo "❌ 错误: 构建失败，.next 目录未生成"
+                exit 1
+            fi
+            echo "✅ 构建验证成功"
+            
             echo "=== 构建后清理 node_modules（可选）==="
             # 构建完成后，可以删除 devDependencies 节省空间
             # npm prune --production
@@ -97,4 +104,24 @@ jobs:
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
             cd /www/wwwroot/my-next-app
+            
+            echo "=== 停止旧应用进程 ==="
+            pm2 stop spring-lament-blog || true
+            sleep 2
+            
+            echo "=== 重启应用 ==="
             pm2 restart spring-lament-blog || pm2 start ecosystem.config.js --env production
+            
+            echo "=== 等待应用启动 ==="
+            sleep 3
+            
+            echo "=== 验证应用状态 ==="
+            if pm2 status | grep -q "spring-lament-blog.*online"; then
+                echo "✅ 应用启动成功"
+            else
+                echo "❌ 应用启动失败"
+                exit 1
+            fi
+            
+            echo "=== 保存 PM2 配置 ==="
+            pm2 save
