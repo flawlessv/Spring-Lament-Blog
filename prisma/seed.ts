@@ -47,7 +47,7 @@ async function main() {
       description: "人工智能、大模型、机器学习相关内容",
       color: "#8B5CF6",
       icon: "🧑🏻‍🎤",
-      sortOrder: 1,
+      sortOrder: 2,
     },
     {
       name: "前端",
@@ -55,7 +55,7 @@ async function main() {
       description: "前端开发技术、框架、工具分享",
       color: "#3B82F6",
       icon: "🪷",
-      sortOrder: 2,
+      sortOrder: 1,
     },
     {
       name: "源码解析",
@@ -87,7 +87,7 @@ async function main() {
       description: "个人经历、成长感悟、自我介绍",
       color: "#6366F1",
       icon: "👋",
-      sortOrder: 6,
+      sortOrder: 7,
     },
     {
       name: "随笔",
@@ -95,7 +95,7 @@ async function main() {
       description: "生活感悟、思考随笔、日常记录",
       color: "#14B8A6",
       icon: "📝",
-      sortOrder: 7,
+      sortOrder: 6,
     },
   ];
 
