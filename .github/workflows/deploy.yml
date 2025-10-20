@@ -109,8 +109,11 @@ jobs:
             pm2 stop spring-lament-blog || true
             sleep 2
             
+            echo "=== 删除旧进程（如果是 errored 状态） ==="
+            pm2 delete spring-lament-blog || true
+            
             echo "=== 重启应用 ==="
-            pm2 restart spring-lament-blog || pm2 start ecosystem.config.js --env production
+            pm2 start ecosystem.config.js --env production
             
             echo "=== 等待应用启动 ==="
             sleep 3
