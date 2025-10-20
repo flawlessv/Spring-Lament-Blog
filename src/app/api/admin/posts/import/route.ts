@@ -110,65 +110,78 @@ async function parseMarkdownFile(file: File): Promise<ParsedPostData> {
 }
 
 /**
- * 查找或创建分类
+ * 查找分类（不自动创建）
  *
- * 原理：采用 "查找或创建" (Find or Create) 模式
- * 1. 先尝试从数据库查找同名分类
- * 2. 如果不存在，则自动创建新分类
- * 3. 返回分类 ID
- *
- * 这样可以避免重复创建分类，同时支持自动导入新分类
+ * 原理：严格模式，要求分类必须预先存在
+ * 1. 优先按 name 查找（因为 name 是用户指定的）
+ * 2. 如果找不到，再按 slug 查找（处理 slug 变化的情况）
+ * 3. 都找不到则抛出错误
  *
  * @param categoryName - 分类名称
  * @returns 分类 ID，如果没有分类则返回 null
+ * @throws Error 如果分类不存在
  */
-async function findOrCreateCategory(
+async function findCategory(
   categoryName: string | null
 ): Promise<string | null> {
   if (!categoryName) {
     return null;
   }
 
-  // 查找现有分类（使用 findFirst 因为按 name 字段查询）
-  let category = await prisma.category.findFirst({
+  // 生成 slug
+  const slug = createSlug(categoryName);
+
+  // 优先按 name 查找（name 也是唯一的）
+  let category = await prisma.category.findUnique({
     where: { name: categoryName },
   });
 
-  // 如果分类不存在，则创建新分类
+  // 如果按 name 找不到，再按 slug 查找
   if (!category) {
-    category = await prisma.category.create({
-      data: {
-        name: categoryName,
-        slug: createSlug(categoryName),
-      },
+    category = await prisma.category.findUnique({
+      where: { slug },
     });
+  }
+
+  // 如果都找不到，抛出错误
+  if (!category) {
+    throw new Error(`分类 "${categoryName}" 不存在，请先在后台创建该分类`);
   }
 
   return category.id;
 }
 
 /**
- * 查找或创建标签
+ * 查找标签（不自动创建）
  *
- * 原理：与分类类似，采用 "查找或创建" 模式
+ * 原理：严格模式，要求标签必须预先存在
+ * 1. 优先按 name 查找（因为 name 是用户指定的）
+ * 2. 如果找不到，再按 slug 查找（处理 slug 变化的情况）
+ * 3. 都找不到则抛出错误
  *
  * @param tagName - 标签名称
  * @returns 标签对象
+ * @throws Error 如果标签不存在
  */
-async function findOrCreateTag(tagName: string) {
-  // 查找现有标签
-  let tag = await prisma.tag.findFirst({
+async function findTag(tagName: string) {
+  // 生成 slug
+  const slug = createSlug(tagName);
+
+  // 优先按 name 查找（name 也是唯一的）
+  let tag = await prisma.tag.findUnique({
     where: { name: tagName },
   });
 
-  // 如果标签不存在，则创建新标签
+  // 如果按 name 找不到，再按 slug 查找
   if (!tag) {
-    tag = await prisma.tag.create({
-      data: {
-        name: tagName,
-        slug: createSlug(tagName),
-      },
+    tag = await prisma.tag.findUnique({
+      where: { slug },
     });
+  }
+
+  // 如果都找不到，抛出错误
+  if (!tag) {
+    throw new Error(`标签 "${tagName}" 不存在，请先在后台创建该标签`);
   }
 
   return tag;
@@ -190,8 +203,8 @@ async function attachTagsToPost(
   tagNames: string[]
 ): Promise<void> {
   for (const tagName of tagNames) {
-    // 查找或创建标签
-    const tag = await findOrCreateTag(tagName);
+    // 查找标签（不存在会抛出错误）
+    const tag = await findTag(tagName);
 
     // 创建文章-标签关联记录
     await prisma.postTag.create({
@@ -250,7 +263,7 @@ async function processFileImport(
     }
 
     // ========== 4. 处理分类 ==========
-    const categoryId = await findOrCreateCategory(postData.categoryName);
+    const categoryId = await findCategory(postData.categoryName);
 
     // ========== 5. 创建文章记录 ==========
     const post = await prisma.post.create({
