@@ -46,7 +46,7 @@ async function main() {
       slug: "ai",
       description: "人工智能、大模型、机器学习相关内容",
       color: "#8B5CF6",
-      icon: "🤖",
+      icon: "🧑🏻‍🎤",
       sortOrder: 1,
     },
     {
@@ -54,7 +54,7 @@ async function main() {
       slug: "frontend",
       description: "前端开发技术、框架、工具分享",
       color: "#3B82F6",
-      icon: "💻",
+      icon: "🪷",
       sortOrder: 2,
     },
     {
@@ -78,7 +78,7 @@ async function main() {
       slug: "soft-skills",
       description: "沟通技巧、思维方法、职场经验",
       color: "#EF4444",
-      icon: "🎯",
+      icon: "🍋‍🟩",
       sortOrder: 5,
     },
     {
