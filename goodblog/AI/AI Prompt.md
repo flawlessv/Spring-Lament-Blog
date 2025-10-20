@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
-excerpt: 背景 在人工智能领域，Prompt工程已经成为提升大规模语言模型（LLM）性能的关键技术之一。Prompt在语言模型中起着决定性作用，因为它直接影响模型输出的内容。
+coverImage: https://pixabay.com/zh/photos/christmas-background-1911637/
 tags:
   - prompt
   - rag

@@ -151,7 +151,6 @@ export default function TagDialog({ open, onClose, tag }: TagDialogProps) {
 
       onClose();
       // 刷新页面以显示更新
-      window.location.reload();
     } catch (error) {
       console.error("操作失败:", error);
       toast({

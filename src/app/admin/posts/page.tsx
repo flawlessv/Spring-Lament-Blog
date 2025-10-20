@@ -173,9 +173,6 @@ export default function PostsPage() {
             variant: "destructive",
           });
         }
-
-        // 刷新页面以显示新导入的文章
-        window.location.reload();
       } else {
         const result = await response.json();
         throw new Error(result.error || "导入失败");

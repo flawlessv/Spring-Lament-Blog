@@ -179,7 +179,6 @@ export default function CategoryDialog({
 
       // 成功后关闭对话框并刷新页面
       onClose();
-      window.location.reload();
     } catch (error) {
       console.error("操作失败:", error);
       alert(error instanceof Error ? error.message : "操作失败，请重试");
