@@ -1,10 +1,9 @@
 ---
 title: 对React SSR的理解
 slug: reactgdaxcs
-excerpt: 什么是React SSR
 published: true
 featured: false
-category: happy-life
+cacategory: 前端
 publishedAt: 2023-08-18T00:00:00.000Z
 readingTime: 1
 ---

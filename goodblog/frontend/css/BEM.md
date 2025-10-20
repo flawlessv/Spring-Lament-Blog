@@ -1,6 +1,6 @@
 ---
 title: BEM命名规范详解：提高CSS可维护性的最佳实践
-excerpt: 前言：为什么我们需要BEM？
+cacategory: 前端
 published: true
 featured: false
 readingTime: 2

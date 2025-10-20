@@ -1,10 +1,9 @@
 ---
 title: 不使用任何库在react项目中实现图片懒加载
 slug: reactqgc3a9
-excerpt: 可以使用Intersection Observer API来实现图片懒加载，它是一种现代的浏览器API，可以异步监测元素是否进入视口（viewport），从而触发相关操作。在React中，可以使用us...
 published: true
 featured: false
-category: happy-life
+cacategory: 前端
 publishedAt: 2023-01-17T00:00:00.000Z
 readingTime: 1
 ---

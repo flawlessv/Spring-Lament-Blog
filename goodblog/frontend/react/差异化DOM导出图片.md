@@ -4,7 +4,7 @@ slug: domqwefuy4npp7
 excerpt: React中DOM导出图片的高级技术方案详解
 published: true
 featured: true
-category: happy-life
+cacategory: 前端
 publishedAt: 2025-04-20T00:00:00.000Z
 readingTime: 19
 ---

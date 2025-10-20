@@ -4,9 +4,9 @@ slug: jseve8314vv
 excerpt: 什么是事件循环？
 published: true
 featured: false
-category: frontend
+cacategory: 前端
 publishedAt: 2024-03-15T00:00:00.000Z
-readingTime: 1
+readingTime: 10
 ---
 
 #### 什么是事件循环？

@@ -1,10 +1,9 @@
 ---
 title: 如何编写AI高质量Prompt
 slug: mcpqweqwfuy4npp7
-excerpt: 背景
 published: true
 featured: true
-category: ai
+category: AI
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
 ---

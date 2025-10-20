@@ -4,7 +4,7 @@ slug: domtocd6r97
 excerpt: 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制
 published: true
 featured: true
-category: happy-life
+category: 源码解析
 publishedAt: 2025-06-09T00:00:00.000Z
 readingTime: 7
 ---

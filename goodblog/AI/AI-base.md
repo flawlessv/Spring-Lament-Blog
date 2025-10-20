@@ -1,6 +1,6 @@
 ---
 title: AI基础知识全面解析：从LLM到AGI的技术演进之路
-excerpt: AI基础知识全面解析：从LLM到AGI的技术演进之路
+cacategory: AI
 published: true
 featured: false
 readingTime: 1
