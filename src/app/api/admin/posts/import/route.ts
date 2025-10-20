@@ -12,8 +12,10 @@ import { createSlug, calculateReadingTime, generateExcerpt } from "@/lib/utils";
 interface ImportResults {
   success: number;
   failed: number;
+  skipped: number;
   errors: string[];
   imported: ImportedPostInfo[];
+  fileStructure?: FileStructureInfo;
 }
 
 // 导入的文章信息
@@ -21,6 +23,15 @@ interface ImportedPostInfo {
   id: string;
   title: string;
   slug: string;
+  filePath?: string;
+}
+
+// 文件结构信息
+interface FileStructureInfo {
+  totalFiles: number;
+  markdownFiles: number;
+  directories: number;
+  maxDepth: number;
 }
 
 // 解析后的文章数据
@@ -206,16 +217,20 @@ async function attachTagsToPost(
  * @param file - 上传的文件
  * @param userId - 用户 ID（作为文章作者）
  * @param results - 导入结果统计对象（会被修改）
+ * @param filePath - 文件的相对路径（用于记录和显示）
  */
 async function processFileImport(
   file: File,
   userId: string,
-  results: ImportResults
+  results: ImportResults,
+  filePath?: string
 ): Promise<void> {
+  const displayPath = filePath || file.name;
+
   // ========== 1. 验证文件格式 ==========
   if (!file.name.endsWith(".md")) {
-    results.failed++;
-    results.errors.push(`${file.name}: 不是 Markdown 文件`);
+    results.skipped++;
+    // 非 Markdown 文件不算错误，只是跳过
     return;
   }
 
@@ -230,7 +245,7 @@ async function processFileImport(
 
     if (existingPost) {
       results.failed++;
-      results.errors.push(`${file.name}: 文章标识 "${postData.slug}" 已存在`);
+      results.errors.push(`${displayPath}: 文章标识 "${postData.slug}" 已存在`);
       return;
     }
 
@@ -265,13 +280,85 @@ async function processFileImport(
       id: post.id,
       title: post.title,
       slug: post.slug,
+      filePath: displayPath,
     });
   } catch (error) {
     // 记录失败结果
     results.failed++;
     const errorMessage = error instanceof Error ? error.message : "未知错误";
-    results.errors.push(`${file.name}: ${errorMessage}`);
+    results.errors.push(`${displayPath}: ${errorMessage}`);
   }
+}
+
+/**
+ * 从 FormData 中提取文件及其路径信息
+ *
+ * 原理：
+ * 当用户上传文件夹时，前端会将每个文件的相对路径也一起发送
+ * 这样我们可以保留文件的目录结构信息
+ *
+ * @param formData - 表单数据
+ * @returns 文件数组和路径映射
+ */
+function extractFilesWithPaths(formData: FormData): {
+  files: File[];
+  pathMap: Map<string, string>;
+} {
+  const files = formData.getAll("files") as File[];
+  const pathMap = new Map<string, string>();
+
+  // 尝试获取文件路径信息
+  files.forEach((file, index) => {
+    const pathKey = `filePaths[${index}]`;
+    const path = formData.get(pathKey);
+    if (path && typeof path === "string") {
+      pathMap.set(file.name, path);
+    }
+  });
+
+  return { files, pathMap };
+}
+
+/**
+ * 分析文件结构
+ *
+ * @param files - 文件数组
+ * @param pathMap - 路径映射
+ * @returns 文件结构信息
+ */
+function analyzeFileStructure(
+  files: File[],
+  pathMap: Map<string, string>
+): FileStructureInfo {
+  const directories = new Set<string>();
+  let maxDepth = 0;
+  let markdownFiles = 0;
+
+  files.forEach((file) => {
+    const path = pathMap.get(file.name) || file.name;
+    const parts = path.split("/");
+
+    // 计算深度
+    maxDepth = Math.max(maxDepth, parts.length - 1);
+
+    // 收集目录
+    for (let i = 0; i < parts.length - 1; i++) {
+      const dir = parts.slice(0, i + 1).join("/");
+      directories.add(dir);
+    }
+
+    // 统计 Markdown 文件
+    if (file.name.endsWith(".md")) {
+      markdownFiles++;
+    }
+  });
+
+  return {
+    totalFiles: files.length,
+    markdownFiles,
+    directories: directories.size,
+    maxDepth,
+  };
 }
 
 /**
@@ -280,17 +367,20 @@ async function processFileImport(
  *
  * 工作原理：
  * 1. 验证管理员权限
- * 2. 从 FormData 中提取上传的文件
- * 3. 遍历每个文件并处理导入
+ * 2. 从 FormData 中提取上传的文件（支持文件夹）
+ * 3. 递归遍历所有文件并处理导入
  * 4. 返回导入结果统计
  *
  * 特性：
- * - 支持批量导入多个 Markdown 文件
- * - 自动解析 YAML front matter
- * - 自动创建不存在的分类和标签
- * - 自动生成缺失的字段（slug、excerpt、readingTime）
- * - 防止 slug 重复
- * - 详细的错误报告
+ * - ✅ 支持批量导入多个 Markdown 文件
+ * - ✅ 支持上传整个文件夹（递归遍历所有子文件夹）
+ * - ✅ 自动解析 YAML front matter
+ * - ✅ 自动创建不存在的分类和标签
+ * - ✅ 自动生成缺失的字段（slug、excerpt、readingTime）
+ * - ✅ 防止 slug 重复
+ * - ✅ 详细的错误报告
+ * - ✅ 保留文件路径信息
+ * - ✅ 文件结构分析
  */
 export async function POST(request: NextRequest) {
   try {
@@ -300,9 +390,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "无权限访问" }, { status: 403 });
     }
 
-    // ============ 2. 提取上传的文件 ============
+    // ============ 2. 提取上传的文件及路径信息 ============
     const formData = await request.formData();
-    const files = formData.getAll("files") as File[];
+    const { files, pathMap } = extractFilesWithPaths(formData);
 
     // 验证是否有文件
     if (!files || files.length === 0) {
@@ -322,22 +412,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ============ 4. 初始化结果统计对象 ============
+    // ============ 4. 分析文件结构 ============
+    const fileStructure = analyzeFileStructure(files, pathMap);
+
+    // ============ 5. 初始化结果统计对象 ============
     const results: ImportResults = {
       success: 0,
       failed: 0,
+      skipped: 0,
       errors: [],
       imported: [],
+      fileStructure,
     };
 
-    // ============ 5. 处理每个文件 ============
+    // ============ 6. 处理每个文件 ============
     for (const file of files) {
-      await processFileImport(file, user.id, results);
+      const filePath = pathMap.get(file.name);
+      await processFileImport(file, user.id, results, filePath);
     }
 
-    // ============ 6. 返回导入结果 ============
+    // ============ 7. 返回导入结果 ============
+    const message = [
+      `导入完成:`,
+      `成功 ${results.success} 个`,
+      results.failed > 0 ? `失败 ${results.failed} 个` : null,
+      results.skipped > 0 ? `跳过 ${results.skipped} 个` : null,
+    ]
+      .filter(Boolean)
+      .join("，");
+
     return NextResponse.json({
-      message: `导入完成: 成功 ${results.success} 个，失败 ${results.failed} 个`,
+      message,
       results,
     });
   } catch (error) {

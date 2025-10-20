@@ -11,7 +11,21 @@ import { useState, useRef } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import UnifiedPostsTable from "@/components/admin/unified-posts-table";
 import { Button } from "@/components/ui/button";
-import { Plus, Download, Loader2, Upload } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Plus,
+  Download,
+  Loader2,
+  Upload,
+  FolderUp,
+  FileUp,
+  ChevronDown,
+} from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,6 +37,7 @@ export default function PostsPage() {
   const [exportingAll, setExportingAll] = useState(false);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   // 导出所有文章
@@ -70,15 +85,55 @@ export default function PostsPage() {
     }
   };
 
-  // 导入 Markdown 文件
+  /**
+   * 从文件列表中提取文件及其相对路径
+   *
+   * 原理：
+   * 当用户选择文件夹时，File 对象的 webkitRelativePath 属性会包含相对路径
+   * 我们需要将这些路径信息一起发送到后端
+   */
+  const extractFilesWithPaths = (
+    files: FileList
+  ): { files: File[]; paths: string[] } => {
+    const fileArray: File[] = [];
+    const paths: string[] = [];
+
+    Array.from(files).forEach((file) => {
+      fileArray.push(file);
+      // webkitRelativePath 在选择文件夹时会有值，选择单个文件时为空
+      const relativePath =
+        (file as { webkitRelativePath?: string }).webkitRelativePath ||
+        file.name;
+      paths.push(relativePath);
+    });
+
+    return { files: fileArray, paths };
+  };
+
+  /**
+   * 导入 Markdown 文件
+   *
+   * 支持：
+   * 1. 单个或多个文件上传
+   * 2. 整个文件夹上传（递归遍历所有子文件夹）
+   */
   const handleImportFiles = async (files: FileList) => {
     if (!files || files.length === 0) return;
 
     setImporting(true);
     try {
+      const { files: fileArray, paths } = extractFilesWithPaths(files);
+
       const formData = new FormData();
-      Array.from(files).forEach((file) => {
+
+      // 添加文件
+      fileArray.forEach((file) => {
         formData.append("files", file);
+      });
+
+      // 添加路径信息
+      paths.forEach((path, index) => {
+        formData.append(`filePaths[${index}]`, path);
       });
 
       const response = await fetch("/api/admin/posts/import", {
@@ -88,21 +143,39 @@ export default function PostsPage() {
 
       if (response.ok) {
         const result = await response.json();
+
+        // 构建详细的成功消息
+        let description = result.message;
+        if (result.results.fileStructure) {
+          const { totalFiles, markdownFiles, directories, maxDepth } =
+            result.results.fileStructure;
+          description += `\n\n文件结构：\n`;
+          description += `- 总文件数: ${totalFiles}\n`;
+          description += `- Markdown 文件: ${markdownFiles}\n`;
+          if (directories > 0) {
+            description += `- 目录数: ${directories}\n`;
+            description += `- 最大深度: ${maxDepth}`;
+          }
+        }
+
         toast({
           title: "导入完成",
-          description: result.message,
+          description,
           variant: "default",
         });
 
         // 显示详细结果
         if (result.results.errors.length > 0) {
-          const errorMsg = result.results.errors.slice(0, 3).join(", ");
+          const errorMsg = result.results.errors.slice(0, 3).join("\n");
           toast({
             title: "部分文件导入失败",
-            description: `错误信息: ${errorMsg}${result.results.errors.length > 3 ? "..." : ""}`,
+            description: `错误信息:\n${errorMsg}${result.results.errors.length > 3 ? "\n..." : ""}`,
             variant: "destructive",
           });
         }
+
+        // 刷新页面以显示新导入的文章
+        window.location.reload();
       } else {
         const result = await response.json();
         throw new Error(result.error || "导入失败");
@@ -122,13 +195,26 @@ export default function PostsPage() {
     }
   };
 
-  // 点击导入按钮
-  const handleImportClick = () => {
+  // 点击导入文件按钮
+  const handleImportFilesClick = () => {
     fileInputRef.current?.click();
+  };
+
+  // 点击导入文件夹按钮
+  const handleImportFolderClick = () => {
+    folderInputRef.current?.click();
   };
 
   // 文件选择改变
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      handleImportFiles(files);
+    }
+  };
+
+  // 文件夹选择改变
+  const handleFolderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       handleImportFiles(files);
@@ -146,24 +232,39 @@ export default function PostsPage() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              onClick={handleImportClick}
-              disabled={importing}
-              className="flex items-center"
-            >
-              {importing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  导入中...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4" />
-                  导入文章
-                </>
-              )}
-            </Button>
+            {/* 导入下拉菜单 */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  disabled={importing}
+                  className="flex items-center"
+                >
+                  {importing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      导入中...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      导入文章
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleImportFilesClick}>
+                  <FileUp className="mr-2 h-4 w-4" />
+                  导入文件
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleImportFolderClick}>
+                  <FolderUp className="mr-2 h-4 w-4" />
+                  导入文件夹
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Button
               variant="outline"
@@ -203,13 +304,25 @@ export default function PostsPage() {
           />
         </div>
 
-        {/* 隐藏的文件输入框 */}
+        {/* 隐藏的文件输入框 - 用于选择多个文件 */}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
           accept=".md,.markdown"
           multiple
+          className="hidden"
+        />
+
+        {/* 隐藏的文件夹输入框 - 用于选择整个文件夹 */}
+        <input
+          type="file"
+          ref={folderInputRef}
+          onChange={handleFolderChange}
+          accept=".md,.markdown"
+          // @ts-expect-error - webkitdirectory 是非标准属性，但所有主流浏览器都支持
+          webkitdirectory=""
+          directory=""
           className="hidden"
         />
       </div>
