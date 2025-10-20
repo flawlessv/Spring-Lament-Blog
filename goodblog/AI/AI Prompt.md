@@ -1,12 +1,12 @@
 ---
-categories: AI
-tags:
-  - AI
-  - Prompt
-date: 2025-07-09
 title: 如何编写AI高质量Prompt
-recommend: true
-id: mcpqweqwfuy4npp7
+slug: mcpqweqwfuy4npp7
+excerpt: 背景
+published: true
+featured: true
+category: ai
+publishedAt: 2025-07-09T00:00:00.000Z
+readingTime: 14
 ---
 
 ## 背景

@@ -1,13 +1,12 @@
 ---
-categories: 源码
-tags:
-  - React
-  - Vue
-  - JavaScript
-date: 2025-06-09T00:00:00.000Z
 title: 如何从DOM元素反向追踪到React和Vue组件
-recommend: true
-id: domtocd6r97
+slug: domtocd6r97
+excerpt: 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制
+published: true
+featured: true
+category: happy-life
+publishedAt: 2025-06-09T00:00:00.000Z
+readingTime: 7
 ---
 
 # 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制

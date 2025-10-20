@@ -1,17 +1,9 @@
 ---
-categories: AI
-tags:
-  - AI
-  - LLM
-  - Prompt
-  - Fine-tuning
-  - RAG
-  - Agent
-  - AGI
-date: 2025-07-02
 title: AI基础知识全面解析：从LLM到AGI的技术演进之路
-recommend: true
-id: ai-fundamentals-comprehensive-guide
+excerpt: AI基础知识全面解析：从LLM到AGI的技术演进之路
+published: true
+featured: false
+readingTime: 1
 ---
 
 # AI基础知识全面解析：从LLM到AGI的技术演进之路

@@ -1,11 +1,9 @@
 ---
-categories: JS
-tags:
-  - JavaScript
-date: 2023-02-02T00:00:00.000Z
 title: js中的防抖和节流
-recommend: false
-id: js6ccpia
+excerpt: 在JavaScript中，防抖（Debouncing）和节流（Throttling）是常见的两种性能优化技术，它们可以提高Web应用程序的性能，避免过多地触发事件或请求。
+published: true
+featured: false
+readingTime: 1
 ---
 
 在`JavaScript`中，防抖`（Debouncing）`和节流`（Throttling`）是常见的两种性能优化技术，它们可以提高`Web`应用程序的性能，避免过多地触发事件或请求。

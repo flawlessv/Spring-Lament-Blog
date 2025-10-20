@@ -1,12 +1,9 @@
 ---
-categories: AI
-tags:
-  - AI
-  - MCP
-date: 2024-06-20T00:00:00.000Z
 title: FunctionCall和MCP
-recommend: true
-id: mcpfuy4npp7
+excerpt: Agent入门第一课：工具-FunctionCall和MCP
+published: true
+featured: false
+readingTime: 8
 ---
 
 Agent入门第一课：工具-FunctionCall和MCP

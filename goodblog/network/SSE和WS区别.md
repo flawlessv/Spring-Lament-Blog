@@ -1,11 +1,12 @@
 ---
-categories: 计算机网络
-tags:
-  - SSE
-date: 2025-07-30T00:00:00.000Z
 title: 深入理解SSE和WebSocket的区别与应用场景
-recommend: true
-id: sse-websocket-diff
+slug: sse-websocket-diff
+excerpt: 背景介绍
+published: true
+featured: true
+category: happy-life
+publishedAt: 2025-07-30T00:00:00.000Z
+readingTime: 2
 ---
 
 ## 背景介绍

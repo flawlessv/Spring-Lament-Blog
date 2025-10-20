@@ -1,11 +1,12 @@
 ---
-categories: 编程基础
-tags:
-  - DSL
-date: 2025-5-31
 title: 组件库DSL设计理念
-recommend: true
-id: programming-dsl-comprehensive-guide
+slug: programming-dsl-comprehensive-guide
+excerpt: DSL设计理念
+published: true
+featured: true
+category: algorithm
+publishedAt: 2025-5-31T00:00:00.000Z
+readingTime: 8
 ---
 
 ## DSL设计理念

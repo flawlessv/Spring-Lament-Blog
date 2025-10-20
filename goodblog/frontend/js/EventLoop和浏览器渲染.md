@@ -1,12 +1,12 @@
 ---
-categories: JS
-tags:
-  - 浏览器原理
-  - JavaScript
-date: 2023-01-01T00:00:00.000Z
 title: 深入解析EventLoop 和浏览器渲染、帧动画、空闲回调
-recommend: false
-id: eventrok01t
+slug: eventrok01t
+excerpt: 前言
+published: true
+featured: false
+category: frontend
+publishedAt: 2023-01-01T00:00:00.000Z
+readingTime: 4
 ---
 
 ### 前言

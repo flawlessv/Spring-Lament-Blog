@@ -1,11 +1,12 @@
 ---
-categories: JS
-tags:
-  - JavaScript
-date: 2024-03-15T00:00:00.000Z
 title: js中EventLoop 事件循环
-recommend: false
-id: jseve8314vv
+slug: jseve8314vv
+excerpt: 什么是事件循环？
+published: true
+featured: false
+category: frontend
+publishedAt: 2024-03-15T00:00:00.000Z
+readingTime: 1
 ---
 
 #### 什么是事件循环？

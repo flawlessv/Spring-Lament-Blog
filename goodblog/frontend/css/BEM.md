@@ -1,13 +1,9 @@
 ---
-categories: CSS
-tags:
-  - CSS
-  - 命名规范
-  - 前端架构
-date: 2024-05-01T00:00:00.000Z
 title: BEM命名规范详解：提高CSS可维护性的最佳实践
-recommend: true
-id: bemp34ort
+excerpt: 前言：为什么我们需要BEM？
+published: true
+featured: false
+readingTime: 2
 ---
 
 ## 前言：为什么我们需要BEM？

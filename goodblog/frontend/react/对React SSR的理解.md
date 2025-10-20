@@ -1,11 +1,12 @@
 ---
-categories: React
-tags:
-  - React
-date: 2023-08-18T00:00:00.000Z
 title: 对React SSR的理解
-recommend: false
-id: reactgdaxcs
+slug: reactgdaxcs
+excerpt: 什么是React SSR
+published: true
+featured: false
+category: happy-life
+publishedAt: 2023-08-18T00:00:00.000Z
+readingTime: 1
 ---
 
 ### 什么是React SSR
