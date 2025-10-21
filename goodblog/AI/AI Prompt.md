@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73a5a80963.png
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f7489d3eaeb.jpg
 tags:
   - prompt
 ---

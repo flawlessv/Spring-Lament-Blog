@@ -12,7 +12,7 @@ date: 2023-12-09
 title: "Git常用命令大全"
 id: git
 recommend: false
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f74002e4a2a.png
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ac05973.jpg
 ---
 
 # Git 常用命令速查指南

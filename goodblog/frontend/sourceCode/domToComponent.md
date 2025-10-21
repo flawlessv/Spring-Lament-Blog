@@ -1,16 +1,15 @@
 ---
 title: 如何从DOM元素反向追踪到React和Vue组件
 slug: domtocd6r97
-excerpt: 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制
 published: true
-featured: true
+featured: false
 category: 源码解析
 publishedAt: 2025-06-09T00:00:00.000Z
 readingTime: 7
 tags:
   - ts
   - react
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f74002e4a2a.png
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f7489d1d073.jpg
 ---
 
 # 1. 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制

@@ -1,8 +1,8 @@
 ---
 title: 组件库DSL设计理念
 slug: programming-dsl-comprehensive-guide
-published: true
-featured: true
+published: false
+featured: false
 category: 前端
 publishedAt: 2025-5-31T00:00:00.000Z
 readingTime: 8

@@ -12,7 +12,7 @@ tags:
   - MCP
   - RAG
   - LLM
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73a5a80963.png
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ab81821.jpg
 ---
 
 # 1. AI基础知识全面解析：从LLM到AGI的技术演进之路
