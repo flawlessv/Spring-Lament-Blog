@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
-coverImage: https://cdn.pixabay.com/photo/2016/12/16/15/25/christmas-background-1911637_960_720.jpg
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73a5a80963.png
 tags:
   - prompt
   - rag
@@ -23,7 +23,7 @@ tags:
 
 ## 3. Prompt的运行过程
 
-![Prompt运行过程](https://youke1.picui.cn/s1/2025/10/21/68f73144690fa.png)
+![Prompt运行过程](https://youke1.picui.cn/s1/2025/10/21/68f7314e90ad2.png)
 
 **Prompt的运行主要包含以下步骤：**
 
@@ -481,13 +481,11 @@ https://platform.openai.com/docs/models/
 
 Prompts 协同可以是提示树 Prompt Tree，通过自顶向下的设计思想，不断拆解子任务，构成任务树，得到多种模型输出，并将这多种输出通过自定义规则（排列组合、筛选、集成等）得到最终结果。如下图就使用了 Prompt Tree 的思想。
 
-![Prompt Tree示意图](https://youke1.picui.cn/s1/2025/10/21/68f731450b6cb.png)
+![Prompt Tree示意图](https://youke1.picui.cn/s1/2025/10/21/68f73144b72df.png)
 
 ##### 2.9.1.2.2. Prompt Graph
 
 Prompts 协同还可以是提示图 Prompt Graph，类似人的社交网络一样，Prompts 间的协同交互也可以是如下的图网络形式。
-
-![Prompt Graph示意图](https://youke1.picui.cn/s1/2025/10/21/68f73144b72df.png)
 
 由于大模型目前输出具备随机性，即使将 Temperature （一个控制生成文本的随机性和创造性的参数）调整为 0 ，输出的随机性还是很大，并且模型输出结果的可用性还不高，多 Prompt 协同的情况下很容易因为其中某一部分结果的质量不佳导致整个协同模式的崩溃。
 
@@ -551,6 +549,8 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 ## 2.10. Prompt Attack
 
+![提示词攻击类别](https://youke1.picui.cn/s1/2025/10/21/68f7314c06a89.png)
+
 ### 2.10.1. 提示词注入
 
 提示词注入可以通过多种方式实现，例如通过用户输入的指令覆盖或改写原有应用的功能。这种攻击可以是直接的，也可以是间接的，后者通常发生在应用依赖外部数据或资源时，攻击者在这些外部数据中隐藏恶意指令。
@@ -563,7 +563,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 可以看到通过提示词注入，当我们的大模型拿到这样的这种数据的时候，就有可能给出不适当的回应（即使它已经知道不恰当）
 
-![提示词注入示例](https://youke1.picui.cn/s1/2025/10/21/68f7314c06a89.png)
+![提示词注入示例](https://youke1.picui.cn/s1/2025/10/21/68f731450b6cb.png)
 
 ### 2.10.2. 提示词泄漏
 
@@ -577,15 +577,15 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 获取之后用户就可以对MiOne的System Prompt进行更改,甚至解除System Prompt的约束条件来做一些非法操作
 
-![提示词泄漏示例](https://youke1.picui.cn/s1/2025/10/21/68f7314d14467.png)
+![提示词泄漏示例](https://youke1.picui.cn/s1/2025/10/21/68f7314c06a89.png)
 
 ### 2.10.3. 越狱
 
 越狱攻击通常涉及到角色扮演、情境模拟等手段，使AI模型突破其预设的限制。这种攻击可能导致AI模型产生不当内容，甚至参与违法活动。
 例如下面文心一眼本来无法输出不正当言辞，但是用过扮演他“过世的祖母”并不断诱导，便实现了对LLM的越狱
-![越狱攻击示例1](https://youke1.picui.cn/s1/2025/10/21/68f7314e90ad2.png)
+![越狱攻击示例1](https://youke1.picui.cn/s1/2025/10/21/68f7314d07955.png)
 通过不断诱导，文心一言已经破防
-![越狱攻击示例2](https://youke1.picui.cn/s1/2025/10/21/68f7314d07955.png)
+![越狱攻击示例2](https://youke1.picui.cn/s1/2025/10/21/68f7314d14467.png)
 
 ### 2.10.4. 防御措施
 
