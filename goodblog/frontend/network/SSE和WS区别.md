@@ -7,7 +7,7 @@ featured: false
 category: 前端
 publishedAt: 2025-07-30T00:00:00.000Z
 readingTime: 4
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748a90d3dd.jpg
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17640593740385664
 ---
 
 ## 1. 背景介绍

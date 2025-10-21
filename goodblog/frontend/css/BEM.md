@@ -8,7 +8,7 @@ slug: BEM
 publishedAt: 2024-01-01T00:00:00Z
 tags:
   - css
-coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17792493819383168
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17639916700028288
 ---
 
 ## 1. 前言：为什么我们需要BEM？

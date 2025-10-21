@@ -11,7 +11,7 @@ tags:
 date: 2023-12-09
 id: git
 recommend: false
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ac05973.jpg
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/16835107832188288
 ---
 
 # Git 常用命令速查指南

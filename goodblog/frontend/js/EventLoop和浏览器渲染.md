@@ -8,7 +8,7 @@ readingTime: 12
 category: 前端
 tags:
   - js
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748abdfaed.jpg
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673910169619840
 ---
 
 ### 1.0.1. 前言
