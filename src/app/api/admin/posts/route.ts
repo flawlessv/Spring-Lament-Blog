@@ -22,11 +22,10 @@ const querySchema = z.object({
     .optional()
     .transform((val) => (val ? parseInt(val) : 10)),
   search: z.string().optional().nullable(),
-  status: z
-    .enum(["all", "published", "draft", "featured"])
-    .optional()
-    .default("all"),
+  status: z.string().optional().nullable(), // 支持逗号分隔的多个状态
   categoryId: z.string().optional().nullable(),
+  categoryNames: z.string().optional().nullable(), // 分类名称筛选：逗号分隔的分类名称列表
+  tagIds: z.string().optional().nullable(), // 标签过滤：逗号分隔的标签ID列表
   sortBy: z
     .enum(["createdAt", "updatedAt", "views", "title"])
     .optional()
@@ -54,6 +53,8 @@ export async function GET(request: NextRequest) {
       search: searchParams.get("search"),
       status: searchParams.get("status") || "all",
       categoryId: searchParams.get("categoryId"),
+      categoryNames: searchParams.get("categoryNames"),
+      tagIds: searchParams.get("tagIds"),
       sortBy: searchParams.get("sortBy") || "updatedAt",
       sortOrder: searchParams.get("sortOrder") || "desc",
     });
@@ -63,30 +64,89 @@ export async function GET(request: NextRequest) {
 
     // 搜索条件
     if (query.search) {
-      where.OR = [
-        { title: { contains: query.search, mode: "insensitive" } },
-        { content: { contains: query.search, mode: "insensitive" } },
-        { excerpt: { contains: query.search, mode: "insensitive" } },
-      ];
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { title: { contains: query.search, mode: "insensitive" } },
+          { content: { contains: query.search, mode: "insensitive" } },
+          { excerpt: { contains: query.search, mode: "insensitive" } },
+        ],
+      });
     }
 
-    // 状态筛选
-    switch (query.status) {
-      case "published":
-        where.published = true;
-        where.featured = false;
-        break;
-      case "draft":
-        where.published = false;
-        break;
-      case "featured":
-        where.featured = true;
-        break;
+    // 状态筛选（支持多个状态）
+    if (query.status && query.status !== "all") {
+      const statusArray = query.status.split(",").filter(Boolean);
+      if (statusArray.length > 0) {
+        const statusConditions = [];
+
+        for (const status of statusArray) {
+          switch (status) {
+            case "published":
+              statusConditions.push({
+                published: true,
+                featured: false,
+              });
+              break;
+            case "draft":
+              statusConditions.push({
+                published: false,
+              });
+              break;
+            case "featured":
+              statusConditions.push({
+                featured: true,
+              });
+              break;
+          }
+        }
+
+        if (statusConditions.length > 0) {
+          where.AND = where.AND || [];
+          where.AND.push({
+            OR: statusConditions,
+          });
+        }
+      }
     }
 
     // 分类筛选
     if (query.categoryId && query.categoryId !== "all") {
       where.categoryId = query.categoryId;
+    }
+
+    // 分类名称筛选（支持多选）
+    if (query.categoryNames && query.categoryNames !== "all") {
+      const categoryNames = query.categoryNames.split(",").filter(Boolean);
+      if (categoryNames.length > 0) {
+        where.AND = where.AND || [];
+        where.AND.push({
+          category: {
+            name: {
+              in: categoryNames,
+            },
+          },
+        });
+      }
+    }
+
+    // 标签筛选（支持多选）
+    if (query.tagIds && query.tagIds !== "all") {
+      const tagNames = query.tagIds.split(",").filter(Boolean);
+      if (tagNames.length > 0) {
+        where.AND = where.AND || [];
+        where.AND.push({
+          tags: {
+            some: {
+              tag: {
+                name: {
+                  in: tagNames,
+                },
+              },
+            },
+          },
+        });
+      }
     }
 
     // 排序配置

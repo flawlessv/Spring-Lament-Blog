@@ -83,6 +83,7 @@ interface UnifiedPostsTableProps {
   statusFilter?: string;
   categoryFilter?: string;
   onSelectionChange?: (selectedIds: string[]) => void;
+  enableTableFilters?: boolean; // 新增：启用表头筛选
 }
 
 export default function UnifiedPostsTable({
@@ -90,12 +91,20 @@ export default function UnifiedPostsTable({
   statusFilter,
   categoryFilter,
   onSelectionChange,
+  enableTableFilters = false,
 }: UnifiedPostsTableProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [exporting, setExporting] = useState(false);
+  const [tableFilters, setTableFilters] = useState<Record<string, any>>({});
+  const [availableTags, setAvailableTags] = useState<
+    { label: string; value: string; color?: string }[]
+  >([]);
+  const [availableCategories, setAvailableCategories] = useState<
+    { label: string; value: string; color?: string }[]
+  >([]);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -106,6 +115,49 @@ export default function UnifiedPostsTable({
   });
 
   const { toast } = useToast();
+
+  // 获取可用标签
+  const fetchAvailableTags = async () => {
+    try {
+      const response = await fetch("/api/admin/tags");
+      if (response.ok) {
+        const data = await response.json();
+        const tags = (data.tags || []).map((tag: any) => ({
+          label: tag.name,
+          value: tag.name,
+          color: tag.color,
+        }));
+        setAvailableTags(tags);
+      }
+    } catch (error) {
+      console.error("获取标签失败:", error);
+    }
+  };
+
+  // 获取可用分类
+  const fetchAvailableCategories = async () => {
+    try {
+      const response = await fetch("/api/admin/categories");
+      if (response.ok) {
+        const data = await response.json();
+        const categories = (data.categories || []).map((category: any) => ({
+          label: category.name,
+          value: category.name,
+          color: category.color,
+        }));
+        setAvailableCategories(categories);
+      }
+    } catch (error) {
+      console.error("获取分类失败:", error);
+    }
+  };
+
+  // 处理表头筛选
+  const handleTableFilters = (filters: Record<string, any>) => {
+    console.log("处理表头筛选:", filters);
+    setTableFilters(filters);
+    setPagination((prev) => ({ ...prev, page: 1 })); // 重置到第一页
+  };
 
   // 获取文章数据
   const fetchPosts = async () => {
@@ -121,6 +173,34 @@ export default function UnifiedPostsTable({
         params.set("status", statusFilter);
       if (categoryFilter && categoryFilter !== "all")
         params.set("categoryId", categoryFilter);
+
+      // 处理表头筛选
+      if (tableFilters.title && tableFilters.title.trim()) {
+        params.set("search", tableFilters.title.trim());
+      }
+      if (
+        tableFilters.status &&
+        Array.isArray(tableFilters.status) &&
+        tableFilters.status.length > 0
+      ) {
+        params.set("status", tableFilters.status.join(","));
+      }
+      if (
+        tableFilters.category &&
+        Array.isArray(tableFilters.category) &&
+        tableFilters.category.length > 0
+      ) {
+        params.set("categoryNames", tableFilters.category.join(","));
+      }
+      if (
+        tableFilters.tags &&
+        Array.isArray(tableFilters.tags) &&
+        tableFilters.tags.length > 0
+      ) {
+        params.set("tagIds", tableFilters.tags.join(","));
+      }
+
+      console.log("发送筛选参数:", Object.fromEntries(params));
 
       const response = await fetch(`/api/admin/posts?${params}`);
 
@@ -142,7 +222,20 @@ export default function UnifiedPostsTable({
 
   useEffect(() => {
     fetchPosts();
-  }, [searchQuery, statusFilter, categoryFilter, pagination.page]);
+  }, [
+    searchQuery,
+    statusFilter,
+    categoryFilter,
+    pagination.page,
+    tableFilters,
+  ]);
+
+  useEffect(() => {
+    if (enableTableFilters) {
+      fetchAvailableTags();
+      fetchAvailableCategories();
+    }
+  }, [enableTableFilters]);
 
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
@@ -334,11 +427,27 @@ export default function UnifiedPostsTable({
     }
   };
 
+  // 状态筛选选项
+  const statusOptions = [
+    { label: "已发布", value: "published", color: "#10B981" },
+    { label: "草稿", value: "draft", color: "#6B7280" },
+    { label: "精选", value: "featured", color: "#F59E0B" },
+  ];
+
   const columns = [
     {
       key: "title",
       title: "文章信息",
       width: "flex-1",
+      filter: enableTableFilters
+        ? {
+            type: "text" as const,
+            placeholder: "搜索文章标题...",
+            onFilter: (value: string) => {
+              console.log("Title filter:", value);
+            },
+          }
+        : undefined,
       render: (_: unknown, post: Post) => (
         <div className="min-w-0">
           <Link
@@ -367,9 +476,51 @@ export default function UnifiedPostsTable({
       ),
     },
     {
+      key: "category",
+      title: "分类",
+      width: "w-32",
+      filter: enableTableFilters
+        ? {
+            type: "multiselect" as const,
+            options: availableCategories,
+            placeholder: "筛选分类",
+            onFilter: (value: string) => {
+              console.log("Category filter:", value);
+            },
+          }
+        : undefined,
+      render: (_: unknown, post: Post) => (
+        <div className="flex items-center space-x-2">
+          {post.category ? (
+            <>
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: post.category.color || "#6B7280" }}
+              />
+              <span className="text-sm text-gray-700 truncate">
+                {post.category.name}
+              </span>
+            </>
+          ) : (
+            <span className="text-sm text-gray-400">-</span>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "tags",
       title: "标签",
       width: "w-56",
+      filter: enableTableFilters
+        ? {
+            type: "multiselect" as const,
+            options: availableTags,
+            placeholder: "筛选标签",
+            onFilter: (value: string) => {
+              console.log("Tags filter:", value);
+            },
+          }
+        : undefined,
       render: (_: unknown, post: Post) => (
         <div className="flex flex-wrap gap-1">
           {post.tags.slice(0, 3).map((tag) => (
@@ -397,6 +548,16 @@ export default function UnifiedPostsTable({
       title: "状态",
       width: "w-24",
       className: "text-center",
+      filter: enableTableFilters
+        ? {
+            type: "multiselect" as const,
+            options: statusOptions,
+            placeholder: "筛选状态",
+            onFilter: (value: string) => {
+              console.log("Status filter:", value);
+            },
+          }
+        : undefined,
       render: (_: unknown, post: Post) => getStatusBadge(post),
     },
     {
@@ -564,6 +725,12 @@ export default function UnifiedPostsTable({
       searchable={true}
       searchPlaceholder="搜索文章标题..."
       onSearch={fetchPosts}
+      filterable={enableTableFilters}
+      onFilterChange={(filters) => {
+        console.log("Table filters changed:", filters);
+        // 处理筛选逻辑
+        handleTableFilters(filters);
+      }}
       selectable={true}
       selectedIds={selectedIds}
       onSelectionChange={(ids) => {
