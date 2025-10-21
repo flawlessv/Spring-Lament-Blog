@@ -305,33 +305,26 @@ export default function PostList({
                   )}
                 </div>
 
-                {/* 底部：标题、摘要和分类 */}
-                <div className="space-y-3">
-                  <h2 className="text-xl md:text-2xl font-bold leading-tight line-clamp-2 transition-all duration-300 group-hover:scale-[1.02]">
+                {/* 中间：标题 - 垂直居中 */}
+                <div className="flex-1 flex items-center">
+                  <h2 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-3 transition-all duration-300 group-hover:scale-[1.02]">
                     {post.title}
                   </h2>
-
-                  {/* 摘要 */}
-                  {post.excerpt && (
-                    <p className="text-sm opacity-90 leading-relaxed line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                  )}
-
-                  {/* 分类标签 */}
-                  {post.categories.length > 0 && (
-                    <div className="flex items-center space-x-3">
-                      {post.categories.slice(0, 2).map((category) => (
-                        <span
-                          key={category.id}
-                          className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
-                        >
-                          {category.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
+
+                {/* 底部：分类标签 */}
+                {post.categories.length > 0 && (
+                  <div className="flex items-center space-x-3">
+                    {post.categories.slice(0, 2).map((category) => (
+                      <span
+                        key={category.id}
+                        className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
+                      >
+                        {category.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </Link>
