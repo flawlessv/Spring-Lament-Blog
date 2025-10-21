@@ -23,7 +23,7 @@ tags:
 
 ## 3. Prompt的运行过程
 
-![Prompt运行过程](/images/prompt/image.png)
+![Prompt运行过程](https://youke1.picui.cn/s1/2025/10/21/68f73144690fa.png)
 
 **Prompt的运行主要包含以下步骤：**
 
@@ -481,13 +481,13 @@ https://platform.openai.com/docs/models/
 
 Prompts 协同可以是提示树 Prompt Tree，通过自顶向下的设计思想，不断拆解子任务，构成任务树，得到多种模型输出，并将这多种输出通过自定义规则（排列组合、筛选、集成等）得到最终结果。如下图就使用了 Prompt Tree 的思想。
 
-![Prompt Tree示意图](/images/prompt/image%20copy.png)
+![Prompt Tree示意图](https://youke1.picui.cn/s1/2025/10/21/68f731450b6cb.png)
 
 ##### 2.9.1.2.2. Prompt Graph
 
 Prompts 协同还可以是提示图 Prompt Graph，类似人的社交网络一样，Prompts 间的协同交互也可以是如下的图网络形式。
 
-![Prompt Graph示意图](/images/prompt/image%20copy%202.png)
+![Prompt Graph示意图](https://youke1.picui.cn/s1/2025/10/21/68f73144b72df.png)
 
 由于大模型目前输出具备随机性，即使将 Temperature （一个控制生成文本的随机性和创造性的参数）调整为 0 ，输出的随机性还是很大，并且模型输出结果的可用性还不高，多 Prompt 协同的情况下很容易因为其中某一部分结果的质量不佳导致整个协同模式的崩溃。
 
@@ -504,12 +504,12 @@ Prompts 协同还可以是提示图 Prompt Graph，类似人的社交网络一�
 1. **写出的提示词过长，超出了模型的输入长度上限**
    - 此时 ChatGPT 网页端会提示输入长度过长， API 调用时则可能会将输入做截断处理（只取一部分输入）。
 
-   ![输入长度过长提示](/images/prompt/image%20copy%203.png)
+   ![输入长度过长提示](https://youke1.picui.cn/s1/2025/10/21/68f73144d4066.png)
 
 2. **任务要求的输出过长，超出了模型的长期记忆上限**
    - 为什么是记忆而不是输出长度上限呢？因为达到输出长度上限导致输出截断时，我们可以使用 "继续输出结果" 这样的提示词让模型继续输出后续结果以突破输出长度限制。而长期记忆上限则很难突破，一旦突破后模型表现会迅速下降。
 
-   ![输出长度限制](/images/prompt/image%20copy%204.png)
+   ![输出长度限制](https://youke1.picui.cn/s1/2025/10/21/68f73144d5f5b.png)
 
 3. **模型表现不佳**
    - 无论如何调试提示词，模型表现都无法达到预期。
@@ -563,7 +563,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 可以看到通过提示词注入，当我们的大模型拿到这样的这种数据的时候，就有可能给出不适当的回应（即使它已经知道不恰当）
 
-![提示词注入示例](/images/prompt/image%20copy%205.png)
+![提示词注入示例](https://youke1.picui.cn/s1/2025/10/21/68f7314c06a89.png)
 
 ### 2.10.2. 提示词泄漏
 
@@ -577,15 +577,15 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 获取之后用户就可以对MiOne的System Prompt进行更改,甚至解除System Prompt的约束条件来做一些非法操作
 
-![提示词泄漏示例](/images/prompt/image%20copy%206.png)
+![提示词泄漏示例](https://youke1.picui.cn/s1/2025/10/21/68f7314d14467.png)
 
 ### 2.10.3. 越狱
 
 越狱攻击通常涉及到角色扮演、情境模拟等手段，使AI模型突破其预设的限制。这种攻击可能导致AI模型产生不当内容，甚至参与违法活动。
 例如下面文心一眼本来无法输出不正当言辞，但是用过扮演他“过世的祖母”并不断诱导，便实现了对LLM的越狱
-![越狱攻击示例1](/images/prompt/image%20copy%207.png)
+![越狱攻击示例1](https://youke1.picui.cn/s1/2025/10/21/68f7314e90ad2.png)
 通过不断诱导，文心一言已经破防
-![越狱攻击示例2](/images/prompt/image%20copy%208.png)
+![越狱攻击示例2](https://youke1.picui.cn/s1/2025/10/21/68f7314d07955.png)
 
 ### 2.10.4. 防御措施
 
@@ -605,7 +605,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 绝大部分场景都可以直接套用下面这套模板
 
-![万能模板](/images/prompt/image%20copy%209.png)
+![万能模板](https://youke1.picui.cn/s1/2025/10/21/68f7314e246a1.png)
 
 ### 2.11.2. 万能提示词
 
