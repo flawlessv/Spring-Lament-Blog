@@ -42,14 +42,19 @@ export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
   const fetchTags = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/tags");
+      const response = await fetch("/api/admin/tags?includeStats=true");
 
       if (!response.ok) {
         throw new Error("获取标签数据失败");
       }
 
       const data = await response.json();
-      setTags(data.tags || []);
+      setTags(
+        (data.tags || []).map((t: any) => ({
+          ...t,
+          _count: { posts: t.stats?.totalPosts ?? 0 },
+        }))
+      );
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "未知错误");

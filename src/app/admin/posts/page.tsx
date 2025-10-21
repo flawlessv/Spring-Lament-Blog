@@ -298,6 +298,7 @@ export default function PostsPage() {
             statusFilter={statusFilter}
             categoryFilter={categoryFilter}
             onSelectionChange={setSelectedIds}
+            enableTableFilters={true}
           />
         </div>
 

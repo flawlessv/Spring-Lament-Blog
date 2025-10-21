@@ -31,8 +31,9 @@ interface Category {
   sortOrder: number;
   createdAt: string | Date;
   updatedAt: string | Date;
-  _count?: {
-    posts: number;
+  stats?: {
+    totalPosts: number;
+    publishedPosts: number;
   };
 }
 
@@ -53,7 +54,8 @@ export default function UnifiedCategoriesTable({
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/categories");
+      // 添加 includeStats 参数以获取文章统计
+      const response = await fetch("/api/admin/categories?includeStats=true");
 
       if (!response.ok) {
         throw new Error("获取分类数据失败");
@@ -172,12 +174,10 @@ export default function UnifiedCategoriesTable({
       width: "w-24",
       className: "text-center",
       render: (_: unknown, category: Category) => (
-        <div className="flex items-center justify-center space-x-2">
-          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-            <FileText className="h-4 w-4 text-green-600" />
-          </div>
-          <span className="font-medium text-gray-700">
-            {category._count?.posts || 0} 篇
+        <div className="flex items-center justify-center space-x-1">
+          <FileText className="h-4 w-4 text-green-600" />
+          <span className="font-medium text-gray-900 text-sm">
+            {category.stats?.totalPosts ?? 0}
           </span>
         </div>
       ),
