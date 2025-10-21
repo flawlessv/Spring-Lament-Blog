@@ -11,7 +11,6 @@ tags:
   - Agent
   - MCP
   - RAG
-  - LLM
 coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ab81821.jpg
 ---
 
