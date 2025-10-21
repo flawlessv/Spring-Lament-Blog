@@ -6,19 +6,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
-import {
-  Edit,
-  Trash2,
-  FolderOpen,
-  FileText,
-  Plus,
-  ArrowUpDown,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Edit, Trash2, FolderOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ModernTable } from "@/components/ui/modern-table";
+import { DraggableTable } from "@/components/ui/draggable-table";
 import { useToast } from "@/hooks/use-toast";
 
 interface Category {
@@ -47,7 +37,6 @@ export default function UnifiedCategoriesTable({
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { toast } = useToast();
 
@@ -76,11 +65,6 @@ export default function UnifiedCategoriesTable({
     fetchCategories();
   }, []);
 
-  const formatDate = (date: string | Date) => {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return format(dateObj, "yyyy年MM月dd日", { locale: zhCN });
-  };
-
   const handleDelete = async (category: Category) => {
     try {
       const response = await fetch(`/api/admin/categories/${category.id}`, {
@@ -106,166 +90,169 @@ export default function UnifiedCategoriesTable({
     }
   };
 
-  const handleBatchDelete = async (selectedIds: string[]) => {
+  const handleDragReorder = async (newOrder: Category[]) => {
     try {
-      await Promise.all(
-        selectedIds.map((id) =>
-          fetch(`/api/admin/categories/${id}`, { method: "DELETE" })
-        )
+      // 批量更新排序
+      const updatePromises = newOrder.map((category, index) =>
+        fetch(`/api/admin/categories/${category.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sortOrder: index + 1,
+          }),
+        })
       );
 
+      await Promise.all(updatePromises);
+
       toast({
-        title: "批量删除成功",
-        description: `已删除 ${selectedIds.length} 个分类`,
+        title: "排序更新成功",
+        description: "分类排序已保存",
         variant: "success",
       });
 
-      setSelectedIds([]);
+      // 拖拽完成后刷新列表
       await fetchCategories();
     } catch (error) {
       toast({
-        title: "批量删除失败",
+        title: "排序更新失败",
         description: "请稍后重试",
         variant: "destructive",
       });
+      // 重新获取数据以恢复正确状态
+      await fetchCategories();
     }
   };
 
-  const columns = [
-    {
-      key: "name",
-      title: "分类名称",
-      width: "w-56",
-      render: (_: unknown, category: Category) => (
-        <div className="flex items-center space-x-3">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-medium flex-shrink-0"
-            style={{ backgroundColor: category.color || "#6B7280" }}
-          >
-            {category.icon || "📁"}
-          </div>
-          <div className="font-medium text-gray-900">{category.name}</div>
-        </div>
-      ),
-    },
-    {
-      key: "slug",
-      title: "URL",
-      width: "w-40",
-      render: (_: unknown, category: Category) => (
-        <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
-          {category.slug}
-        </code>
-      ),
-    },
-    {
-      key: "description",
-      title: "描述",
-      width: "flex-1",
-      render: (_: unknown, category: Category) => (
-        <span className="text-sm text-gray-600 line-clamp-2">
-          {category.description || <span className="text-gray-400">-</span>}
-        </span>
-      ),
-    },
-    {
-      key: "posts",
-      title: "文章数量",
-      width: "w-24",
-      className: "text-center",
-      render: (_: unknown, category: Category) => (
-        <div className="flex items-center justify-center space-x-1">
-          <FileText className="h-4 w-4 text-green-600" />
-          <span className="font-medium text-gray-900 text-sm">
-            {category.stats?.totalPosts ?? 0}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: "sortOrder",
-      title: "排序",
-      width: "w-16",
-      className: "text-center",
-      render: (_: unknown, category: Category) => (
-        <div className="flex items-center justify-center space-x-1 text-gray-600">
-          <ArrowUpDown className="h-3 w-3" />
-          <span className="text-sm font-mono">{category.sortOrder}</span>
-        </div>
-      ),
-    },
-    {
-      key: "createdAt",
-      title: "创建时间",
-      width: "w-32",
-      className: "text-center",
-      render: (_: unknown, category: Category) => (
-        <span className="text-sm text-gray-500">
-          {formatDate(category.createdAt)}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      title: "操作",
-      width: "w-24",
-      className: "text-center",
-      render: (_: unknown, category: Category) => (
-        <div className="flex items-center justify-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-            onClick={() => onEdit?.(category)}
-            title="编辑"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-            onClick={() => handleDelete(category)}
-            title="删除"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
-  const batchActions = [
-    {
-      label: "批量删除",
-      onClick: handleBatchDelete,
-      variant: "danger" as const,
-      icon: <Trash2 className="h-4 w-4 mr-2" />,
-    },
-  ];
-
   return (
-    <ModernTable
-      data={categories}
-      columns={columns}
-      loading={loading}
-      error={error}
-      searchable={true}
-      searchPlaceholder="搜索分类名称..."
-      selectable={true}
-      selectedIds={selectedIds}
-      onSelectionChange={setSelectedIds}
-      createButton={{
-        label: "新建分类",
-        href: "/admin/categories/new",
-        icon: <Plus className="mr-2 h-4 w-4" />,
-      }}
-      batchActions={batchActions}
-      emptyIcon={<FolderOpen className="h-10 w-10 text-gray-400" />}
-      emptyTitle="暂无分类"
-      emptyDescription="创建第一个分类来组织您的内容"
-      getRecordId={(category) => category.id}
-      onRetry={fetchCategories}
-    />
+    <div className="space-y-6">
+      {/* 搜索和操作栏 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="搜索分类名称..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e) => {
+                // 这里可以实现搜索功能
+                console.log("搜索:", e.target.value);
+              }}
+            />
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Link href="/admin/categories/new">
+            <Button className="flex items-center">
+              <Plus className="mr-2 h-4 w-4" />
+              新建分类
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* 拖拽排序表格 */}
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p className="mt-2 text-gray-600">加载中...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12">
+          <p className="text-red-600">{error}</p>
+          <Button onClick={fetchCategories} className="mt-4">
+            重试
+          </Button>
+        </div>
+      ) : categories.length === 0 ? (
+        <div className="text-center py-16">
+          <FolderOpen className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">暂无分类</h3>
+          <p className="text-gray-600 mb-6">开始创建您的第一个分类吧</p>
+          <Link href="/admin/categories/new">
+            <Button className="flex items-center">
+              <Plus className="mr-2 h-4 w-4" />
+              新建分类
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <DraggableTable
+            data={categories}
+            onReorder={handleDragReorder}
+            getRecordId={(category) => category.id}
+            renderItem={(category) => (
+              <div className="bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                <div className="p-4">
+                  <div className="flex items-center space-x-4">
+                    {/* 分类信息 */}
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-medium flex-shrink-0 shadow-sm"
+                        style={{ backgroundColor: category.color || "#6B7280" }}
+                      >
+                        {category.icon || "📁"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-gray-900 text-base">
+                          {category.name}
+                        </div>
+                        <div className="text-sm text-gray-500 font-mono">
+                          {category.slug}
+                        </div>
+                        {category.description && (
+                          <div className="text-xs text-gray-400 mt-1 line-clamp-1">
+                            {category.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 统计信息 */}
+                    <div className="flex items-center space-x-6">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">文章</div>
+                        <div className="font-semibold text-gray-900 text-lg">
+                          {category.stats?.totalPosts ?? 0}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">排序</div>
+                        <div className="font-semibold text-blue-600 text-lg">
+                          {category.sortOrder}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 操作按钮 */}
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEdit?.(category)}
+                        className="h-9 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(category)}
+                        className="h-9 px-3 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          />
+        </div>
+      )}
+    </div>
   );
 }

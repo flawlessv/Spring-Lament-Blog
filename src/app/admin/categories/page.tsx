@@ -42,7 +42,7 @@ export default function CategoriesPage() {
         </div>
 
         {/* 分类列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           <UnifiedCategoriesTable onEdit={handleEdit} />
         </div>
       </div>
