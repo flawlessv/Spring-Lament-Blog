@@ -12,11 +12,11 @@ tags:
   - react
 ---
 
-# React中DOM导出图片的高级技术方案详解
+# 1. React中DOM导出图片的高级技术方案详解
 
 在React开发中，经常会遇到需要将页面内容导出为图片的需求，特别是当导出内容与当前页面展示不同时。本文将详细介绍几种主流的技术实现方案，帮助开发者选择最适合的解决方案。
 
-## 前言
+## 1.1. 前言
 
 传统的DOM截图方案往往局限于当前页面的可见内容，但在实际业务中，我们经常需要：
 
@@ -27,11 +27,11 @@ tags:
 
 本文将介绍三种主流的技术方案来解决这些问题。
 
-## 方案一：html2canvas + 隐藏DOM
+## 1.2. 方案一：html2canvas + 隐藏DOM
 
 这是最常用且最灵活的方案，通过创建隐藏的DOM容器来渲染专门的导出内容。
 
-### 基础实现
+### 1.2.1. 基础实现
 
 ```typescript
 import html2canvas from "html2canvas";
@@ -122,7 +122,7 @@ export const useExportImage = () => {
 };
 ```
 
-### 使用示例
+### 1.2.2. 使用示例
 
 ```typescript
 import React from 'react'
@@ -189,7 +189,7 @@ const ReportPage: React.FC = () => {
 }
 ```
 
-### 高级用法：支持异步数据加载
+### 1.2.3. 高级用法：支持异步数据加载
 
 ```typescript
 const exportWithAsyncData = async (
@@ -266,11 +266,11 @@ const exportWithAsyncData = async (
 };
 ```
 
-## 方案二：React Portal
+## 1.3. 方案二：React Portal
 
 React Portal提供了一种更优雅的方式来渲染导出内容，特别适合需要与页面内容共享状态的场景。
 
-### Portal基础实现
+### 1.3.1. Portal基础实现
 
 ```typescript
 import React, { useState, useEffect } from "react";
@@ -353,7 +353,7 @@ const ExportPortal: React.FC<{
 };
 ```
 
-### Portal使用示例
+### 1.3.2. Portal使用示例
 
 ```typescript
 const ReportWithPortal: React.FC = () => {
@@ -405,7 +405,7 @@ const ReportWithPortal: React.FC = () => {
 }
 ```
 
-### 高级Portal：可视化调试
+### 1.3.3. 高级Portal：可视化调试
 
 ```typescript
 const DebugableExportPortal: React.FC<{
@@ -481,11 +481,11 @@ const DebugableExportPortal: React.FC<{
 }
 ```
 
-## 方案三：虚拟DOM渲染
+## 1.4. 方案三：虚拟DOM渲染
 
 虚拟DOM方案通过React的服务端渲染功能，将组件渲染为HTML字符串，然后转换为图片。
 
-### 基础虚拟DOM实现
+### 1.4.1. 基础虚拟DOM实现
 
 ```typescript
 import { renderToString } from "react-dom/server";
@@ -589,7 +589,7 @@ export const exportVirtualDOM = async (
 };
 ```
 
-### 虚拟DOM使用示例
+### 1.4.2. 虚拟DOM使用示例
 
 ```typescript
 import React from 'react'
@@ -694,7 +694,7 @@ const ReportPage: React.FC = () => {
 }
 ```
 
-### 高级虚拟DOM：支持CSS样式注入
+### 1.4.3. 高级虚拟DOM：支持CSS样式注入
 
 ```typescript
 interface VirtualDOMExportOptions extends ExportOptions {
@@ -806,7 +806,7 @@ export const exportVirtualDOMWithCSS = async (
 };
 ```
 
-## 方案对比与选择建议
+## 1.5. 方案对比与选择建议
 
 | 方案        | 优点                            | 缺点                          | 适用场景                   |
 | ----------- | ------------------------------- | ----------------------------- | -------------------------- |
@@ -814,7 +814,7 @@ export const exportVirtualDOMWithCSS = async (
 | **Portal**  | 代码结构清晰，易于调试          | 仍需要DOM渲染，内存占用较高   | 需要与页面状态共享的场景   |
 | **虚拟DOM** | 性能最好，无需DOM渲染           | 不支持复杂交互，样式限制多    | 静态内容、服务端渲染友好   |
 
-### 选择建议
+### 1.5.1. 选择建议
 
 1. **简单静态内容**: 首选虚拟DOM方案
 2. **复杂交互组件**: 选择隐藏DOM方案
@@ -822,9 +822,9 @@ export const exportVirtualDOMWithCSS = async (
 4. **性能要求高**: 优先考虑虚拟DOM方案
 5. **样式复杂**: 选择隐藏DOM或Portal方案
 
-## 性能优化建议
+## 1.6. 性能优化建议
 
-### 1. 避免重复创建容器
+### 1.6.1. 避免重复创建容器
 
 ```typescript
 // 使用单例模式管理导出容器
@@ -858,7 +858,7 @@ class ExportManager {
 }
 ```
 
-### 2. 预加载图片资源
+### 1.6.2. 预加载图片资源
 
 ```typescript
 const preloadImages = async (imageSrcs: string[]) => {
@@ -874,7 +874,7 @@ const preloadImages = async (imageSrcs: string[]) => {
 };
 ```
 
-### 3. 使用Web Workers
+### 1.6.3. 使用Web Workers
 
 ```typescript
 // worker.js
@@ -905,7 +905,7 @@ const exportInWorker = async (imageData: any, options: any) => {
 };
 ```
 
-## 总结
+## 1.7. 总结
 
 本文详细介绍了三种React DOM导出图片的技术方案：
 

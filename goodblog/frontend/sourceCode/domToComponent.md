@@ -12,13 +12,13 @@ tags:
   - react
 ---
 
-# 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制
+# 1. 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制
 
 在现代前端开发中，我们经常需要调试复杂的组件树结构。有时候，我们会遇到这样的场景：看到页面上的某个DOM元素，想要快速定位到对应的React或Vue组件。本文将深入探讨如何实现这一功能，并详细解析其背后的技术原理。
 
-## 技术背景
+## 1.1. 技术背景
 
-### 为什么需要DOM到组件的映射？
+### 1.1.1. 为什么需要DOM到组件的映射？
 
 在开发和调试过程中，我们经常面临以下挑战：
 
@@ -26,7 +26,7 @@ tags:
 2. **性能分析**：需要了解某个DOM元素对应的组件渲染性能
 3. **开发工具增强**：为浏览器扩展或开发工具提供更好的用户体验
 
-### 技术挑战
+### 1.1.2. 技术挑战
 
 实现DOM到组件的映射面临以下技术挑战：
 
@@ -34,9 +34,9 @@ tags:
 - **版本兼容性**：不同版本的框架内部实现可能不同
 - **生产环境限制**：某些调试信息只在开发环境可用
 
-## React实现方案
+## 1.2. React实现方案
 
-### React Fiber架构简介
+### 1.2.1. React Fiber架构简介
 
 React 16引入了Fiber架构，这是一个全新的协调算法实现。Fiber将渲染工作分解为小的工作单元，使得React能够：
 
@@ -45,7 +45,7 @@ React 16引入了Fiber架构，这是一个全新的协调算法实现。Fiber�
 - 重用之前完成的工作
 - 如果不再需要则中止工作
 
-### 核心数据结构
+### 1.2.2. 核心数据结构
 
 ```typescript
 interface FiberNode {
@@ -64,7 +64,7 @@ interface FiberNode {
 }
 ```
 
-### Fiber标签类型
+### 1.2.3. Fiber标签类型
 
 ```typescript
 // Fiber标签的近似值（具体数值可在React源码中查看）
@@ -73,9 +73,9 @@ const ClassComponent = 1; // 类组件
 const HostComponent = 5; // 原生DOM元素
 ```
 
-### 实现原理详解
+### 1.2.4. 实现原理详解
 
-#### 第一步：获取Fiber节点引用
+#### 1.2.4.1. 第一步：获取Fiber节点引用
 
 React会在DOM元素上附加一个Fiber节点的引用，键名通常以`__reactFiber$`或`__reactInternalInstance$`开头：
 
@@ -87,7 +87,7 @@ const fiberKey = Object.keys(element).find(
 );
 ```
 
-#### 第二步：遍历Fiber树
+#### 1.2.4.2. 第二步：遍历Fiber树
 
 一旦获得了Fiber节点，我们就可以通过`return`属性向上遍历Fiber树：
 
@@ -104,14 +104,14 @@ while (currentFiber && components.length < maxComponents) {
 }
 ```
 
-#### 第三步：组件信息提取
+#### 1.2.4.3. 第三步：组件信息提取
 
 对于不同类型的组件，我们采用不同的策略提取信息：
 
 1. **常规组件**：直接从`type`属性获取组件定义
 2. **服务端组件(RSC)**：通过`_debugOwner`属性识别
 
-### 完整实现代码
+### 1.2.5. 完整实现代码
 
 ```typescript
 export interface ComponentInfo {
@@ -201,7 +201,7 @@ export function getReactComponentHierarchy(
 }
 ```
 
-### React流程图
+### 1.2.6. React流程图
 
 ```mermaid
 graph TD
@@ -232,13 +232,13 @@ graph TD
 
 ```
 
-## Vue实现方案
+## 1.3. Vue实现方案
 
-### Vue响应式系统简介
+### 1.3.1. Vue响应式系统简介
 
 Vue采用了不同于React的架构设计。Vue的响应式系统基于依赖追踪，每个组件实例都会在渲染过程中追踪其依赖的响应式数据。Vue在DOM元素上保留了对组件实例的引用，这为我们提供了反向追踪的可能。
 
-### Vue版本差异
+### 1.3.2. Vue版本差异
 
 Vue在不同版本中使用了不同的内部属性来存储组件实例：
 
@@ -246,9 +246,9 @@ Vue在不同版本中使用了不同的内部属性来存储组件实例：
 - **Vue 2**：使用`__vue__`属性
 - **Vue 1**：使用`__vms__`属性（数组形式）
 
-### 实现原理详解
+### 1.3.3. 实现原理详解
 
-#### Vue 3的实现策略
+#### 1.3.3.1. Vue 3的实现策略
 
 Vue 3在DOM元素上通过`__vueParentComponent`属性保存父组件的引用：
 
@@ -260,7 +260,7 @@ if (parentComponent?.type?.__name) {
 }
 ```
 
-#### Vue 2/1的实现策略
+#### 1.3.3.2. Vue 2/1的实现策略
 
 对于Vue 2和Vue 1，我们需要检查`__vue__`和`__vms__`属性：
 
@@ -276,7 +276,7 @@ if (
 }
 ```
 
-#### 组件名称提取策略
+#### 1.3.3.3. 组件名称提取策略
 
 Vue组件的名称可能来自多个源：
 
@@ -285,7 +285,7 @@ Vue组件的名称可能来自多个源：
 3. `vm.$options._componentTag` - 组件标签名
 4. 默认为`AnonymousComponent`
 
-### 完整实现代码
+### 1.3.4. 完整实现代码
 
 ```typescript
 export interface ComponentInfo {
@@ -426,7 +426,7 @@ export function getSelectedElementsPrompt(elements: HTMLElement[]) {
 }
 ```
 
-### Vue流程图
+### 1.3.5. Vue流程图
 
 ```mermaid
 graph TD
@@ -475,11 +475,11 @@ graph TD
 
 ```
 
-## 工具函数实现
+## 1.4. 工具函数实现
 
 为了更好地使用这些核心功能，我们还提供了一些辅助工具函数：
 
-### 格式化组件层次结构
+### 1.4.1. 格式化组件层次结构
 
 ```typescript
 /**
@@ -504,7 +504,7 @@ export function formatComponentHierarchy(
 }
 ```
 
-### 获取元素注解
+### 1.4.2. 获取元素注解
 
 ```typescript
 /**
@@ -531,9 +531,9 @@ export function getSelectedElementAnnotation(
 }
 ```
 
-## 实际应用场景
+## 1.5. 实际应用场景
 
-### 1. 浏览器开发工具扩展
+### 1.5.1. 浏览器开发工具扩展
 
 这些函数可以用于开发浏览器扩展，帮助开发者快速定位页面元素对应的组件：
 
@@ -563,7 +563,7 @@ document.addEventListener("click", (event) => {
 });
 ```
 
-### 2. 自动化测试
+### 1.5.2. 自动化测试
 
 在端到端测试中，可以使用这些函数来验证组件的正确渲染：
 
@@ -577,7 +577,7 @@ function verifyComponentRendered(selector: string, expectedComponent: string) {
 }
 ```
 
-### 3. 性能分析工具
+### 1.5.3. 性能分析工具
 
 结合性能监控，可以分析特定组件的渲染性能：
 
@@ -592,16 +592,16 @@ function analyzeComponentPerformance(element: HTMLElement) {
 }
 ```
 
-## 注意事项和最佳实践
+## 1.6. 注意事项和最佳实践
 
-### 1. 开发环境限制
+### 1.6.1. 开发环境限制
 
 这些函数主要依赖于框架在开发环境中提供的调试信息：
 
 - **React**: Fiber节点的调试属性在生产环境中可能被优化掉
 - **Vue**: `__vue__`等属性只在开发构建中可用
 
-### 2. 版本兼容性
+### 1.6.2. 版本兼容性
 
 不同版本的框架可能有不同的内部实现：
 
@@ -609,13 +609,13 @@ function analyzeComponentPerformance(element: HTMLElement) {
 - 提供降级策略处理不支持的版本
 - 监控框架更新，及时调整实现
 
-### 3. 性能考虑
+### 1.6.3. 性能考虑
 
 - 避免在高频事件（如`mousemove`）中调用这些函数
 - 考虑添加缓存机制减少重复计算
 - 在生产环境中谨慎使用
 
-### 4. 错误处理
+### 1.6.4. 错误处理
 
 ```typescript
 function safeGetComponentHierarchy(element: HTMLElement) {
@@ -630,7 +630,7 @@ function safeGetComponentHierarchy(element: HTMLElement) {
 }
 ```
 
-## 总结
+## 1.7. 总结
 
 通过深入理解React Fiber和Vue的内部机制，我们实现了从DOM元素反向追踪到组件的功能。这项技术在开发工具、调试、测试等场景中都有重要应用价值。
 

@@ -11,7 +11,7 @@ tags:
   - react
 ---
 
-## DSL设计理念
+## 1. DSL设计理念
 
 这个组件库采用了**流式接口(Fluent Interface)**的DSL设计，核心思想是让字段配置写起来像自然语言一样流畅：
 
@@ -22,9 +22,9 @@ F("年龄", "age").Number().Required().Align("right").W(100).val;
 F("状态", "status").Select({ data: options }).Required().Hidden().val;
 ```
 
-## 链式调用的实现机制
+## 2. 链式调用的实现机制
 
-### 1. 基础设计模式 - 建造者模式
+### 1.2.1. 基础设计模式 - 建造者模式
 
 所有字段创建器都继承自 `FieldCreator` 基类：
 
@@ -74,7 +74,7 @@ export class FieldCreator<FieldProps = AnyObject, WrapperProps = AnyObject> {
 }
 ```
 
-### 2. 继承扩展 - 不同场景的字段创建器
+### 1.2.2. 继承扩展 - 不同场景的字段创建器
 
 ```typescript
 // 表单字段创建器 - 支持编辑功能
@@ -104,7 +104,7 @@ export const D = (...params) => new FieldCreator(...params); // 描述
 export const ET = (...params) => new EditableFieldCreator(...params); // 可编辑表格
 ```
 
-### 3. 方法分类 - 不同职责的链式方法
+### 1.2.3. 方法分类 - 不同职责的链式方法
 
 ```typescript
 export class FieldCreator {
@@ -163,9 +163,9 @@ export class FieldCreator {
 }
 ```
 
-## DSL到配置项的转换机制
+## 3. DSL到配置项的转换机制
 
-### 1. PipeGetter机制 - 统一的配置管道
+### 1.3.1. PipeGetter机制 - 统一的配置管道
 
 核心是 `PipeGetter<T>` 类型，支持静态配置和动态函数：
 
@@ -189,7 +189,7 @@ export function getPipeGetterValue<T extends AnyObject, Extra = AnyObject>(
 }
 ```
 
-### 2. 配置累积机制 - \_setPipeGetter
+### 1.3.2. 配置累积机制 - \_setPipeGetter
 
 ```typescript
 
@@ -214,7 +214,7 @@ protected _setPipeGetter<Field extends 'fieldProps' | 'formItemProps'>(
 }
 ```
 
-### 3. 最终配置对象结构
+### 1.3.3. 最终配置对象结构
 
 经过DSL链式调用后，最终生成标准的 `FieldConfigType` 配置：
 
@@ -240,9 +240,9 @@ export type FieldConfigType<FieldProps = AnyObject, WrapperProps = AnyObject> = 
 }
 ```
 
-## 配置到渲染的转换过程
+## 4. 配置到渲染的转换过程
 
-### 1. 表单渲染器的使用
+### 1.4.1. 表单渲染器的使用
 
 ```typescript
 // 表单中的配置解析
@@ -274,7 +274,7 @@ export function FormItemElWrapper(props: { field: FieldConfigType }) {
 }
 ```
 
-### 2. 表格渲染器的使用
+### 1.4.2. 表格渲染器的使用
 
 ```typescript
 // 表格中的配置解析
@@ -299,7 +299,7 @@ export function TableColumnMapper(props: { fields: FieldConfigType[] }) {
 }
 ```
 
-### 3. 描述列表渲染器的使用
+### 1.4.3. 描述列表渲染器的使用
 
 ```typescript
 // 描述列表中的配置解析
@@ -320,7 +320,7 @@ export function DescriptionsRender(props: { fields: FieldConfigType[] }) {
 }
 ```
 
-## DSL设计的核心优势
+## 5. DSL设计的核心优势
 
 1. **类型安全**: TypeScript 提供完整的类型推导和检查
 2. **配置复用**: 同一份配置可以在不同渲染器间复用

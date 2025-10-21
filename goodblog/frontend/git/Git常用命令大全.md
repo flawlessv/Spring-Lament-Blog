@@ -25,7 +25,7 @@ recommend: false
 
 ---
 
-# 常用 Git 命令指南
+# 1. 常用 Git 命令指南
 
 工作里习惯了通过 Fork（app）使用 Git，这两个月的时间里开始熟悉 Git 的命令行客户端。虽然命令行在视觉上不如 UI 直观，但命令行可以保持双手持续输入不离开键盘，熟悉命令行也更利于寻找最适合自己的 GUI。
 
@@ -33,21 +33,21 @@ recommend: false
 
 下面的内容包括了 Git 常用的命令，以及各命令或详或简但有必要的解释说明，其中也包括了很多相关的引用链接用于扩展阅读。
 
-## 推送和拉取
+## 1.1. 推送和拉取
 
 推送：
 
 ```
-# 推送远程，并设置当前分支的 upstream 为 main，设置之后每次推送当前分支只需要 git push 即可
+# 2. 推送远程，并设置当前分支的 upstream 为 main，设置之后每次推送当前分支只需要 git push 即可
 git push -u origin main
 
-# 推送远程至 upstream，如果没有设置，在 git 2.0 之前，所有同名分支被推送，git 2.0 之后，报错
+# 3. 推送远程至 upstream，如果没有设置，在 git 2.0 之前，所有同名分支被推送，git 2.0 之后，报错
 git push
 
-# 强制推送
+# 4. 强制推送
 git push -f
 
-# 推送至远程，但是设置远程分支名称
+# 5. 推送至远程，但是设置远程分支名称
 git push origin hehe:haha
 
 ```
@@ -83,18 +83,18 @@ git config push.default nothing
 - [`push.default`](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fdocs%2Fgit-config%23Documentation%2Fgit-config.txt-pushdefault "https://git-scm.com/docs/git-config#Documentation/git-config.txt-pushdefault")：社区文档的解释；
 - [What is the difference between 'git pull' and 'git fetch'?](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fquestions%2F292357%2Fwhat-is-the-difference-between-git-pull-and-git-fetch "https://stackoverflow.com/questions/292357/what-is-the-difference-between-git-pull-and-git-fetch")：`git pull`和`git fetch`的区别，`git pull = git fetch + git merge FETCH_HEAD`。
 
-## 分支
+## 5.1. 分支
 
 查看分支：
 
 ```
-# 查看所有分支
+# 6. 查看所有分支
 git branch -a
 
-# 查看本地分支
+# 7. 查看本地分支
 git branch
 
-# 查看远程分支
+# 8. 查看远程分支
 git branch -r
 
 ```
@@ -102,13 +102,13 @@ git branch -r
 删除分支：
 
 ```
-# 删除本地分支（删除不了未合并过的分支）
+# 9. 删除本地分支（删除不了未合并过的分支）
 git branch -d feature-album
 
-# 删除未合并过的本地分支
+# 10. 删除未合并过的本地分支
 git branch -D feature-album # 大写的 D
 
-# 删除远程分支
+# 11. 删除远程分支
 git push origin --delete feature-album # 第一种方法
 git push origin :refs/branch/feature-album # 第二种方法，这种方法适用在，分支名和标签名相同时，执行第一种方法会冲突报错，则使用这个方法，因为第一种方法也可以用来删除标签
 
@@ -124,18 +124,18 @@ git checkout -b <local-branch> origin/<remote-branch> # 拉取远程指定分支
 重命名分支（本地）：
 
 ```
-# 重命名当前分支
+# 12. 重命名当前分支
 git branch -m <new_name> # -m 是 --move 短格式
 
-# 重命名指定分支
+# 13. 重命名指定分支
 git branch -m <old_name> <new_name>
 
-# 在大小写无感的文件系统中重命名分支
+# 14. 在大小写无感的文件系统中重命名分支
 git branch -M <New_Name> # 如果不是用 -M，会报错 fatal: 一个分支名 'new_name' 已经存在
 
 ```
 
-## 克隆
+## 14.1. 克隆
 
 ```
 git clone git@github.com:wswmsword/git-learning.git
@@ -187,7 +187,7 @@ git pull origin main
 - [sparse_checkout.sh](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Ftrilinos%2FTrilinos%2Fblob%2Fmaster%2Fsparse_checkout.sh "https://github.com/trilinos/Trilinos/blob/master/sparse_checkout.sh")：第一条中提到的脚本。
 - [sparse-checkout](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fdocs%2Fgit-sparse-checkout "https://git-scm.com/docs/git-sparse-checkout")：git 的稀疏检出社区文档。
 
-## 提交
+## 14.2. 提交
 
 暂存：
 
@@ -203,31 +203,31 @@ git add --ignore-removal . # 除已删除的文件外，暂存所有的文件
 提交：
 
 ```
-# 提交，添加信息
+# 15. 提交，添加信息
 git commit -m "junior commit"
 
-# 提交指定文件（这里的文件是 file-abc）
+# 16. 提交指定文件（这里的文件是 file-abc）
 git commit file-abc -m "add single file"
 
-# 提交，打开默认编辑器编辑提交信息
+# 17. 提交，打开默认编辑器编辑提交信息
 git commit
 
-# 暂存已跟踪的文件，同时提交（省略了 git add 命令，但是这里只能暂存已跟踪文件）
+# 18. 暂存已跟踪的文件，同时提交（省略了 git add 命令，但是这里只能暂存已跟踪文件）
 git commit -am "junior commit"
 
-# 提交，打开默认编辑器编辑提交信息，包含 diff 信息
+# 19. 提交，打开默认编辑器编辑提交信息，包含 diff 信息
 git commit -v
 
-# 提交，允许空提交信息
+# 20. 提交，允许空提交信息
 git commit --allow-empty-message
 
-# 修改上一次提交
+# 21. 修改上一次提交
 git commit --amend -m "better message was committed"
 
-# 打开默认编辑器，修改上次提交信息
+# 22. 打开默认编辑器，修改上次提交信息
 git commit --amend
 
-# 修改上次提交的邮箱
+# 23. 修改上次提交的邮箱
 git commit --amend --author "New Authorname <authoremail@mydomain.com>"
 
 ```
@@ -256,22 +256,22 @@ git checkout <commit-hash>
 - [What's the difference between `git add .` and `git add -u`?](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fa%2F2190440 "https://stackoverflow.com/a/2190440")。
 - [git add .与git add -A的区别(版本不同时候的区别)](https://link.juejin.cn/?target=https%3A%2F%2Fblog.csdn.net%2Fmy466879168%2Farticle%2Fdetails%2F107584358 "https://blog.csdn.net/my466879168/article/details/107584358")：1.x 和 2.x 版本之间 add 命令的区别。
 
-## 合并
+## 23.1. 合并
 
 ```
-# 指定分支合并到当前分支
+# 24. 指定分支合并到当前分支
 git merge feature-album
 
-# 安全合并
+# 25. 安全合并
 git merge --no-ff --no-commit my-branch # --no-commit 不自动提交，--no-ff 不使用 fast-forward（快进）
 
-# 合并的时候把一个分支合并成一条记录
+# 26. 合并的时候把一个分支合并成一条记录
 git merge --squash feature-album
 
-# 合并分支不提交记录
+# 27. 合并分支不提交记录
 git merge feature-album --no-commit
 
-# 终止合并（解决冲突的阶段）
+# 28. 终止合并（解决冲突的阶段）
 git merge --abort
 
 ```
@@ -397,7 +397,7 @@ git checkout testing-merge-file features/album/audio-formats # 当前分支的�
 - [3.2 Git 分支 - 分支的新建与合并](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fbook%2Fzh%2Fv2%2FGit-%25E5%2588%2586%25E6%2594%25AF-%25E5%2588%2586%25E6%2594%25AF%25E7%259A%2584%25E6%2596%25B0%25E5%25BB%25BA%25E4%25B8%258E%25E5%2590%2588%25E5%25B9%25B6 "https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%9A%84%E6%96%B0%E5%BB%BA%E4%B8%8E%E5%90%88%E5%B9%B6")：社区文档；
 - [Git Merge Fast-Forward vs Git Rebase](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fa%2F70627815 "https://stackoverflow.com/a/70627815")：StackOverflow 上关于`fast-forward`和`rebase`区别的答案。
 
-## 变基 rebase
+## 28.1. 变基 rebase
 
 > 首先要提一下 rebase 的意思，我擅自的直譯是「重新 (re-) 定義某個 branch 的參考基準 (base)」。把這個意思先記起來，比較容易理解 rebase 的運作原理。就好比移花接木那樣（稼接），把某個樹枝接到別的樹枝。——[Git-rebase 小筆記](https://link.juejin.cn/?target=https%3A%2F%2Fblog.yorkxin.org%2Fposts%2Fgit-rebase.html "https://blog.yorkxin.org/posts/git-rebase.html")
 
@@ -419,36 +419,36 @@ pick 0d72816 add album/tracks
 pick d49335e add album/audio-formats
 pick 4f4a863 add album/types
 
-# 变基 22bafc6..4f4a863 到 22bafc6（5 个提交）
+# 29. 变基 22bafc6..4f4a863 到 22bafc6（5 个提交）
 #
-# 命令:
-# p, pick <提交> = 使用提交
-# r, reword <提交> = 使用提交，但编辑提交说明
-# e, edit <提交> = 使用提交，但停止以便在 shell 中修补提交
-# s, squash <提交> = 使用提交，但挤压到前一个提交
+# 30. 命令:
+# 31. p, pick <提交> = 使用提交
+# 32. r, reword <提交> = 使用提交，但编辑提交说明
+# 33. e, edit <提交> = 使用提交，但停止以便在 shell 中修补提交
+# 34. s, squash <提交> = 使用提交，但挤压到前一个提交
 
-# f, fixup [-C | -c] <提交> = 类似于 "squash"，但只保留前一个提交
+# 35. f, fixup [-C | -c] <提交> = 类似于 "squash"，但只保留前一个提交
 
-#                    的提交说明，除非使用了 -C 参数，此情况下则只
-#                    保留本提交说明。使用 -c 和 -C 类似，但会打开
-#                    编辑器修改提交说明
-# x, exec <命令> = 使用 shell 运行命令（此行剩余部分）
-# b, break = 在此处停止（使用 'git rebase --continue' 继续变基）
-# d, drop <提交> = 删除提交
-# l, label <label> = 为当前 HEAD 打上标记
-# t, reset <label> = 重置 HEAD 到该标记
+# 36. 的提交说明，除非使用了 -C 参数，此情况下则只
+# 37. 保留本提交说明。使用 -c 和 -C 类似，但会打开
+# 38. 编辑器修改提交说明
+# 39. x, exec <命令> = 使用 shell 运行命令（此行剩余部分）
+# 40. b, break = 在此处停止（使用 'git rebase --continue' 继续变基）
+# 41. d, drop <提交> = 删除提交
+# 42. l, label <label> = 为当前 HEAD 打上标记
+# 43. t, reset <label> = 重置 HEAD 到该标记
 
-# m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
+# 44. m, merge [-C <commit> | -c <commit>] <label> [# <oneline>]
 
-# .       创建一个合并提交，并使用原始的合并提交说明（如果没有指定
-# .       原始提交，使用注释部分的 oneline 作为提交说明）。使用
-# .       -c <提交> 可以编辑提交说明。
+# 45. 创建一个合并提交，并使用原始的合并提交说明（如果没有指定
+# 46. 原始提交，使用注释部分的 oneline 作为提交说明）。使用
+# 47. -c <提交> 可以编辑提交说明。
 #
-# 可以对这些行重新排序，将从上至下执行。
+# 48. 可以对这些行重新排序，将从上至下执行。
 #
-# 如果您在这里删除一行，对应的提交将会丢失。
+# 49. 如果您在这里删除一行，对应的提交将会丢失。
 #
-# 然而，如果您删除全部内容，变基操作将会终止。
+# 50. 然而，如果您删除全部内容，变基操作将会终止。
 #
 
 ```
@@ -462,7 +462,7 @@ s 0d72816 add album/tracks
 s d49335e add album/audio-formats
 s 4f4a863 add album/types
 
-# ...省略
+# 51. 省略
 
 ```
 
@@ -472,28 +472,28 @@ s 4f4a863 add album/types
 
 ```
 add album features
-# 这是一个 5 个提交的组合。
-# 这是第一个提交说明：
+# 52. 这是一个 5 个提交的组合。
+# 53. 这是第一个提交说明：
 
 add album/history
 
-# 这是提交说明 #2：
+# 54. 这是提交说明 #2：
 
 add album/length
 
-# 这是提交说明 #3：
+# 55. 这是提交说明 #3：
 
 add album/tracks
 
-# 这是提交说明 #4：
+# 56. 这是提交说明 #4：
 
 add album/audio-formats
 
-# 这是提交说明 #5：
+# 57. 这是提交说明 #5：
 
 add album/types
 
-# ...省略
+# 58. 省略
 
 ```
 
@@ -525,7 +525,7 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 - [“git 小白求助，怎样优雅的回滚过去某次错误的 merge，并保留 merge 之后 commit 的改动”](https://link.juejin.cn/?target=https%3A%2F%2Fwww.v2ex.com%2Ft%2F883095 "https://www.v2ex.com/t/883095")；
 - [Git-rebase 小筆記](https://link.juejin.cn/?target=https%3A%2F%2Fblog.yorkxin.org%2Fposts%2Fgit-rebase.html "https://blog.yorkxin.org/posts/git-rebase.html")。
 
-## 文件的四种状态
+## 58.1. 文件的四种状态
 
 `Untracked`、`Staged`、`Unmodified`、`Modified`
 
@@ -540,7 +540,7 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 
 也有文档解释中多出第五种状态---：“[已提交（committed）](https://link.juejin.cn/?target=http%3A%2F%2Fwkevin.github.io%2FGitChat%2Fgitchat.html%23%25E4%25BF%25AE%25E6%2594%25B9%25E5%25AE%258C%25E4%25BA%2586%25E4%25B8%25BA%25E4%25BB%2580%25E4%25B9%2588%25E4%25B8%258D%25E6%2598%25AF%25E7%259B%25B4%25E6%258E%25A5%25E6%258F%2590%25E4%25BA%25A4%25E8%2580%258C%25E6%2598%25AF-git-add "http://wkevin.github.io/GitChat/gitchat.html#%E4%BF%AE%E6%94%B9%E5%AE%8C%E4%BA%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%98%AF%E7%9B%B4%E6%8E%A5%E6%8F%90%E4%BA%A4%E8%80%8C%E6%98%AF-git-add")”，已提交相当于`Unmodified`未修改状态。
 
-## 日志
+## 58.2. 日志
 
 简洁日志，包括短 id 和提交信息：“`git log --oneline`”。
 
@@ -548,8 +548,8 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 
 ```
 git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-# 这一段命令很长，为了方便，后面介绍了用别名代替这条命令的方法
-# --abbrev-commit 的意思是，展示缩写的 commit_id，abbreviation
+# 59. 这一段命令很长，为了方便，后面介绍了用别名代替这条命令的方法
+# 60. --abbrev-commit 的意思是，展示缩写的 commit_id，abbreviation
 
 ```
 
@@ -571,16 +571,16 @@ git reflog
 ```
 
 ```
-# 查看某一个文件的提交记录
+# 61. 查看某一个文件的提交记录
 git log -p <file> # -p 查看具体的 diff
 
-# 展示所有的提交记录，例如在某个分支需要查看最新的提交信息时，可以使用这条命令
+# 62. 展示所有的提交记录，例如在某个分支需要查看最新的提交信息时，可以使用这条命令
 git log --oneline --all # 参数 --all 表示展示所有提交记录
 
-# 查看指定分支的提交记录
+# 63. 查看指定分支的提交记录
 git log --oneline <branch_name> # 这条命令会展示包括合并分支的所有细节提交记录，可以用选项 --first-parent 来只展示合并节点，方便阅读
 
-# 查看指定分支的提交记录（合并分支的提交记录只选择展示最后的合并节点）
+# 64. 查看指定分支的提交记录（合并分支的提交记录只选择展示最后的合并节点）
 git log --oneline --first-parent <branch_name>
 
 ```
@@ -636,7 +636,7 @@ git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 - [Pretty Git branch graphs](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fquestions%2F1057564%2Fpretty-git-branch-graphs "https://stackoverflow.com/questions/1057564/pretty-git-branch-graphs")。
 
-## 忽略文件
+## 64.1. 忽略文件
 
 有两种忽略文件或文件夹的方法，一，编辑项目内的`.git/info/exclude`文件，在文件里添加需要忽略的文件或文件夹，二，在项目里添加`.gitignore`文件，在文件里添加需要忽略的文件或文件夹。
 
@@ -656,21 +656,21 @@ git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Crese
 - [Git常用命令整理八(忽略文件)](https://link.juejin.cn/?target=http%3A%2F%2Fniliu.me%2Farticles%2F2841.html "http://niliu.me/articles/2841.html")；
 - “[When would you use .git/info/exclude instead of .gitignore to exclude files?](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fquestions%2F22906851%2Fwhen-would-you-use-git-info-exclude-instead-of-gitignore-to-exclude-files "https://stackoverflow.com/questions/22906851/when-would-you-use-git-info-exclude-instead-of-gitignore-to-exclude-files")”。
 
-## 比较差异
+## 64.2. 比较差异
 
 ```
-# 对比暂存区差异
+# 65. 对比暂存区差异
 git diff --staged
 
-# 对比工作区差异
+# 66. 对比工作区差异
 git diff
 
-# 和上一次提交对比
+# 67. 和上一次提交对比
 git diff HEAD~
 
 ```
 
-## diff 工具
+## 67.1. diff 工具
 
 - 下载 diff 前端，这里是 [Meld](https://link.juejin.cn/?target=http%3A%2F%2Fmeldmerge.org%2F "http://meldmerge.org/")（其它 diff 工具：[Beyond Compare](https://link.juejin.cn/?target=https%3A%2F%2Fwww.scootersoftware.com%2F "https://www.scootersoftware.com/")、[Araxis Merge](https://link.juejin.cn/?target=https%3A%2F%2Fwww.araxis.com%2F "https://www.araxis.com/")、[DiffMerge](https://link.juejin.cn/?target=http%3A%2F%2Fwww.sourcegear.com%2Fdiffmerge%2Fdownloads.php "http://www.sourcegear.com/diffmerge/downloads.php")）
 - 添加配置，编辑`~/.gitconfig`
@@ -695,7 +695,7 @@ git diff HEAD~
 
 这样设置后，执行`git difftool`打开 diff 工具进行文件比较。
 
-## 补丁
+## 67.2. 补丁
 
 生成一个补丁文件，自己或者分享其他人使用，举例：
 
@@ -725,49 +725,49 @@ git apply patch-abc # 添加补丁，如果不能添加会提示失败
 
 ```
 
-## 标签
+## 67.3. 标签
 
 标签分为“附注标签”和“轻量标签”，附注标签包含很多信息，例如标签的作者、邮箱、日期时间等，而轻量标签只是简单的引用，是指向标签所在 commit 的指针。
 
 ```
-# 查看本地标签
+# 68. 查看本地标签
 git tag
 
-# 查看远程标签
+# 69. 查看远程标签
 git ls-remote --tags origin
 
-# 特定模式（通配符）查找标签
+# 70. 特定模式（通配符）查找标签
 git tag -l "chill-v*"
 
-# 打标签（附注标签，包含标签作者、邮箱等信息，annotated tag）
+# 71. 打标签（附注标签，包含标签作者、邮箱等信息，annotated tag）
 git tag -a chill-tag -m "truly hot" # 如果添加标签信息，只有 -m 参数的时候，不加 -a，生成的标签同样是附注标签
 
-# 打标签（轻量标签，commit 的指针，lightweight tag）
+# 72. 打标签（轻量标签，commit 的指针，lightweight tag）
 git tag hot-day # 当前 commit 生成名为 hot-day 的标签
 
-# 给之前的 commit 打标签
+# 73. 给之前的 commit 打标签
 git tag -a old-tag "all those years ago" <commit_id>
 
-# 推送所有本地标签
+# 74. 推送所有本地标签
 git push origin --tags
 
-# 推送指定标签
+# 75. 推送指定标签
 git push origin more-tag # 推送名为 more-tag 的标签
 
-# 删除本地标签
+# 76. 删除本地标签
 git tag -d more-tag
 
-# 删除远程标签
+# 77. 删除远程标签
 git push origin --delete more-tag # 第一种方法
 git push origin :refs/tags/more-tag # 第二种方法，这种方法适用在，分支名和标签名相同时，执行第一种方法会冲突报错，则使用这个方法
 
-# 检出标签
+# 78. 检出标签
 git checkout hot-day
 
-# 查看标签的详细信息
+# 79. 查看标签的详细信息
 git show hot-day
 
-# 找到删除的标签所在的 commit
+# 80. 找到删除的标签所在的 commit
 
 git fsck --unreachable | grep tag
 
@@ -775,40 +775,40 @@ git fsck --unreachable | grep tag
 
 点击查看[开源项目 React 创建的所有标签](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Ffacebook%2Freact%2Ftags "https://github.com/facebook/react/tags")。
 
-## 贮藏
+## 80.1. 贮藏
 
 ```
-# 查看贮藏列表
+# 81. 查看贮藏列表
 git stash list
 
-# 添加贮藏，添加信息
+# 82. 添加贮藏，添加信息
 git stash push -m "stash then go the other branch to fix bug" # 不添加信息，直接执行 git stash push
 
-# 删除贮藏
+# 83. 删除贮藏
 git stash drop stash@{0} # 删除贮藏 stash@{0}，stash@{0} 代表贮藏的编号，所有贮藏编号使用 git stash list 查看，如果不指定 stash@{0} 将删除最近的贮藏
 
-# 应用贮藏
+# 84. 应用贮藏
 git stash apply stash@{0} # 不指定 stash@{0}，即直接执行 git stash apply 将应用最顶部（最近添加的）贮藏
 
-# 推出贮藏（应用并删除最顶部贮藏）
+# 85. 推出贮藏（应用并删除最顶部贮藏）
 git stash pop
 
-# 添加贮藏（包括未跟踪文件）
+# 86. 添加贮藏（包括未跟踪文件）
 git stash -u # -u 即 --include-untracked，`git stash` == `git stash push`，如果要添加信息，添加 -m
 
-# 交互式添加贮藏（看到 diff，给选项进行选择是否添加贮藏）
+# 87. 交互式添加贮藏（看到 diff，给选项进行选择是否添加贮藏）
 git stash --patch
 
-# 切新分支并应用贮藏
+# 88. 切新分支并应用贮藏
 git stash branch <branch-name>
 
-# 查看贮藏内容
+# 89. 查看贮藏内容
 git stash show -p # -p 显示详细信息
 
-# 清除未跟踪文件（交互式 -i）
+# 90. 清除未跟踪文件（交互式 -i）
 git clean -d -i
 
-# ?
+# 91. ?
 git stash apply --index # ?
 
 ```
@@ -817,16 +817,16 @@ git stash apply --index # ?
 
 相关链接：“[What's the difference between git stash save and git stash push?](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fa%2F71040797 "https://stackoverflow.com/a/71040797")”。
 
-## 遴选
+## 91.1. 遴选
 
 ```
-# 遴选一条记录
+# 92. 遴选一条记录
 git cherry-pick <commit-hash>
-# 遴选多条记录（不连续）
+# 93. 遴选多条记录（不连续）
 git cherry-pick <commit-hash-a> <commit-hash-b>
-# 遴选连续的多条记录（前开后闭）
+# 94. 遴选连续的多条记录（前开后闭）
 git cherry-pick <commit-hash-a>...<commit-hash-c>
-# 添加配置项 -n，遴选不产生提交记录，只更新工作去与暂存区
+# 95. 添加配置项 -n，遴选不产生提交记录，只更新工作去与暂存区
 git cherry-pick -n <commit-hash>
 
 ```
@@ -853,7 +853,7 @@ git cherry-pick -n <commit-hash>
 
 - [git cherry-pick 教程](https://link.juejin.cn/?target=https%3A%2F%2Fwww.ruanyifeng.com%2Fblog%2F2020%2F04%2Fgit-cherry-pick.html "https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html")。
 
-## 回滚、撤销、重置
+## 95.1. 回滚、撤销、重置
 
 `git reset`：
 
@@ -902,7 +902,7 @@ git checkout <commit-hash> -- <path/to/file>
 - [What's the difference between git reset --mixed, --soft, and --hard?](https://link.juejin.cn/?target=https%3A%2F%2Fstackoverflow.com%2Fa%2F50022436 "https://stackoverflow.com/a/50022436")
 - [常用 Git 命令清单-九、撤销](https://link.juejin.cn/?target=https%3A%2F%2Fwww.ruanyifeng.com%2Fblog%2F2015%2F12%2Fgit-cheat-sheet.html "https://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html")
 
-## 责怪
+## 95.2. 责怪
 
 ```
 git blame <file_name> # 查看文件每一行的修改记录，包括作者、日期和内容
@@ -917,7 +917,7 @@ GitLens 第 26 行的`git blame -L 26,26 .internal/baseUniq.js`的效果：
 
 !['git blame' in VSCode with GitLens: line 26](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b4b1ec7c8e284564b855166c4e482440~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.image?)
 
-## 配置
+## 95.3. 配置
 
 查看配置：
 
@@ -941,7 +941,7 @@ git config user.email "cjzjzzz@gmail.com" # 设置邮箱（local 级别）
 配置默认编辑器：
 
 ```
-# 常用编辑器：emacs / nano / vim / vi
+# 96. 常用编辑器：emacs / nano / vim / vi
 git config --global core.editor emacs
 
 ```
@@ -950,7 +950,7 @@ git config --global core.editor emacs
 
 ```
 git config -e # 等价 vim .git/config
-# 可加 --global，--system
+# 97. 可加 --global，--system
 
 ```
 
@@ -961,7 +961,7 @@ git config --global core.ignorecase false # git 默认忽略大小写
 
 ```
 
-## 别名
+## 97.1. 别名
 
 设置命令的别名：
 
@@ -985,7 +985,7 @@ git config --global --replace-all alias.lg "log --pretty=format:'%h %ad %an %s' 
 
 ```
 
-## 子模块
+## 97.2. 子模块
 
 ```
 git submodule add https://github.com/wswmsword/git-submodule lyrics # 添加一个子模块，路径是 ./lyrics
@@ -1016,15 +1016,15 @@ git clone --recursive https://github.com/wswmsword/git-learning # 克隆项目�
 删除子模块：
 
 ```
-# step 1
+# 98. step 1
 git rm submarines # 删除文件夹 submarines（submarines 是子模块仓库）
-# step 2
+# 99. step 2
 rm -rf .git/modules/submarines
-# step 3
+# 100. step 3
 vim .git/config # 删除 config 文件里的 submodule 配置，形如下面这一段
-# [submodule "submarines"]
-#     active = true
-#     url = https://github.com/xxxxxxx.git
+# 101. [submodule "submarines"]
+# 102. active = true
+# 103. url = https://github.com/xxxxxxx.git
 
 ```
 
@@ -1034,21 +1034,21 @@ vim .git/config # 删除 config 文件里的 submodule 配置，形如下面这�
 - [Git子模块](https://link.juejin.cn/?target=https%3A%2F%2Fblog.csdn.net%2Fweixin_37015703%2Farticle%2Fdetails%2F123978159 "https://blog.csdn.net/weixin_37015703/article/details/123978159")—— CSDN 文章，提到了子模块更新父模块为更新的情况；
 - [7.11 Git 工具 - 子模块](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fbook%2Fzh%2Fv2%2FGit-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%25AD%2590%25E6%25A8%25A1%25E5%259D%2597 "https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97")—— Git 社区文档。
 
-## 二分查找
+## 103.1. 二分查找
 
 使用`git bisect`命令，用二分法找到第一条出错的提交记录。
 
 ```
 git bisect start <节点> <祖先节点>
-# 例如，git bisect start HEAD 4d83cfc
+# 104. 例如，git bisect start HEAD 4d83cfc
 
-# 如果代码没有错误，就进行标记 good，git 接下来会向后代继续查找
+# 105. 如果代码没有错误，就进行标记 good，git 接下来会向后代继续查找
 git bisect good
 
-# 如果代码出现了错误，就进行标记 bad，git 接下来会向祖先继续查找
+# 106. 如果代码出现了错误，就进行标记 bad，git 接下来会向祖先继续查找
 git bisect bad
 
-# 退出查找
+# 107. 退出查找
 git bisect reset
 
 ```
@@ -1061,13 +1061,13 @@ git bisect reset
 - [git bisect 命令教程](https://link.juejin.cn/?target=http%3A%2F%2Fwww.ruanyifeng.com%2Fblog%2F2018%2F12%2Fgit-bisect.html "http://www.ruanyifeng.com/blog/2018/12/git-bisect.html")；
 - [git-bisect](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fdocs%2Fgit-bisect "https://git-scm.com/docs/git-bisect")——社区文档。
 
-## GUI
+## 107.1. GUI
 
 - [magit](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fmagit%2Fmagit "https://github.com/magit/magit")：Emacs git 客户端
 - [fork](https://link.juejin.cn/?target=https%3A%2F%2Fgit-fork.com%2F "https://git-fork.com/")：Mac git 客户端，简洁，方便，反应快
 - [lazygit](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fjesseduffield%2Flazygit "https://github.com/jesseduffield/lazygit")：命令行 git 客户端
 
-## 修改文件名称的大小写
+## 107.2. 修改文件名称的大小写
 
 ```
 git mv SONG song2
@@ -1085,7 +1085,7 @@ git commit -m "rename 'song'"
 
 - [被文件名大小写的问题搞晕了](https://link.juejin.cn/?target=https%3A%2F%2Fwww.v2ex.com%2Ft%2F862453 "https://www.v2ex.com/t/862453")：V2EX 上关于 Git 文件名大小写修改的讨论。
 
-## 其它
+## 107.3. 其它
 
 [`git show`](https://link.juejin.cn/?target=https%3A%2F%2Fgit-scm.com%2Fdocs%2Fgit-show "https://git-scm.com/docs/git-show")，显示最近提交的信息，与之相关的其它命令：
 
@@ -1141,7 +1141,7 @@ git hash-data <file-name> # 查看单文件的 SHA1 值
 
 ```
 
-### git rm
+### 107.3.1. git rm
 
 `git rm <file>`，撤销跟踪，并且删除指定文件。如果加上`-r`参数（`git rm -r <file>`），则删除文件夹。
 
@@ -1153,7 +1153,7 @@ git hash-data <file-name> # 查看单文件的 SHA1 值
 
 - [git忽略已经被提交的文件](https://link.juejin.cn/?target=https%3A%2F%2Fsegmentfault.com%2Fq%2F1010000000430426%2Fa-1020000017179994 "https://segmentfault.com/q/1010000000430426/a-1020000017179994")——segmentfault 的答案，除了使用`git rm --cached`还提供了其它方法取消跟踪已跟踪的文件。
 
-### git remote
+### 107.3.2. git remote
 
 ```
 git remote -v # 显示所有远程仓库
