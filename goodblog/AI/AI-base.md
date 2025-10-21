@@ -1,15 +1,17 @@
 ---
-title: AI基础知识全面解析：从LLM到AGI的技术演进之路
+title: AI基础知识全面浅析
 published: true
-featured: false
-readingTime: 1
+featured: true
+readingTime: 12
 category: ai
-slug: AI基础知识全面解析从LLM到AGI的技
-excerpt: AI基础知识全面解析：从LLM到AGI的技术演进之路 背景介绍 AI（ChatGPT）已经充斥了我们的生活和工作，但是很多基本概念亟待我们了解和学习。
-publishedAt: 2024-01-01T00:00:00.000Z
+slug: aibase
+publishedAt: 2025-01-01T00:00:00.000Z
 tags:
-  - prompt
-  - agent
+  - Prompt
+  - Agent
+  - MCP
+  - RAG
+  - LLM
 coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73a5a80963.png
 ---
 

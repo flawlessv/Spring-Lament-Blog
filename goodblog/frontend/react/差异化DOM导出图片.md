@@ -2,8 +2,8 @@
 title: 差异化DOM导出图片的技术选择
 slug: domqwefuy4npp7
 excerpt: React中DOM导出图片的高级技术方案详解
-published: true
-featured: true
+published: false
+featured: false
 publishedAt: 2025-04-20T00:00:00.000Z
 readingTime: 19
 category: 前端

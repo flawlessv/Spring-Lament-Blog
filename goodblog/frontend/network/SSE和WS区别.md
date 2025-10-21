@@ -3,10 +3,11 @@ title: 深入理解SSE和WebSocket的区别与应用场景
 slug: sse-websocket-diff
 excerpt: 背景介绍
 published: true
-featured: true
+featured: false
 category: 前端
 publishedAt: 2025-07-30T00:00:00.000Z
-readingTime: 2
+readingTime: 4
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73feeb2145.png
 ---
 
 ## 1. 背景介绍

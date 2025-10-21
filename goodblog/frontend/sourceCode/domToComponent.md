@@ -10,6 +10,7 @@ readingTime: 7
 tags:
   - ts
   - react
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f74002e4a2a.png
 ---
 
 # 1. 从DOM元素反向追踪到组件：深入理解React和Vue的内部机制

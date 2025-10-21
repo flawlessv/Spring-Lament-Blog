@@ -8,6 +8,7 @@ readingTime: 12
 category: 前端
 tags:
   - js
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73ff99bec1.png
 ---
 
 ### 1.0.1. 前言

@@ -1,14 +1,14 @@
 ---
-title: BEM命名规范详解：提高CSS可维护性的最佳实践
+title: BEM命名规范详解
 published: true
 featured: false
-readingTime: 2
+readingTime: 4
 category: 前端
-slug: BEM命名规范详解提高CSS可维护性的最
-excerpt: 前言：为什么我们需要BEM？ 在前端开发中，CSS命名一直是个令人头疼的问题。随着项目规模扩大，我们经常会遇到： - 样式冲突 - 命名混乱 - 维护困难
-publishedAt: 2024-01-01T00:00:00.000Z
+slug: BEM
+publishedAt: 2023-12-22T:00:00.000Z
 tags:
   - css
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17792493819383168
 ---
 
 ## 1. 前言：为什么我们需要BEM？

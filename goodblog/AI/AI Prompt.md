@@ -9,7 +9,6 @@ readingTime: 14
 coverImage: https://youke1.picui.cn/s1/2025/10/21/68f73a5a80963.png
 tags:
   - prompt
-  - rag
 ---
 
 ## 1. 背景
