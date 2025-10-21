@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-07-09T00:00:00.000Z
 readingTime: 14
-coverImage: https://pixabay.com/zh/photos/christmas-background-1911637/
+coverImage: https://cdn.pixabay.com/photo/2016/12/16/15/25/christmas-background-1911637_960_720.jpg
 tags:
   - prompt
   - rag
