@@ -8,7 +8,15 @@
 
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { Search, Plus, Trash2, MoreHorizontal, RefreshCw } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Trash2,
+  MoreHorizontal,
+  RefreshCw,
+  Filter,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,11 +28,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TableFilter } from "@/components/ui/table-filter";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+
+// 筛选器类型
+interface FilterOption {
+  label: string;
+  value: string;
+  color?: string;
+}
+
+interface ColumnFilter {
+  type: "select" | "multiselect" | "text" | "date";
+  options?: FilterOption[];
+  placeholder?: string;
+  onFilter?: (value: any) => void;
+}
 
 interface ModernTableColumn {
   key: string;
@@ -32,6 +55,7 @@ interface ModernTableColumn {
   width?: string;
   className?: string;
   render?: (value: any, record: any) => ReactNode;
+  filter?: ColumnFilter;
 }
 
 interface ModernTableAction {
@@ -61,6 +85,10 @@ interface ModernTableProps<T = any> {
   searchable?: boolean;
   searchPlaceholder?: string;
   onSearch?: (query: string) => void;
+
+  // 筛选
+  filterable?: boolean;
+  onFilterChange?: (filters: Record<string, any>) => void;
 
   // 选择
   selectable?: boolean;
@@ -114,6 +142,8 @@ export function ModernTable<T = any>({
   searchable = true,
   searchPlaceholder = "搜索...",
   onSearch,
+  filterable = false,
+  onFilterChange,
   selectable = true,
   selectedIds = [],
   onSelectionChange,
@@ -129,11 +159,39 @@ export function ModernTable<T = any>({
 }: ModernTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteRecord, setDeleteRecord] = useState<T | null>(null);
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [openPopovers, setOpenPopovers] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     onSearch?.(query);
+  };
+
+  const handleFilterChange = (columnKey: string, value: any) => {
+    const newFilters = { ...filters, [columnKey]: value };
+    setFilters(newFilters);
+    onFilterChange?.(newFilters);
+  };
+
+  const clearFilter = (columnKey: string) => {
+    const newFilters = { ...filters };
+    delete newFilters[columnKey];
+    setFilters(newFilters);
+    onFilterChange?.(newFilters);
+  };
+
+  const clearAllFilters = () => {
+    setFilters({});
+    onFilterChange?.({});
+  };
+
+  const openPopover = (columnKey: string) => {
+    setOpenPopovers((prev) => ({ ...prev, [columnKey]: true }));
+  };
+
+  const closePopover = (columnKey: string) => {
+    setOpenPopovers((prev) => ({ ...prev, [columnKey]: false }));
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -266,7 +324,10 @@ export function ModernTable<T = any>({
       </div>
 
       {/* 表格内容 */}
-      {data.length === 0 && !loading ? (
+      {data.length === 0 &&
+      !loading &&
+      !filterable &&
+      Object.keys(filters).length === 0 ? (
         <Card>
           <CardContent className="text-center py-16">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-2xl mb-6">
@@ -291,120 +352,164 @@ export function ModernTable<T = any>({
       ) : (
         <div className="space-y-4">
           {/* 表头 */}
-          <div className="flex items-center space-x-4 px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700">
-            {selectable && (
-              <div className="w-8">
-                <Checkbox
-                  checked={
-                    selectedIds.length === data.length && data.length > 0
-                  }
-                  onCheckedChange={handleSelectAll}
-                  className="rounded-md"
-                />
-              </div>
-            )}
-            {columns.map((column) => (
-              <div
-                key={column.key}
-                className={cn(column.width || "flex-1", column.className)}
-              >
-                {column.title}
-              </div>
-            ))}
-            {actions.length > 0 && <div className="w-12 text-center">操作</div>}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-4 px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700">
+              {selectable && (
+                <div className="w-8">
+                  <Checkbox
+                    checked={
+                      selectedIds.length === data.length && data.length > 0
+                    }
+                    onCheckedChange={handleSelectAll}
+                    className="rounded-md"
+                  />
+                </div>
+              )}
+              {columns.map((column) => (
+                <div
+                  key={column.key}
+                  className={cn(
+                    column.width || "flex-1",
+                    column.className,
+                    "flex items-center space-x-2"
+                  )}
+                >
+                  <span>{column.title}</span>
+                  {filterable && column.filter && (
+                    <TableFilter
+                      columnKey={column.key}
+                      columnTitle={column.title}
+                      filterType={column.filter.type}
+                      options={column.filter.options}
+                      placeholder={column.filter.placeholder}
+                      currentValue={filters[column.key]}
+                      onFilterChange={handleFilterChange}
+                      onApply={closePopover}
+                      onReset={clearFilter}
+                      onOpen={openPopover}
+                      onClose={closePopover}
+                      isOpen={openPopovers[column.key] || false}
+                    />
+                  )}
+                </div>
+              ))}
+              {actions.length > 0 && (
+                <div className="w-12 text-center">操作</div>
+              )}
+            </div>
           </div>
 
           {/* 数据行 */}
-          {data.map((record) => {
-            const recordId = getRecordId(record);
-            return (
-              <Card key={recordId} className="overflow-hidden hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-4">
-                    {selectable && (
-                      <div>
-                        <Checkbox
-                          checked={selectedIds.includes(recordId)}
-                          onCheckedChange={(checked) =>
-                            handleSelectRecord(recordId, checked as boolean)
-                          }
-                          className="rounded-md"
-                        />
-                      </div>
-                    )}
+          {data.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8">
+                <div className="text-gray-500">
+                  <Filter className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm">没有找到匹配筛选条件的数据</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    请尝试调整筛选条件
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            data.map((record) => {
+              const recordId = getRecordId(record);
+              return (
+                <Card
+                  key={recordId}
+                  className="overflow-hidden hover:shadow-md"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-4">
+                      {selectable && (
+                        <div>
+                          <Checkbox
+                            checked={selectedIds.includes(recordId)}
+                            onCheckedChange={(checked) =>
+                              handleSelectRecord(recordId, checked as boolean)
+                            }
+                            className="rounded-md"
+                          />
+                        </div>
+                      )}
 
-                    {columns.map((column) => (
-                      <div
-                        key={column.key}
-                        className={cn(
-                          column.width || "flex-1",
-                          "min-w-0",
-                          column.className
-                        )}
-                      >
-                        {column.render
-                          ? column.render(record[column.key as keyof T], record)
-                          : String(record[column.key as keyof T] || "")}
-                      </div>
-                    ))}
+                      {columns.map((column) => (
+                        <div
+                          key={column.key}
+                          className={cn(
+                            column.width || "flex-1",
+                            "min-w-0",
+                            column.className
+                          )}
+                        >
+                          {column.render
+                            ? column.render(
+                                record[column.key as keyof T],
+                                record
+                              )
+                            : String(record[column.key as keyof T] || "")}
+                        </div>
+                      ))}
 
-                    {actions.length > 0 && (
-                      <div className="w-12">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="rounded-xl border-gray-200"
-                          >
-                            <DropdownMenuLabel className="text-gray-700">
-                              操作
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            {actions.map((action, index) => (
-                              <DropdownMenuItem
-                                key={action.key}
-                                onClick={() => handleAction(action, record)}
-                                className={cn(
-                                  "rounded-lg",
-                                  (typeof action.variant === "function"
-                                    ? action.variant(record)
-                                    : action.variant) === "danger" &&
-                                    "text-red-600",
-                                  (typeof action.variant === "function"
-                                    ? action.variant(record)
-                                    : action.variant) === "warning" &&
-                                    "text-orange-600",
-                                  (typeof action.variant === "function"
-                                    ? action.variant(record)
-                                    : action.variant) === "success" &&
-                                    "text-green-600",
-                                  action.className
-                                )}
+                      {actions.length > 0 && (
+                        <div className="w-12">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg"
                               >
-                                {action.icon && (
-                                  <span className="mr-2">{action.icon}</span>
-                                )}
-                                {typeof action.label === "function"
-                                  ? action.label(record)
-                                  : action.label}
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="rounded-xl border-gray-200"
+                            >
+                              <DropdownMenuLabel className="text-gray-700">
+                                操作
+                              </DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              {actions.map((action, index) => (
+                                <DropdownMenuItem
+                                  key={action.key}
+                                  onClick={() => handleAction(action, record)}
+                                  className={cn(
+                                    "rounded-lg",
+                                    (typeof action.variant === "function"
+                                      ? action.variant(record)
+                                      : action.variant) === "danger" &&
+                                      "text-red-600",
+                                    (typeof action.variant === "function"
+                                      ? action.variant(record)
+                                      : action.variant) === "warning" &&
+                                      "text-orange-600",
+                                    (typeof action.variant === "function"
+                                      ? action.variant(record)
+                                      : action.variant) === "success" &&
+                                      "text-green-600",
+                                    action.className
+                                  )}
+                                >
+                                  {action.icon && (
+                                    <span className="mr-2">{action.icon}</span>
+                                  )}
+                                  {typeof action.label === "function"
+                                    ? action.label(record)
+                                    : action.label}
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
         </div>
       )}
 
