@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { ChevronLeft } from "lucide-react";
+import Image from "next/image";
 
 import PublicLayout from "@/components/layout/public-layout";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
@@ -125,11 +126,17 @@ export default async function PostPage({
         <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center space-x-2">
             {post.author.profile?.avatar ? (
-              <img
-                src={post.author.profile.avatar}
-                alt={post.author.profile?.displayName || post.author.username}
-                className="w-8 h-8 rounded-full object-cover"
-              />
+              <div className="relative w-8 h-8">
+                <Image
+                  src={post.author.profile.avatar}
+                  alt={post.author.profile?.displayName || post.author.username}
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover"
+                  sizes="32px"
+                  quality={80}
+                />
+              </div>
             ) : (
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
                 {(post.author.profile?.displayName || post.author.username)

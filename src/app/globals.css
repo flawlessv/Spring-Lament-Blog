@@ -481,3 +481,26 @@
     @apply text-foreground/90;
   }
 }
+
+/* 图片加载动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.image-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 图片加载占位符 */
+.image-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

@@ -28,6 +28,25 @@ const nextConfig = {
   // 图片优化配置
   images: {
     unoptimized: false,
+    // 允许的图片域名（用于外部图片优化）
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+    // 图片格式优化
+    formats: ["image/webp", "image/avif"],
+    // 设备尺寸断点
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // 图片尺寸断点
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // 图片质量
+    minimumCacheTTL: 60,
   },
 
   // 编译输出配置
