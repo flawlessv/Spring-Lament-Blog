@@ -1,5 +1,5 @@
 ---
-title: 深入解析 JavaScript EventLoop：从基础到浏览器渲染、帧动画、空闲回调
+title: 深入解析 JavaScript EventLoop
 slug: eventrok01t
 published: true
 featured: false

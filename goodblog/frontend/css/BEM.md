@@ -1,5 +1,5 @@
 ---
-title: "BEM命名规范完全指南：构建可维护CSS架构的黄金法则"
+title: "BEM命名规范完全指南"
 published: true
 featured: false
 readingTime: 6
