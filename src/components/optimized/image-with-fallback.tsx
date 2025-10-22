@@ -24,9 +24,7 @@ const OPTIMIZED_RANDOM_IMAGE_APIS = [
   "https://picsum.photos/800/600",
   "https://www.dmoe.cc/random.php",
   "https://api.btstu.cn/sjbz/api.php",
-  "https://api.ghser.com/random/pc.php",
   "https://www.loliapi.com/acg/",
-  "https://api.ixiaowai.cn/api/api.php",
   "https://api.likepoems.com/img/pc",
   "https://img.paulzzh.com/touhou/random",
 ];
