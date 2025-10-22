@@ -101,7 +101,8 @@ interface ModernTableProps<T = any> {
   // 新建按钮
   createButton?: {
     label: string;
-    href: string;
+    href?: string;
+    onClick?: () => void;
     icon?: ReactNode;
   };
 
@@ -312,14 +313,23 @@ export function ModernTable<T = any>({
           )}
 
           {/* 新建按钮 */}
-          {createButton && (
-            <Link href={createButton.href as any}>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+          {createButton &&
+            (createButton.href ? (
+              <Link href={createButton.href as any}>
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                  {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
+                  {createButton.label}
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                onClick={createButton.onClick}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+              >
                 {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                 {createButton.label}
               </Button>
-            </Link>
-          )}
+            ))}
         </div>
       </div>
 
@@ -339,14 +349,24 @@ export function ModernTable<T = any>({
             <p className="text-gray-600 mb-6">
               {searchQuery ? "未找到匹配的结果" : emptyDescription}
             </p>
-            {!searchQuery && createButton && (
-              <Link href={createButton.href as any}>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+            {!searchQuery &&
+              createButton &&
+              (createButton.href ? (
+                <Link href={createButton.href as any}>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                    {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
+                    {createButton.label}
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  onClick={createButton.onClick}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+                >
                   {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                   {createButton.label}
                 </Button>
-              </Link>
-            )}
+              ))}
           </CardContent>
         </Card>
       ) : (

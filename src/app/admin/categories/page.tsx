@@ -30,6 +30,11 @@ export default function CategoriesPage() {
     setShowDialog(true);
   };
 
+  const handleCreate = () => {
+    setEditingCategory(null);
+    setShowDialog(true);
+  };
+
   const handleCloseDialog = () => {
     setShowDialog(false);
     setEditingCategory(null);
@@ -46,7 +51,7 @@ export default function CategoriesPage() {
 
         {/* 分类列表 */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <UnifiedCategoriesTable onEdit={handleEdit} />
+          <UnifiedCategoriesTable onEdit={handleEdit} onCreate={handleCreate} />
         </div>
       </div>
 

@@ -27,6 +27,11 @@ export default function TagsPage() {
     setShowDialog(true);
   };
 
+  const handleCreate = () => {
+    setEditingTag(null);
+    setShowDialog(true);
+  };
+
   const handleCloseDialog = () => {
     setShowDialog(false);
     setEditingTag(null);
@@ -43,7 +48,7 @@ export default function TagsPage() {
 
         {/* 标签列表 */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <UnifiedTagsTable onEdit={handleEdit} />
+          <UnifiedTagsTable onEdit={handleEdit} onCreate={handleCreate} />
         </div>
       </div>
 

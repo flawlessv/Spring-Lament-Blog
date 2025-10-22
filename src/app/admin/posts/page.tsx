@@ -12,12 +12,6 @@ import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import UnifiedPostsTable from "@/components/admin/unified-posts-table";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Plus,
   Download,
   Loader2,
@@ -26,7 +20,6 @@ import {
   FileUp,
   ChevronDown,
 } from "lucide-react";
-import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PostsPage() {
@@ -229,39 +222,43 @@ export default function PostsPage() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* 导入下拉菜单 */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={importing}
-                  className="flex items-center"
+            {/* 导入hover菜单 */}
+            <div className="relative group">
+              <Button
+                variant="outline"
+                disabled={importing}
+                className="flex items-center"
+              >
+                {importing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    导入中...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    导入文章
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <button
+                  onClick={handleImportFilesClick}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center"
                 >
-                  {importing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      导入中...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="mr-2 h-4 w-4" />
-                      导入文章
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleImportFilesClick}>
                   <FileUp className="mr-2 h-4 w-4" />
                   导入文件
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleImportFolderClick}>
+                </button>
+                <button
+                  onClick={handleImportFolderClick}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center"
+                >
                   <FolderUp className="mr-2 h-4 w-4" />
                   导入文件夹
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </button>
+              </div>
+            </div>
 
             <Button
               variant="outline"
@@ -281,13 +278,6 @@ export default function PostsPage() {
                 </>
               )}
             </Button>
-
-            <Link href="/admin/posts/new">
-              <Button className="flex items-center">
-                <Plus className="mr-2 h-4 w-4" />
-                新建文章
-              </Button>
-            </Link>
           </div>
         </div>
 

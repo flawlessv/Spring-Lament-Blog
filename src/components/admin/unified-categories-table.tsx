@@ -5,7 +5,6 @@
  */
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { Edit, Trash2, FolderOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DraggableTable } from "@/components/ui/draggable-table";
@@ -29,10 +28,12 @@ interface Category {
 
 interface UnifiedCategoriesTableProps {
   onEdit?: (category: Category) => void;
+  onCreate?: () => void;
 }
 
 export default function UnifiedCategoriesTable({
   onEdit,
+  onCreate,
 }: UnifiedCategoriesTableProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -144,12 +145,10 @@ export default function UnifiedCategoriesTable({
           </div>
         </div>
         <div className="flex items-center space-x-3">
-          <Link href="/admin/categories/new">
-            <Button className="flex items-center">
-              <Plus className="mr-2 h-4 w-4" />
-              新建分类
-            </Button>
-          </Link>
+          <Button className="flex items-center" onClick={onCreate}>
+            <Plus className="mr-2 h-4 w-4" />
+            新建分类
+          </Button>
         </div>
       </div>
 
@@ -171,12 +170,10 @@ export default function UnifiedCategoriesTable({
           <FolderOpen className="h-10 w-10 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">暂无分类</h3>
           <p className="text-gray-600 mb-6">开始创建您的第一个分类吧</p>
-          <Link href="/admin/categories/new">
-            <Button className="flex items-center">
-              <Plus className="mr-2 h-4 w-4" />
-              新建分类
-            </Button>
-          </Link>
+          <Button className="flex items-center mx-auto" onClick={onCreate}>
+            <Plus className="mr-2 h-4 w-4" />
+            新建分类
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">

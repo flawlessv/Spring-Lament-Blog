@@ -5,7 +5,6 @@
  */
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { Edit, Trash2, Tags, FileText, Plus } from "lucide-react";
@@ -29,9 +28,13 @@ interface Tag {
 
 interface UnifiedTagsTableProps {
   onEdit?: (tag: Tag) => void;
+  onCreate?: () => void;
 }
 
-export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
+export default function UnifiedTagsTable({
+  onEdit,
+  onCreate,
+}: UnifiedTagsTableProps) {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -232,7 +235,7 @@ export default function UnifiedTagsTable({ onEdit }: UnifiedTagsTableProps) {
       onSelectionChange={setSelectedIds}
       createButton={{
         label: "新建标签",
-        href: "/admin/tags/new",
+        onClick: onCreate,
         icon: <Plus className="mr-2 h-4 w-4" />,
       }}
       batchActions={batchActions}
