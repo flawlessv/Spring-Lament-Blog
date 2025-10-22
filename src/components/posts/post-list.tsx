@@ -6,6 +6,26 @@ import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import dynamic from "next/dynamic";
 
+// 类型定义
+interface PostListProps {
+  className?: string;
+  categorySlug?: string;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  coverImage?: string;
+  createdAt: Date;
+  featured: boolean;
+  categories: Array<{
+    id: string;
+    name: string;
+  }>;
+}
+
 // 动态导入优化的图片组件，减少初始包大小
 const BackgroundImage = dynamic(
   () =>
