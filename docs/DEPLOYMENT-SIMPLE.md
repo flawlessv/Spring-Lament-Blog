@@ -51,6 +51,21 @@ NODE_ENV="production"
 npm run deploy:setup:prod
 ```
 
+这会自动执行：
+
+- 生成 Prisma Client
+- 推送数据库 Schema
+- 创建种子数据（初始管理员和分类/标签）
+- 构建项目
+
+**种子数据包括：**
+
+- 管理员用户: admin (密码由 `ADMIN_PASSWORD` 环境变量决定)
+- 8个默认分类: AI、前端、源码解析、编程基础、软技能、随笔、AboutMe
+- 17个默认标签: HTML、CSS、JavaScript、React、Node.js 等
+
+**重复执行是安全的：** 使用 upsert 操作，不会产生重复数据
+
 ### 5. 构建项目
 
 ```bash
@@ -120,6 +135,7 @@ chown -R www:www /www/wwwroot/your-domain.com
 | 数据库错误     | 连接失败            | 检查 `DATABASE_URL` 配置        |
 | Nginx 无法启动 | 80端口被占用        | 检查宝塔面板端口设置            |
 | 域名无法访问   | 本地正常            | 检查 DNS 解析和防火墙设置       |
+| 分类/标签缺失  | 管理后台空白        | `npm run db:seed:prod` 重新创建 |
 
 ## 📋 部署检查清单
 
@@ -127,8 +143,8 @@ chown -R www:www /www/wwwroot/your-domain.com
 - [ ] 项目代码已上传
 - [ ] 依赖包已安装 (`npm install`)
 - [ ] 环境变量文件已配置
-- [ ] 数据库已初始化
-- [ ] 项目已构建 (`npm run build`)
+- [ ] 数据库已初始化 (`npm run deploy:setup:prod`)
+- [ ] 项目已构建
 - [ ] PM2 进程已启动
 - [ ] Nginx 配置已完成
 - [ ] SSL 证书已配置
