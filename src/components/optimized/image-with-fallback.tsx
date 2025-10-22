@@ -21,9 +21,7 @@ interface ImageWithFallbackProps {
 
 // 优化的随机图片API列表（精选10个稳定快速的）
 const OPTIMIZED_RANDOM_IMAGE_APIS = [
-  "https://source.unsplash.com/random/800x600",
   "https://picsum.photos/800/600",
-  "https://t.alcy.cc/800x600",
   "https://www.dmoe.cc/random.php",
   "https://api.btstu.cn/sjbz/api.php",
   "https://api.ghser.com/random/pc.php",
@@ -58,7 +56,11 @@ export function ImageWithFallback({
   onLoad,
   onError,
 }: ImageWithFallbackProps) {
-  const [imgSrc, setImgSrc] = useState(src);
+  // 如果 src 为空或无效，立即使用备用图片或随机图片
+  const initialSrc =
+    !src || src.trim() === "" ? fallbackSrc || getRandomImageApi() : src;
+
+  const [imgSrc, setImgSrc] = useState(initialSrc);
   const [imgError, setImgError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -95,17 +97,15 @@ export function ImageWithFallback({
 
   // 监听src变化
   useEffect(() => {
-    setImgSrc(src);
+    // 如果新的 src 为空，使用备用图片或随机图片
+    if (!src || src.trim() === "") {
+      setImgSrc(fallbackSrc || getRandomImageApi());
+    } else {
+      setImgSrc(src);
+    }
     setImgError(false);
     setIsLoading(true);
-  }, [src]);
-
-  // 如果src为空，使用随机图片
-  useEffect(() => {
-    if (!src || src.trim() === "") {
-      setImgSrc(getRandomImageApi());
-    }
-  }, [src]);
+  }, [src, fallbackSrc]);
 
   // 显示加载状态
   if (isLoading && !priority) {
@@ -162,7 +162,11 @@ export function BackgroundImage({
   priority = false,
   fallbackSrc,
 }: BackgroundImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
+  // 如果 src 为空或无效，立即使用备用图片或随机图片
+  const initialSrc =
+    !src || src.trim() === "" ? fallbackSrc || getRandomImageApi() : src;
+
+  const [imgSrc, setImgSrc] = useState(initialSrc);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleError = () => {
@@ -178,9 +182,14 @@ export function BackgroundImage({
   };
 
   useEffect(() => {
-    setImgSrc(src);
+    // 如果新的 src 为空，使用备用图片或随机图片
+    if (!src || src.trim() === "") {
+      setImgSrc(fallbackSrc || getRandomImageApi());
+    } else {
+      setImgSrc(src);
+    }
     setIsLoading(true);
-  }, [src]);
+  }, [src, fallbackSrc]);
 
   return (
     <div className={cn("relative overflow-hidden", className)}>

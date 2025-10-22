@@ -135,6 +135,7 @@ export default async function PostPage({
                   className="rounded-full object-cover"
                   sizes="32px"
                   quality={80}
+                  unoptimized
                 />
               </div>
             ) : (

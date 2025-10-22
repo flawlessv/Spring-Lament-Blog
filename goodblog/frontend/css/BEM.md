@@ -8,10 +8,6 @@ slug: BEM
 publishedAt: 2024-01-01T00:00:00Z
 tags:
   - css
-  - 前端工程
-  - 代码规范
-  - 命名规范
-  - css架构
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17639916700028288
 excerpt: "深入解析BEM命名方法论，从基础概念到实战应用，助你构建清晰、可维护的CSS代码架构"
 ---
