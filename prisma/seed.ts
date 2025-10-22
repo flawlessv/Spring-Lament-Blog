@@ -101,7 +101,7 @@ async function main() {
 
   for (const categoryData of categories) {
     const category = await prisma.category.upsert({
-      where: { slug: categoryData.slug },
+      where: { name: categoryData.name },
       update: {},
       create: categoryData,
     });
@@ -132,7 +132,7 @@ async function main() {
 
   for (const tagData of tags) {
     const tag = await prisma.tag.upsert({
-      where: { slug: tagData.slug },
+      where: { name: tagData.name },
       update: {},
       create: tagData,
     });
