@@ -16,7 +16,7 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/16835107832
 
 # Git 常用命令速查指南
 
-本文整理了日常开发中最常用的 Git 命令，按使用场景分类，便于快速查阅。
+本文整理了日常开发中最常用的 Git 命令，按使用场景分类，便于快速查阅。每个命令都配有实际使用示例和说明。
 
 ## 1. 基础操作
 
@@ -47,6 +47,25 @@ git diff
 
 # 查看暂存区变更
 git diff --staged
+
+# 查看特定文件的变更
+git diff <file-name>
+```
+
+### 1.3. 配置管理
+
+```bash
+# 查看全局配置
+git config --global --list
+
+# 设置用户名
+git config --global user.name "Your Name"
+
+# 设置邮箱
+git config --global user.email "your.email@example.com"
+
+# 设置默认编辑器
+git config --global core.editor "code --wait"
 ```
 
 ## 2. 分支管理
@@ -56,6 +75,9 @@ git diff --staged
 ```bash
 # 查看所有分支
 git branch -a
+
+# 查看本地分支
+git branch
 
 # 创建新分支
 git branch <branch-name>
@@ -114,6 +136,9 @@ git commit -am "提交信息"
 
 # 修改上次提交
 git commit --amend
+
+# 修改上次提交信息
+git commit --amend -m "新的提交信息"
 ```
 
 ### 3.2. 提交历史
@@ -146,7 +171,7 @@ git push
 # 推送指定分支
 git push origin <branch-name>
 
-# 强制推送
+# 强制推送（谨慎使用）
 git push -f
 
 # 拉取远程更新
@@ -185,6 +210,9 @@ git merge --squash <branch-name>
 
 # 终止合并
 git merge --abort
+
+# 使用特定合并策略
+git merge --strategy-option theirs <branch-name>
 ```
 
 ### 5.2. 变基操作
@@ -200,9 +228,9 @@ git rebase -i <commit-hash>
 git rebase --abort
 ```
 
-## 6. 撤销与回滚
+## 6. 撤销与重置
 
-### 6.1. 撤销工作区修改
+### 6.1. 撤销操作
 
 ```bash
 # 撤销工作区修改
@@ -210,149 +238,217 @@ git checkout -- <file-name>
 
 # 撤销所有工作区修改
 git checkout -- .
+
+# 撤销暂存区修改
+git reset HEAD <file-name>
+
+# 撤销所有暂存区修改
+git reset HEAD
+
+# 撤销最近一次提交
+git reset --soft HEAD~1
+
+# 撤销提交并删除修改
+git reset --hard HEAD~1
 ```
 
-### 6.2. 撤销暂存区修改
+### 6.2. 重置操作
 
 ```bash
-# 从暂存区移除文件
-git reset <file-name>
-
-# 清空暂存区
-git reset
-```
-
-### 6.3. 回滚提交
-
-```bash
-# 软回滚（保留修改）
+# 软重置（保留修改）
 git reset --soft <commit-hash>
 
-# 混合回滚（默认）
+# 混合重置（默认，保留工作区）
 git reset --mixed <commit-hash>
 
-# 硬回滚（删除修改）
+# 硬重置（删除所有修改）
 git reset --hard <commit-hash>
 
-# 撤销指定提交
-git revert <commit-hash>
+# 重置到远程分支状态
+git reset --hard origin/<branch-name>
 ```
 
-## 7. 贮藏与清理
+## 7. 标签管理
 
-### 7.1. 贮藏操作
-
-```bash
-# 贮藏当前修改
-git stash
-
-# 贮藏并添加描述
-git stash push -m "描述信息"
-
-# 查看贮藏列表
-git stash list
-
-# 应用贮藏
-git stash apply
-
-# 应用并删除贮藏
-git stash pop
-
-# 删除贮藏
-git stash drop
-```
-
-### 7.2. 清理工作区
+### 7.1. 标签操作
 
 ```bash
-# 清理未跟踪文件
-git clean -fd
-
-# 交互式清理
-git clean -i
-```
-
-## 8. 标签管理
-
-```bash
-# 查看标签
+# 查看所有标签
 git tag
 
 # 创建轻量标签
 git tag <tag-name>
 
-# 创建附注标签
-git tag -a <tag-name> -m "标签信息"
+# 创建带注释的标签
+git tag -a <tag-name> -m "标签说明"
 
-# 推送标签
+# 推送标签到远程
 git push origin <tag-name>
 
 # 推送所有标签
 git push origin --tags
 
-# 删除标签
+# 删除本地标签
 git tag -d <tag-name>
 
 # 删除远程标签
 git push origin --delete <tag-name>
 ```
 
-## 9. 配置与别名
+## 8. 暂存与清理
 
-### 9.1. 配置管理
+### 8.1. 暂存操作
 
 ```bash
-# 查看配置
-git config --list
+# 暂存当前修改
+git stash
 
-# 设置用户名
-git config user.name "用户名"
+# 暂存并添加说明
+git stash push -m "暂存说明"
 
-# 设置邮箱
-git config user.email "邮箱"
+# 查看暂存列表
+git stash list
 
-# 设置默认编辑器
-git config core.editor vim
+# 应用最新暂存
+git stash apply
+
+# 应用指定暂存
+git stash apply stash@{n}
+
+# 应用并删除暂存
+git stash pop
+
+# 删除暂存
+git stash drop stash@{n}
+
+# 清空所有暂存
+git stash clear
 ```
 
-### 9.2. 常用别名
+### 8.2. 清理操作
 
 ```bash
+# 删除未跟踪文件
+git clean -f
+
+# 交互式删除未跟踪文件
+git clean -i
+
+# 删除未跟踪目录
+git clean -fd
+
+# 预览将要删除的文件
+git clean -n
+```
+
+## 9. 子模块管理
+
+### 9.1. 子模块操作
+
+```bash
+# 添加子模块
+git submodule add <repository-url> <path>
+
+# 初始化子模块
+git submodule init
+
+# 更新子模块
+git submodule update
+
+# 更新所有子模块
+git submodule update --init --recursive
+
+# 克隆包含子模块的仓库
+git clone --recurse-submodules <repository-url>
+```
+
+## 10. 高级技巧
+
+### 10.1. 二分查找
+
+```bash
+# 开始二分查找
+git bisect start
+
+# 标记错误提交
+git bisect bad
+
+# 标记正确提交
+git bisect good <commit-hash>
+
+# 结束二分查找
+git bisect reset
+```
+
+### 10.2. 补丁操作
+
+```bash
+# 生成补丁
+git format-patch <commit-range>
+
+# 应用补丁
+git am <patch-file>
+
+# 检查补丁
+git apply --check <patch-file>
+
+# 应用补丁（不提交）
+git apply <patch-file>
+```
+
+### 10.3. 工作流优化
+
+```bash
+# 设置默认推送行为
+git config --global push.default simple
+
+# 设置默认合并行为
+git config --global pull.rebase true
+
 # 设置别名
-git config --global alias.st "status -sb"
-git config --global alias.ci "commit"
-git config --global alias.co "checkout"
-git config --global alias.br "branch"
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+
+# 查看别名列表
+git config --global --get-regexp alias
 ```
 
-## 10. 实用技巧
+## 11. 实用脚本与技巧
 
-### 10.1. 文件追踪
+### 11.1. 常用别名设置
+
+在 `~/.gitconfig` 文件中添加：
+
+```ini
+[alias]
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
+  unstage = reset HEAD --
+  last = log -1 HEAD
+  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+```
+
+### 11.2. 批量操作脚本
 
 ```bash
-# 查看文件每一行的修改历史
-git blame <file-name>
+# 批量删除已合并的分支
+git branch --merged | grep -v "\*" | xargs -n 1 git branch -d
 
-# 查找包含关键字的提交
-git log --all --grep="关键字"
+# 批量清理远程已删除的分支
+git fetch --prune && git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
 ```
 
-### 10.2. 选择性合并
+## 12. 总结
 
-```bash
-# 合并指定提交
-git cherry-pick <commit-hash>
+本文涵盖了Git日常开发中最常用的命令，从基础操作到高级技巧都有涉及。记住这些命令可以帮助你：
 
-# 合并指定文件
-git checkout <branch-name> -- <file-path>
-```
+- 提高版本控制效率
+- 避免常见错误
+- 更好地管理项目历史
+- 与团队协作更加顺畅
 
-## 总结
-
-本文涵盖了 Git 日常开发中最常用的命令，建议根据实际使用频率重点掌握：
-
-- **高频命令**: `git status`, `git add`, `git commit`, `git push`, `git pull`, `git checkout`
-- **中频命令**: `git branch`, `git merge`, `git log`, `git diff`, `git stash`
-- **低频命令**: `git rebase`, `git reset`, `git tag`, `git cherry-pick`
-
-掌握这些命令能够满足 90% 以上的日常开发需求。对于更高级的功能，建议在实际需要时查阅官方文档。
+建议将常用命令设置为别名，并定期练习使用，以熟练掌握Git的强大功能。
