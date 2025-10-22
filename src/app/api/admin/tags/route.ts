@@ -26,8 +26,8 @@ const createTagSchema = z.object({
     .optional(),
 });
 
-// 更新标签的验证schema
-const updateTagSchema = createTagSchema.partial();
+// 更新标签的验证schema（暂未使用）
+// const updateTagSchema = createTagSchema.partial();
 
 /**
  * GET /api/admin/tags

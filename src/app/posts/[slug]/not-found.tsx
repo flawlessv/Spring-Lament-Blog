@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft, FileX } from "lucide-react";
 import PublicLayout from "@/components/layout/public-layout";
 
 export default function PostNotFound() {

@@ -29,8 +29,8 @@ const createCategorySchema = z.object({
   sortOrder: z.number().int().min(0).default(0),
 });
 
-// 更新分类的验证schema
-const updateCategorySchema = createCategorySchema.partial();
+// 更新分类的验证schema（暂未使用）
+// const updateCategorySchema = createCategorySchema.partial();
 
 /**
  * GET /api/admin/categories

@@ -10,19 +10,22 @@ import { useState } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import UnifiedCategoriesTable from "@/components/admin/unified-categories-table";
 import CategoryDialog from "@/components/admin/category-dialog";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  sortOrder: number;
+}
 
 export default function CategoriesPage() {
   const [showDialog, setShowDialog] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
-  const handleCreate = () => {
-    setEditingCategory(null);
-    setShowDialog(true);
-  };
-
-  const handleEdit = (category: any) => {
+  const handleEdit = (category: Category) => {
     setEditingCategory(category);
     setShowDialog(true);
   };

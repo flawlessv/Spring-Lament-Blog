@@ -10,19 +10,19 @@ import { useState } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import UnifiedTagsTable from "@/components/admin/unified-tags-table";
 import TagDialog from "@/components/admin/tag-dialog";
-import { Button } from "@/components/ui/button";
-import { Plus, Tags } from "lucide-react";
+
+interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+  color?: string;
+}
 
 export default function TagsPage() {
   const [showDialog, setShowDialog] = useState(false);
-  const [editingTag, setEditingTag] = useState<any>(null);
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
 
-  const handleCreate = () => {
-    setEditingTag(null);
-    setShowDialog(true);
-  };
-
-  const handleEdit = (tag: any) => {
+  const handleEdit = (tag: Tag) => {
     setEditingTag(tag);
     setShowDialog(true);
   };

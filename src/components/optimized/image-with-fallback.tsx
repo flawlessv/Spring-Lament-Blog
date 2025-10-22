@@ -61,12 +61,10 @@ export function ImageWithFallback({
     !src || src.trim() === "" ? fallbackSrc || getRandomImageApi() : src;
 
   const [imgSrc, setImgSrc] = useState(initialSrc);
-  const [imgError, setImgError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // 处理图片加载错误
   const handleError = () => {
-    setImgError(true);
     setIsLoading(false);
 
     if (onError) onError();
@@ -103,7 +101,6 @@ export function ImageWithFallback({
     } else {
       setImgSrc(src);
     }
-    setImgError(false);
     setIsLoading(true);
   }, [src, fallbackSrc]);
 
