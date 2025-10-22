@@ -1,4 +1,17 @@
-# Node.js 完全入门指南：从零开始的服务端开发之旅
+---
+title: Node.js 完全入门指南
+slug: nodejsrm
+published: true
+featured: true
+publishedAt: 2025-10-21T00:00:00.000Z
+readingTime: 12
+category: 前端
+tags:
+  - js
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17202184696024448
+---
+
+# ：从零开始的服务端开发之旅
 
 ## 前言
 
