@@ -80,6 +80,9 @@ jobs:
             echo "=== 推送数据库变更 ==="
             npm run db:push:prod
             
+            echo "=== 清理旧的 Next.js 构建产物 ==="
+            rm -rf .next
+            
             echo "=== 构建 Next.js 项目 ==="
             npm run build
             
@@ -89,10 +92,6 @@ jobs:
                 exit 1
             fi
             echo "✅ 构建验证成功"
-            
-            echo "=== 构建后清理 node_modules（可选）==="
-            # 构建完成后，可以删除 devDependencies 节省空间
-            # npm prune --production
 
       # 重启 PM2 应用
       - name: 重启应用
@@ -123,6 +122,7 @@ jobs:
                 echo "✅ 应用启动成功"
             else
                 echo "❌ 应用启动失败"
+                pm2 logs spring-lament-blog
                 exit 1
             fi
             
