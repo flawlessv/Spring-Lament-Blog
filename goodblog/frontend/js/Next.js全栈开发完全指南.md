@@ -1,4 +1,15 @@
-# Next.js全栈开发完全指南
+---
+title: Next.js全栈开发完全指南
+slug: nextfullstack
+published: true
+featured: true
+publishedAt: 2025-10-23T00:00:00.000Z
+readingTime: 20
+category: 前端
+tags:
+  - js
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/15691093812220224
+---
 
 > 基于Spring Lament Blog项目的实战经验，帮助前端同学快速掌握全栈开发技能
 
@@ -30,6 +41,8 @@
 ---
 
 ## 第1章：后端的本质
+
+TODO:画一个前后端交互的流程图
 
 ### 什么是后端？
 
