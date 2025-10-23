@@ -169,20 +169,36 @@ const data = await response.json();
 ### 传统开发方式的痛点
 
 在传统的Web开发中，我们需要维护多个独立的项目：
-TODO: 这个目录可以更详细一点，例如frontend下包含components、pages等、backend下包含service、controll等等。。
 
 ```
 项目结构：
 ├── frontend/          # React前端项目
 │   ├── src/
+│   │   ├── components/  # React组件
+│   │   ├── pages/      # 页面组件
+│   │   ├── hooks/      # 自定义Hook
+│   │   ├── utils/      # 工具函数
+│   │   ├── services/   # API调用
+│   │   ├── store/      # 状态管理
+│   │   └── types/      # TypeScript类型
+│   ├── public/         # 静态资源
 │   ├── package.json
 │   └── ...
 ├── backend/           # Node.js后端项目
 │   ├── src/
+│   │   ├── controllers/ # 控制器
+│   │   ├── services/   # 业务逻辑
+│   │   ├── models/     # 数据模型
+│   │   ├── routes/     # 路由定义
+│   │   ├── middleware/ # 中间件
+│   │   ├── utils/      # 工具函数
+│   │   └── config/     # 配置文件
 │   ├── package.json
 │   └── ...
 └── database/          # 数据库
-    └── schema.sql
+    ├── migrations/     # 数据库迁移
+    ├── seeds/         # 初始数据
+    └── schema.sql     # 数据库架构
 ```
 
 这种方式的缺点：
@@ -211,7 +227,29 @@ Next.js是Vercel开发的React全栈框架，解决了传统开发的问题：
 
 ### Next.js的核心优势
 
-TODO:也需要简单介绍下next的打包方式turbepack的优点
+#### 0. Turbopack构建系统
+
+Next.js 15引入了基于Rust的Turbopack构建系统，相比传统的Webpack有显著优势：
+
+**Turbopack优势：**
+
+- **启动速度快**：开发环境启动速度比Webpack快10倍
+- **增量编译**：只编译变更的部分，开发时几乎瞬时更新
+- **内存占用低**：更高效的内存使用，减少内存泄漏
+- **原生支持**：原生支持TypeScript、JSX、CSS等
+- **未来架构**：基于Rust，为Next.js未来发展奠定基础
+
+**对比效果：**
+
+```bash
+# Webpack (传统)
+npm run dev  # 启动时间: 10-30秒
+# 文件变更后刷新: 2-5秒
+
+# Turbopack (Next.js 15)
+npm run dev  # 启动时间: 1-3秒
+# 文件变更后刷新: <100ms
+```
 
 #### 1. 文件系统路由
 
@@ -785,16 +823,16 @@ Prisma使用`schema.prisma`文件来定义数据库结构：
 
 ```prisma
 // prisma/schema.prisma
-//TODO: 写上注释
+// Prisma客户端生成器配置，指定生成JavaScript/TypeScript客户端
 generator client {
   provider = "prisma-client-js"
 }
-//TODO: 写上注释
+// 数据库连接配置，指定数据库类型和连接URL
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-//TODO: 写上注释
+// 用户数据模型定义
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -809,7 +847,7 @@ model User {
 
   @@map("users")
 }
-//TODO: 写上注释 @relation是啥意思？
+// @relation装饰器用于定义表之间的关联关系，指定外键字段和引用字段
 
 model Post {
   id          String   @id @default(cuid())
@@ -999,7 +1037,7 @@ const posts = await prisma.post.findMany({
   },
 });
 
-// 关联查询 TODO: 这个查出来跟普通的查询有啥区别，可以举个例子
+// 关联查询 - 一次性获取文章及其作者、分类、标签信息
 const postsWithAuthor = await prisma.post.findMany({
   include: {
     author: true,
@@ -1007,6 +1045,37 @@ const postsWithAuthor = await prisma.post.findMany({
     tags: true,
   },
 });
+
+// 查询结果示例：
+// [
+//   {
+//     id: "1",
+//     title: "Next.js指南",
+//     content: "...",
+//     author: { id: "1", name: "张三", email: "zhang@example.com" },
+//     category: { id: "1", name: "前端技术" },
+//     tags: [{ id: "1", name: "Next.js" }, { id: "2", name: "React" }]
+//   }
+// ]
+
+// 对比：普通查询 - 只获取文章基本信息
+const posts = await prisma.post.findMany();
+// 查询结果示例：
+// [
+//   {
+//     id: "1",
+//     title: "Next.js指南",
+//     content: "...",
+//     authorId: "1",  // 只有ID，没有作者详细信息
+//     categoryId: "1" // 只有ID，没有分类详细信息
+//   }
+// ]
+
+// 如果用普通查询获取完整信息，需要多次查询：
+const posts2 = await prisma.post.findMany();
+const authors = await prisma.user.findMany();
+const categories = await prisma.category.findMany();
+// 然后在代码中手动关联数据...
 ```
 
 #### 3. 更新数据 (Update)
@@ -1041,20 +1110,81 @@ await prisma.post.deleteMany({
 
 ### Migration迁移
 
-当Schema发生变化时，需要运行迁移来更新数据库：
+当Schema发生变化时，需要运行迁移来更新数据库。以下是完整的Prisma使用流程：
+
+#### Prisma完整使用流程
+
+**1. 安装Prisma**
+
+```bash
+# 安装Prisma CLI和客户端
+npm install prisma @prisma/client
+```
+
+**2. 初始化Prisma**
+
+```bash
+# 初始化Prisma配置
+npx prisma init
+```
+
+**3. 编写Schema**
+
+编辑`prisma/schema.prisma`文件定义数据模型
+
+**4. 生成Prisma Client**
+
+```bash
+# 生成TypeScript类型化的Prisma客户端
+npx prisma generate
+```
+
+这一步会：
+
+- 根据schema.prisma生成Prisma Client代码
+- 创建TypeScript类型定义
+- 在node_modules/.prisma/client中生成客户端代码
+
+**5. 推送Schema到数据库**
+
+```bash
+# 将schema同步到数据库(适用于开发环境)
+npx prisma db push
+```
+
+这一步会：
+
+- 读取schema.prisma文件
+- 创建或更新数据库表结构
+- 不生成migration文件
+
+**6. 创建Migration(生产环境推荐)**
 
 ```bash
 # 生成迁移文件
 npx prisma migrate dev --name add-user-role
-
-# 应用迁移
-npx prisma db push
-
-# 生成Prisma Client
-npx prisma generate
 ```
 
-TODO: 需要补充Prisma的使用方式，例如先生成Prisma Client，然后再push等等，并解释每一步都是干嘛的
+这一步会：
+
+- 创建migration文件记录schema变更
+- 应用变更到数据库
+- 自动运行`prisma generate`
+
+**7. 应用Migration到生产环境**
+
+```bash
+# 在生产环境应用migration
+npx prisma migrate deploy
+```
+
+**流程对比：**
+
+| 场景             | 使用命令                | 说明                     |
+| ---------------- | ----------------------- | ------------------------ |
+| 开发环境快速测试 | `prisma db push`        | 快速同步，不记录变更历史 |
+| 正式开发         | `prisma migrate dev`    | 记录变更历史，可回滚     |
+| 生产部署         | `prisma migrate deploy` | 安全地应用所有migration  |
 
 ### 学习目标
 
@@ -1084,9 +1214,9 @@ User (用户)
 └── Role (角色) - 枚举
 
 Post (文章)
-├── User (作者) - 多对一
-├── Category (分类) - 多对一 TODO: 这里的多对一只的 是啥意思？确定不是一对多吗
-└── Tag (标签) - 多对多
+├── User (作者) - 多对一 (多篇文章对应一个作者)
+├── Category (分类) - 多对一 (多篇文章对应一个分类)
+└── Tag (标签) - 多对多 (多篇文章对应多个标签)
 
 Category (分类)
 └── Post (文章) - 一对多
@@ -1346,8 +1476,8 @@ const posts = await prisma.post.findMany({
     tags: { include: { tag: true } },
   },
   orderBy: { publishedAt: "desc" },
-  skip: (page - 1) * limit, //TODO:添加注释
-  take: limit, //TODO:添加注释
+  skip: (page - 1) * limit, // 跳过前面的记录数，实现分页
+  take: limit, // 限制返回的记录数量
 });
 ```
 
@@ -2193,7 +2323,21 @@ TODO: 补充github action一键发布部署链接
 
 #### 1. SSG/ISR特性
 
-TODO: SSG/ISR是啥都没介绍
+**SSG (Static Site Generation)** - 静态站点生成：
+
+在构建时预先生成HTML页面，用户访问时直接返回静态文件，速度极快。
+
+**ISR (Incremental Static Regeneration)** - 增量静态再生：
+
+在SSG基础上，允许页面在运行时按需更新，既保证了性能又保证了内容的时效性。
+
+**三种渲染模式对比：**
+
+| 渲染模式 | 生成时机      | 优势               | 劣势                 | 适用场景                 |
+| -------- | ------------- | ------------------ | -------------------- | ------------------------ |
+| **SSG**  | 构建时        | 性能最佳，SEO友好  | 内容更新需要重新构建 | 静态内容，如文档、博客   |
+| **ISR**  | 构建时+运行时 | 性能好，内容可更新 | 配置相对复杂         | 半静态内容，如新闻、商品 |
+| **SSR**  | 请求时        | 内容实时，交互性好 | 服务器压力大         | 动态内容，如用户面板     |
 
 ```typescript
 // app/posts/[slug]/page.tsx
