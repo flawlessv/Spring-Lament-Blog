@@ -8,12 +8,25 @@
 
 ## 文章大纲
 
-**学习路径：先概念 → 再技术 → 后实践**
+**学习路径：概念理解 → 工具掌握 → 实战应用**
 
-1. **概念理解篇**（第1-3章）：后端本质、Node.js、Next.js框架
-2. **技术深入篇**（第4-7章）：App Router、数据流转、Prisma ORM、数据模型
-3. **项目实战篇**（第8-10章）：项目结构、认证系统、CRUD操作
-4. **部署运维篇**（第11-12章）：部署实战、性能优化
+### 📚 概念理解篇（打基础）
+
+1. **第1章：后端的本质** - 理解前后端分工和全栈开发价值
+2. **第2章：Node.js入门** - JavaScript运行时和服务端能力
+3. **第3章：Next.js全栈框架** - 现代化全栈开发解决方案
+
+### 🔧 工具掌握篇（学工具）
+
+4. **第4章：项目结构全解析** - 理解文件组织和架构设计
+5. **第5章：数据库与Prisma ORM** - 数据管理和模型设计
+6. **第6章：用户认证系统** - 安全控制和权限管理
+
+### 🚀 实战应用篇（做项目）
+
+7. **第7章：完整功能实现** - 端到端的CRUD操作流程
+8. **第8章：部署与运维** - 生产环境部署和自动化
+9. **第9章：性能优化** - 提升应用性能和用户体验
 
 ---
 
@@ -164,7 +177,7 @@ const data = await response.json();
 
 ---
 
-## 第3章：全栈框架Next.js
+## 第3章：Next.js全栈框架
 
 ### 传统开发方式的痛点
 
@@ -201,7 +214,7 @@ const data = await response.json();
     └── schema.sql     # 数据库架构
 ```
 
-这种方式的缺点：
+**这种方式的缺点：**
 
 - **开发复杂**：需要同时维护多个项目
 - **部署复杂**：需要分别部署前端和后端
@@ -210,12 +223,10 @@ const data = await response.json();
 
 ### Next.js的解决方案
 
-Next.js是Vercel开发的React全栈框架，解决了传统开发的问题：
-
-**一个项目，前后端统一：**
+Next.js是Vercel开发的React全栈框架，一个项目解决所有问题：
 
 ```
-项目结构：
+Next.js项目结构：
 ├── app/               # 页面和API路由
 │   ├── page.tsx      # 前端页面
 │   ├── api/          # 后端API
@@ -239,21 +250,9 @@ Next.js 15引入了基于Rust的Turbopack构建系统，相比传统的Webpack�
 - **原生支持**：原生支持TypeScript、JSX、CSS等
 - **未来架构**：基于Rust，为Next.js未来发展奠定基础
 
-**对比效果：**
-
-```bash
-# Webpack (传统)
-npm run dev  # 启动时间: 10-30秒
-# 文件变更后刷新: 2-5秒
-
-# Turbopack (Next.js 15)
-npm run dev  # 启动时间: 1-3秒
-# 文件变更后刷新: <100ms
-```
-
 #### 1. 文件系统路由
 
-Next.js使用文件系统作为路由系统，非常直观：
+文件即路由，非常直观：
 
 ```
 app/
@@ -261,128 +260,27 @@ app/
 ├── about/page.tsx   → /about
 ├── posts/
 │   ├── page.tsx     → /posts
-│   └── [slug]/
-│       └── page.tsx → /posts/hello-world
-└── api/
-    └── posts/
-        └── route.ts → /api/posts
+│   └── [slug]/page.tsx → /posts/hello-world
+└── api/posts/route.ts → /api/posts
 ```
 
-#### 2. 服务端渲染(SSR)
+#### 2. 特殊文件约定
 
-Next.js支持多种渲染模式：
-
-- **SSR**：服务端渲染，SEO友好
-- **SSG**：静态生成，性能最佳
-- **ISR**：增量静态再生，平衡性能和更新
-
-#### 3. API路由
-
-在Next.js中，API路由就是普通的文件：
+Next.js使用特殊文件名定义不同功能：
 
 ```typescript
-// app/api/posts/route.ts
-export async function GET() {
-  const posts = await prisma.post.findMany();
-  return Response.json(posts);
-}
-
-export async function POST(request: Request) {
-  const data = await request.json();
-  const post = await prisma.post.create({ data });
-  return Response.json(post);
-}
-```
-
-#### 4. 类型安全
-
-Next.js + TypeScript提供端到端的类型安全：
-
-```typescript
-// 前端组件
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-}
-
-// API路由
-export async function GET(): Promise<Response<Post[]>> {
-  // 类型安全的数据查询
-}
-```
-
-### 为什么选择Next.js？
-
-1. **学习成本低**：基于React，前端同学容易上手
-2. **开发效率高**：约定大于配置，减少样板代码
-3. **性能优秀**：自动代码分割、图片优化、缓存策略
-4. **生态完善**：丰富的插件和工具链
-5. **部署简单**：支持Vercel一键部署
-
-### 学习目标
-
-通过本章，你应该理解：
-
-- 传统前后端分离开发的痛点
-- Next.js如何解决这些问题
-- Next.js的核心优势：文件路由、SSR、API路由、类型安全
-- 为什么Next.js是前端同学学习全栈的最佳选择
-
-在下一章，我们将深入学习Next.js 15的App Router，这是Next.js最新的路由系统。
-
----
-
-## 第4章：Next.js 15 App Router核心
-
-### 版本说明
-
-本指南基于**Next.js 15.0.0**版本，这是Next.js的最新稳定版本，带来了许多性能优化和新特性。
-
-### "约定大于配置"的设计哲学
-
-Next.js遵循"约定大于配置"的设计理念，通过文件命名和目录结构来定义应用的行为，而不是通过复杂的配置文件。
-
-### 核心文件约定
-
-在Next.js 15的App Router中，每个文件都有特定的作用：
-
-#### 1. page.tsx - 页面组件
-
-```typescript
-// app/posts/page.tsx
+// app/posts/page.tsx - 页面组件
 export default function PostsPage() {
   return <div>文章列表页面</div>
 }
-```
 
-这个文件自动成为`/posts`路由的页面组件。
-
-#### 2. route.ts - API路由
-
-```typescript
-// app/api/posts/route.ts
+// app/api/posts/route.ts - API路由
 export async function GET() {
   return Response.json({ message: "获取文章列表" });
 }
 
-export async function POST(request: Request) {
-  const data = await request.json();
-  return Response.json({ message: "创建文章", data });
-}
-```
-
-这个文件自动成为`/api/posts`的API端点。
-
-#### 3. layout.tsx - 布局组件
-
-```typescript
-// app/layout.tsx
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+// app/layout.tsx - 布局组件
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh">
       <body>
@@ -393,312 +291,47 @@ export default function RootLayout({
     </html>
   )
 }
-```
 
-布局组件会包裹所有子页面。
-
-#### 4. loading.tsx - 加载状态
-
-```typescript
-// app/posts/loading.tsx
+// app/loading.tsx - 加载状态
 export default function Loading() {
   return <div>加载中...</div>
 }
 ```
 
-当页面加载时自动显示。
+#### 3. Server Components与Client Components
 
-#### 5. error.tsx - 错误处理
-
-```typescript
-// app/posts/error.tsx
-'use client'
-
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string }
-  reset: () => void
-}) {
-  return (
-    <div>
-      <h2>出错了!</h2>
-      <button onClick={() => reset()}>重试</button>
-    </div>
-  )
-}
-```
-
-当页面出错时自动显示。
-
-### 文件系统路由规则
-
-Next.js 15使用文件系统来定义路由，非常直观：
-
-```
-app/
-├── page.tsx                    → /
-├── about/
-│   └── page.tsx               → /about
-├── posts/
-│   ├── page.tsx               → /posts
-│   ├── loading.tsx            → 加载状态
-│   ├── error.tsx              → 错误处理
-│   └── [slug]/
-│       ├── page.tsx           → /posts/hello-world
-│       └── not-found.tsx      → 404页面
-└── api/
-    ├── posts/
-    │   └── route.ts           → /api/posts
-    └── posts/
-        └── [id]/
-            └── route.ts       → /api/posts/123
-```
-
-### Server Components vs Client Components
-
-Next.js 15默认使用Server Components，但也可以使用Client Components：
-
-#### Server Components（默认）
+**Server Components（默认）**：在服务器执行，可直接访问数据库
 
 ```typescript
-// app/posts/page.tsx - 服务端组件
-import { prisma } from '@/lib/prisma'
-
+// 服务端组件 - 默认
 export default async function PostsPage() {
-  // 在服务端执行，可以直接访问数据库
-  const posts = await prisma.post.findMany()
-
-  return (
-    <div>
-      {posts.map(post => (
-        <div key={post.id}>{post.title}</div>
-      ))}
-    </div>
-  )
+  const posts = await prisma.post.findMany() // 直接数据库查询
+  return <div>{posts.map(post => <div key={post.id}>{post.title}</div>)}</div>
 }
 ```
 
-#### Client Components
+**Client Components**：在浏览器执行，处理交互
 
 ```typescript
-// app/components/PostForm.tsx - 客户端组件
+// 客户端组件 - 需要'use client'声明
 'use client'
-
 import { useState } from 'react'
 
 export default function PostForm() {
   const [title, setTitle] = useState('')
-
-  const handleSubmit = () => {
-    // 客户端交互逻辑
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-    </form>
-  )
+  return <input value={title} onChange={(e) => setTitle(e.target.value)} />
 }
 ```
 
-### 动态路由
+#### 4. 多种渲染模式
 
-Next.js支持动态路由，使用方括号语法：
+- **SSG**：静态生成，构建时生成HTML，性能最佳
+- **SSR**：服务端渲染，请求时生成HTML，SEO友好
+- **ISR**：增量静态再生，平衡性能和更新
 
-```typescript
-// app/posts/[slug]/page.tsx
-interface Props {
-  params: { slug: string }
-}
+#### 5. 类型安全
 
-export default async function PostPage({ params }: Props) {
-  const post = await prisma.post.findUnique({
-    where: { slug: params.slug }
-  })
-
-  return <div>{post?.title}</div>
-}
-```
-
-### 学习目标
-
-通过本章，你应该理解：
-
-- Next.js 15的App Router核心概念
-- 各种文件类型的作用：page.tsx、route.ts、layout.tsx等
-- 文件系统路由的规则和约定
-- Server Components和Client Components的区别
-- 动态路由的使用方法
-
-在下一章，我们将通过博客项目的实际代码，学习完整的数据流转过程。
-
----
-
-## 第5章：博客项目数据流转
-
-### 项目概述
-
-Spring Lament Blog是一个基于Next.js 15的现代化博客系统，包含：
-
-- **前台功能**：文章展示、分类浏览、标签筛选
-- **后台管理**：文章CRUD、用户管理、数据统计
-- **技术栈**：Next.js 15 + Prisma + NextAuth + SQLite
-
-### 完整的数据流转过程
-
-让我们通过一个具体的例子，看看数据是如何在系统中流转的：
-
-#### 场景：用户访问文章详情页
-
-**1. 用户访问URL**
-
-```
-用户访问：/posts/hello-world
-```
-
-**2. 路由匹配**
-
-```
-app/posts/[slug]/page.tsx
-```
-
-**3. 服务端组件执行**
-
-```typescript
-// app/posts/[slug]/page.tsx
-import { prisma } from '@/lib/prisma'
-
-interface Props {
-  params: { slug: string }
-}
-
-export default async function PostPage({ params }: Props) {
-  // 1. 从数据库查询文章数据
-  const post = await prisma.post.findUnique({
-    where: { slug: params.slug },
-    include: {
-      author: { select: { name: true, avatar: true } },
-      category: true,
-      tags: true
-    }
-  })
-
-  if (!post) {
-    return <div>文章不存在</div>
-  }
-
-  // 2. 渲染页面
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <div>{post.content}</div>
-      <div>作者：{post.author.name}</div>
-      <div>分类：{post.category.name}</div>
-    </article>
-  )
-}
-```
-
-**4. 数据库查询**
-
-```typescript
-// lib/prisma.ts
-import { PrismaClient } from "@prisma/client";
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-```
-
-**5. 返回渲染结果**
-
-- 服务端渲染完成
-- 返回HTML给浏览器
-- 浏览器显示页面
-
-### API路由的数据流转
-
-#### 场景：创建新文章
-
-**1. 前端表单提交**
-
-```typescript
-// app/admin/posts/new/page.tsx
-'use client'
-
-export default function NewPostPage() {
-  const handleSubmit = async (data: FormData) => {
-    const response = await fetch('/api/admin/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-
-    if (response.ok) {
-      router.push('/admin/posts')
-    }
-  }
-
-  return <PostForm onSubmit={handleSubmit} />
-}
-```
-
-**2. API路由处理**
-
-```typescript
-// app/api/admin/posts/route.ts
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-
-export async function POST(request: Request) {
-  // 1. 验证用户身份
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return Response.json({ error: "未授权" }, { status: 401 });
-  }
-
-  // 2. 解析请求数据
-  const data = await request.json();
-
-  // 3. 数据验证
-  if (!data.title || !data.content) {
-    return Response.json({ error: "标题和内容不能为空" }, { status: 400 });
-  }
-
-  // 4. 保存到数据库
-  const post = await prisma.post.create({
-    data: {
-      title: data.title,
-      content: data.content,
-      slug: generateSlug(data.title),
-      authorId: session.user.id,
-    },
-  });
-
-  // 5. 返回结果
-  return Response.json({ post });
-}
-```
-
-**3. 数据库操作**
-
-```typescript
-// Prisma自动生成的SQL
-INSERT INTO Post (title, content, slug, authorId)
-VALUES (?, ?, ?, ?)
-```
-
-### 前后端在同一个项目的好处
-
-#### 1. 类型安全
+前后端共享TypeScript类型：
 
 ```typescript
 // 共享类型定义
@@ -706,68 +339,148 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  slug: string;
-  authorId: string;
 }
 
 // 前端使用
 const [posts, setPosts] = useState<Post[]>([]);
 
 // API路由使用
-export async function GET(): Promise<Response<Post[]>> {
-  const posts = await prisma.post.findMany();
+export async function GET(): Promise<Response> {
+  const posts: Post[] = await prisma.post.findMany();
   return Response.json(posts);
 }
 ```
 
-#### 2. 代码复用
+### 为什么选择Next.js？
 
-```typescript
-// lib/utils.ts - 共享工具函数
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-// 前端使用
-const slug = generateSlug(formData.title);
-
-// 后端使用
-const post = await prisma.post.create({
-  data: { slug: generateSlug(data.title) },
-});
-```
-
-#### 3. 统一部署
-
-```bash
-# 一个命令部署整个应用
-npm run build
-npm start
-```
+1. **学习成本低**：基于React，前端同学容易上手
+2. **开发效率高**：约定大于配置，减少样板代码
+3. **性能优秀**：自动代码分割、图片优化、缓存策略
+4. **类型安全**：前后端统一的TypeScript支持
+5. **部署简单**：支持Vercel一键部署
 
 ### 学习目标
 
 通过本章，你应该理解：
 
-- 完整的数据流转过程：用户请求 → 路由匹配 → 服务端组件 → 数据库查询 → 渲染返回
-- API路由的处理流程：请求验证 → 数据解析 → 业务逻辑 → 数据库操作 → 响应返回
-- 前后端统一开发的优势：类型安全、代码复用、统一部署
-- 如何在Next.js中实现完整的数据流转
+- 传统前后端分离开发的痛点
+- Next.js如何用一个项目解决所有问题
+- 文件系统路由和特殊文件约定
+- Server Components和Client Components的区别
+- Next.js的核心优势和选择理由
 
-在下一章，我们将深入学习Prisma ORM，这是操作数据库的核心工具。
+在下一章，我们将了解具体的项目结构，看看文件是如何组织的。
 
 ---
 
-## 第6章：Prisma ORM
+## 第4章：项目结构全解析
+
+### 项目目录结构
+
+Spring Lament Blog采用Next.js 15的App Router架构，目录结构如下：
+
+```
+Spring-Lament-Blog/
+├── src/                          # 源代码目录
+│   ├── app/                      # Next.js App Router
+│   │   ├── admin/                # 管理后台页面
+│   │   │   ├── layout.tsx        # 后台布局
+│   │   │   ├── page.tsx          # 后台首页
+│   │   │   └── posts/            # 文章管理
+│   │   ├── api/                  # API路由
+│   │   │   ├── admin/            # 后台API
+│   │   │   ├── auth/             # 认证API
+│   │   │   └── posts/            # 公开API
+│   │   ├── posts/                # 文章展示页面
+│   │   │   └── [slug]/           # 文章详情
+│   │   ├── login/                # 登录页面
+│   │   ├── layout.tsx            # 根布局
+│   │   └── page.tsx              # 首页
+│   ├── components/               # React组件
+│   │   ├── admin/                # 后台组件
+│   │   ├── ui/                   # shadcn/ui组件
+│   │   └── layout/               # 布局组件
+│   ├── lib/                      # 工具函数库
+│   │   ├── auth.ts               # NextAuth配置
+│   │   ├── prisma.ts             # Prisma客户端
+│   │   └── utils.ts              # 通用工具
+│   └── types/                    # TypeScript类型
+├── prisma/                       # 数据库相关
+│   ├── schema.prisma             # 数据模型定义
+│   ├── seed.ts                   # 初始数据
+│   └── dev.db                    # SQLite数据库
+├── public/                       # 静态资源
+├── package.json                  # 项目配置
+├── next.config.js                # Next.js配置
+├── tailwind.config.ts            # Tailwind配置
+└── tsconfig.json                 # TypeScript配置
+```
+
+### 核心目录详解
+
+#### 1. src/app/ - 页面和API路由
+
+**页面路由示例：**
+
+```typescript
+// app/page.tsx - 首页
+export default function HomePage() {
+  return <div>博客首页</div>
+}
+
+// app/posts/[slug]/page.tsx - 文章详情页
+interface Props {
+  params: { slug: string }
+}
+
+export default async function PostPage({ params }: Props) {
+  return <div>文章: {params.slug}</div>
+}
+```
+
+**API路由示例：**
+
+```typescript
+// app/api/posts/route.ts - 文章API
+export async function GET() {
+  return Response.json({ message: "获取文章列表" });
+}
+
+export async function POST(request: Request) {
+  const data = await request.json();
+  return Response.json({ message: "创建文章", data });
+}
+```
+
+### 文件命名约定
+
+| 文件名        | 作用     | 示例                                     |
+| ------------- | -------- | ---------------------------------------- |
+| `page.tsx`    | 页面组件 | `/app/posts/page.tsx` → `/posts`         |
+| `layout.tsx`  | 布局组件 | `/app/layout.tsx` → 全局布局             |
+| `route.ts`    | API端点  | `/app/api/posts/route.ts` → `/api/posts` |
+| `loading.tsx` | 加载状态 | `/app/posts/loading.tsx` → 加载中...     |
+| `error.tsx`   | 错误处理 | `/app/posts/error.tsx` → 错误页面        |
+
+### 学习目标
+
+通过本章，你应该理解：
+
+- Next.js项目的完整目录结构
+- 各个目录和文件的作用
+- 页面路由和API路由的组织方式
+- 组件库的层次结构
+- 配置文件的作用
+
+在下一章，我们将学习数据库和Prisma ORM，了解如何管理应用的数据。
+
+---
+
+## 第5章：数据库与Prisma ORM
 
 ### 什么是ORM？
 
-**ORM(Object-Relational Mapping)**是对象关系映射，是一种编程技术，用于在面向对象编程语言中管理关系型数据库。
-
-简单来说，ORM让我们可以用面向对象的方式操作数据库，而不需要写SQL语句。
+**ORM(Object-Relational Mapping)**是对象关系映射，让我们可以用面向对象的方式操作数据库，而不需要写SQL语句。
 
 ### 传统SQL vs Prisma对比
 
@@ -780,12 +493,6 @@ VALUES ('张三', 'zhang@example.com', 'hashed_password');
 
 -- 查询用户
 SELECT * FROM users WHERE email = 'zhang@example.com';
-
--- 更新用户
-UPDATE users SET name = '李四' WHERE id = 1;
-
--- 删除用户
-DELETE FROM users WHERE id = 1;
 ```
 
 #### Prisma方式
@@ -804,22 +511,50 @@ await prisma.user.create({
 const user = await prisma.user.findUnique({
   where: { email: "zhang@example.com" },
 });
-
-// 更新用户
-await prisma.user.update({
-  where: { id: 1 },
-  data: { name: "李四" },
-});
-
-// 删除用户
-await prisma.user.delete({
-  where: { id: 1 },
-});
 ```
 
-### Schema定义详解
+### Prisma完整使用流程
 
-Prisma使用`schema.prisma`文件来定义数据库结构：
+**1. 安装Prisma**
+
+```bash
+npm install prisma @prisma/client
+```
+
+**2. 初始化Prisma**
+
+```bash
+npx prisma init
+```
+
+**3. 编写Schema**
+
+编辑`prisma/schema.prisma`文件定义数据模型
+
+**4. 生成Prisma Client**
+
+```bash
+npx prisma generate
+```
+
+**5. 推送Schema到数据库**
+
+```bash
+npx prisma db push  # 开发环境
+npx prisma migrate dev  # 生产环境
+```
+
+### 博客数据模型设计
+
+#### 核心实体关系
+
+```
+User (用户) 1:N Post (文章)
+Post (文章) N:1 Category (分类)
+Post (文章) N:M Tag (标签)
+```
+
+#### Schema定义
 
 ```prisma
 // prisma/schema.prisma
@@ -847,8 +582,8 @@ model User {
 
   @@map("users")
 }
-// @relation装饰器用于定义表之间的关联关系，指定外键字段和引用字段
 
+// 文章模型
 model Post {
   id          String   @id @default(cuid())
   title       String
@@ -859,6 +594,7 @@ model Post {
   updatedAt   DateTime @updatedAt
 
   authorId String
+// @relation装饰器用于定义表之间的关联关系，指定外键字段和引用字段
   author   User   @relation(fields: [authorId], references: [id])
 
   categoryId String?
@@ -869,132 +605,17 @@ model Post {
   @@map("posts")
 }
 
-model Category {
-  id          String @id @default(cuid())
-  name        String @unique
-  slug        String @unique
-  description String?
 
-  posts Post[]
 
-  @@map("categories")
-}
 
-model Tag {
-  id          String @id @default(cuid())
-  name        String @unique
-  slug        String @unique
-  color       String?
-
-  posts PostTag[]
-
-  @@map("tags")
-}
-
-model PostTag {
-  postId String
-  post   Post @relation(fields: [postId], references: [id])
-  tagId  String
-  tag    Tag  @relation(fields: [tagId], references: [id])
-
-  @@id([postId, tagId])
-  @@map("post_tags")
-}
-
-model Profile {
-  id     String @id @default(cuid())
-  bio    String?
-  avatar String?
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@map("profiles")
-}
-
-enum Role {
-  USER
-  ADMIN
-}
 ```
 
-### 关键概念解析
+### 基础CRUD操作
 
-#### 1. 字段类型
-
-```prisma
-model User {
-  id        String   @id @default(cuid())    // 主键，自动生成ID
-  email     String   @unique                 // 唯一字段
-  name      String?                          // 可选字段
-  password  String                           // 必填字段
-  role      Role     @default(USER)          // 枚举类型，默认值
-  createdAt DateTime @default(now())          // 时间戳，默认当前时间
-  updatedAt DateTime @updatedAt              // 更新时间，自动维护
-}
-```
-
-#### 2. 表关联关系
-
-**一对多关系 (One-to-Many)**
-
-```prisma
-model User {
-  id    String @id @default(cuid())
-  posts Post[]  // 一个用户可以有多个文章
-}
-
-model Post {
-  id       String @id @default(cuid())
-  authorId String
-  author   User @relation(fields: [authorId], references: [id])
-}
-```
-
-**一对一关系 (One-to-One)**
-
-```prisma
-model User {
-  id      String  @id @default(cuid())
-  profile Profile?  // 一个用户最多有一个资料
-}
-
-model Profile {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-}
-```
-
-**多对多关系 (Many-to-Many)**
-
-```prisma
-model Post {
-  id   String @id @default(cuid())
-  tags PostTag[]  // 通过中间表实现多对多
-}
-
-model Tag {
-  id    String @id @default(cuid())
-  posts PostTag[]
-}
-
-model PostTag {
-  postId String
-  post   Post @relation(fields: [postId], references: [id])
-  tagId  String
-  tag    Tag  @relation(fields: [tagId], references: [id])
-
-  @@id([postId, tagId])  // 复合主键
-}
-```
-
-### 基础查询操作
-
-#### 1. 创建数据 (Create)
+#### 1. 创建数据
 
 ```typescript
-// 创建单个记录
+// 创建用户
 const user = await prisma.user.create({
   data: {
     name: "张三",
@@ -1003,758 +624,141 @@ const user = await prisma.user.create({
   },
 });
 
-// 创建关联数据
+// 创建文章（包含关联）
 const post = await prisma.post.create({
   data: {
-    title: "我的第一篇文章",
-    content: "文章内容...",
-    slug: "my-first-post",
-    author: {
-      connect: { id: user.id },
-    },
+    title: "Next.js全栈开发指南",
+    slug: "nextjs-fullstack-guide",
+    content: "# 指南内容...",
+    authorId: user.id,
+    categoryId: category.id,
   },
 });
 ```
 
-#### 2. 查询数据 (Read)
+#### 2. 查询数据
 
 ```typescript
-// 查询所有记录
-const users = await prisma.user.findMany();
-
-// 查询单个记录
-const user = await prisma.user.findUnique({
-  where: { email: "zhang@example.com" },
-});
+// 查询所有文章
+const posts = await prisma.post.findMany();
 
 // 条件查询
-const posts = await prisma.post.findMany({
-  where: {
-    published: true,
-    author: {
-      name: "张三",
-    },
-  },
+const publishedPosts = await prisma.post.findMany({
+  where: { published: true },
 });
 
-// 关联查询 - 一次性获取文章及其作者、分类、标签信息
-const postsWithAuthor = await prisma.post.findMany({
+// 关联查询 - 一次性获取文章及其关联数据
+const postsWithRelations = await prisma.post.findMany({
   include: {
     author: true,
     category: true,
-    tags: true,
+    tags: { include: { tag: true } },
   },
 });
-
-// 查询结果示例：
-// [
-//   {
-//     id: "1",
-//     title: "Next.js指南",
-//     content: "...",
-//     author: { id: "1", name: "张三", email: "zhang@example.com" },
-//     category: { id: "1", name: "前端技术" },
-//     tags: [{ id: "1", name: "Next.js" }, { id: "2", name: "React" }]
-//   }
-// ]
-
-// 对比：普通查询 - 只获取文章基本信息
-const posts = await prisma.post.findMany();
-// 查询结果示例：
-// [
-//   {
-//     id: "1",
-//     title: "Next.js指南",
-//     content: "...",
-//     authorId: "1",  // 只有ID，没有作者详细信息
-//     categoryId: "1" // 只有ID，没有分类详细信息
-//   }
-// ]
-
-// 如果用普通查询获取完整信息，需要多次查询：
-const posts2 = await prisma.post.findMany();
-const authors = await prisma.user.findMany();
-const categories = await prisma.category.findMany();
-// 然后在代码中手动关联数据...
 ```
 
-#### 3. 更新数据 (Update)
+#### 3. 更新数据
 
 ```typescript
-// 更新单个记录
-const updatedUser = await prisma.user.update({
-  where: { id: user.id },
-  data: { name: "李四" },
-});
-
-// 批量更新
-await prisma.post.updateMany({
-  where: { published: false },
-  data: { published: true },
+// 更新文章
+const updatedPost = await prisma.post.update({
+  where: { id: postId },
+  data: { title: "新标题" },
 });
 ```
 
-#### 4. 删除数据 (Delete)
+#### 4. 删除数据
 
 ```typescript
-// 删除单个记录
-await prisma.user.delete({
-  where: { id: user.id },
-});
-
-// 批量删除
-await prisma.post.deleteMany({
-  where: { published: false },
+// 删除文章
+await prisma.post.delete({
+  where: { id: postId },
 });
 ```
 
-### Migration迁移
+### 复杂查询示例
 
-当Schema发生变化时，需要运行迁移来更新数据库。以下是完整的Prisma使用流程：
+#### 分页查询
 
-#### Prisma完整使用流程
-
-**1. 安装Prisma**
-
-```bash
-# 安装Prisma CLI和客户端
-npm install prisma @prisma/client
+```typescript
+const posts = await prisma.post.findMany({
+  where: { published: true },
+  include: {
+    author: { select: { name: true } },
+    category: true,
+  },
+  orderBy: { createdAt: "desc" },
+  skip: (page - 1) * limit, // 跳过前面的记录数，实现分页
+  take: limit, // 限制返回的记录数量
+});
 ```
 
-**2. 初始化Prisma**
+#### 按分类筛选
 
-```bash
-# 初始化Prisma配置
-npx prisma init
+```typescript
+const postsByCategory = await prisma.post.findMany({
+  where: {
+    published: true,
+    category: { slug: "frontend" },
+  },
+});
 ```
 
-**3. 编写Schema**
+### 数据库客户端配置
 
-编辑`prisma/schema.prisma`文件定义数据模型
+```typescript
+// lib/prisma.ts
+import { PrismaClient } from "@prisma/client";
 
-**4. 生成Prisma Client**
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-```bash
-# 生成TypeScript类型化的Prisma客户端
-npx prisma generate
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
 ```
-
-这一步会：
-
-- 根据schema.prisma生成Prisma Client代码
-- 创建TypeScript类型定义
-- 在node_modules/.prisma/client中生成客户端代码
-
-**5. 推送Schema到数据库**
-
-```bash
-# 将schema同步到数据库(适用于开发环境)
-npx prisma db push
-```
-
-这一步会：
-
-- 读取schema.prisma文件
-- 创建或更新数据库表结构
-- 不生成migration文件
-
-**6. 创建Migration(生产环境推荐)**
-
-```bash
-# 生成迁移文件
-npx prisma migrate dev --name add-user-role
-```
-
-这一步会：
-
-- 创建migration文件记录schema变更
-- 应用变更到数据库
-- 自动运行`prisma generate`
-
-**7. 应用Migration到生产环境**
-
-```bash
-# 在生产环境应用migration
-npx prisma migrate deploy
-```
-
-**流程对比：**
-
-| 场景             | 使用命令                | 说明                     |
-| ---------------- | ----------------------- | ------------------------ |
-| 开发环境快速测试 | `prisma db push`        | 快速同步，不记录变更历史 |
-| 正式开发         | `prisma migrate dev`    | 记录变更历史，可回滚     |
-| 生产部署         | `prisma migrate deploy` | 安全地应用所有migration  |
 
 ### 学习目标
 
 通过本章，你应该理解：
 
 - ORM的概念和优势
-- Prisma Schema的定义方法
-- 各种字段类型和约束
-- 表关联关系的设计
-- 基本的CRUD操作
-- Migration迁移的作用
+- Prisma的完整使用流程
+- 博客系统的数据模型设计
+- 各种关联关系的实现
+- 基本的CRUD操作和复杂查询
 
-在下一章，我们将深入分析博客项目的数据模型，学习如何设计复杂的数据结构。
+在下一章，我们将学习用户认证系统，保护应用的安全。
 
 ---
 
-## 第7章：博客数据模型解析
+## 第6章：用户认证系统
 
-### 项目数据模型概览
+### 为什么需要认证系统？
 
-Spring Lament Blog的数据模型包含以下核心实体：
+TODO: 这里简单介绍一些常见后端种为什么需要认证系统，而不是仅局限于我们的博客
+在博客系统中，我们需要区分不同的用户角色：
 
-```
-User (用户)
-├── Profile (个人资料) - 一对一
-├── Post (文章) - 一对多
-└── Role (角色) - 枚举
+- **普通用户**：只能查看文章，不能编辑
+- **管理员**：可以管理文章、分类、标签
+- **未登录用户**：只能访问公开内容
 
-Post (文章)
-├── User (作者) - 多对一 (多篇文章对应一个作者)
-├── Category (分类) - 多对一 (多篇文章对应一个分类)
-└── Tag (标签) - 多对多 (多篇文章对应多个标签)
+认证系统确保只有授权用户才能访问受保护的资源。
 
-Category (分类)
-└── Post (文章) - 一对多
+### NextAuth.js简介
 
-Tag (标签)
-└── Post (文章) - 多对多
-```
+NextAuth.js是Next.js生态中最流行的认证解决方案，支持多种认证方式：
 
-### 核心模型详解
+- **Credentials Provider**：用户名密码登录
+- **OAuth Providers**：Google、GitHub等第三方登录
+- **JWT Sessions**：JWT令牌管理
 
-#### 1. User模型 - 用户管理
+### 认证配置
 
-```prisma
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  posts    Post[]
-  profile  Profile?
-
-  @@map("users")
-}
-```
-
-**字段说明：**
-
-- `id`: 主键，使用cuid()生成唯一ID
-- `email`: 邮箱，唯一约束，用于登录
-- `name`: 姓名，可选字段
-- `password`: 密码，存储加密后的哈希值
-- `role`: 角色，枚举类型(USER/ADMIN)
-- `createdAt/updatedAt`: 时间戳，自动维护
-
-**实际应用：**
-
-```typescript
-// 创建管理员用户
-const admin = await prisma.user.create({
-  data: {
-    email: "admin@blog.com",
-    name: "博客管理员",
-    password: await bcrypt.hash("password123", 10),
-    role: "ADMIN",
-  },
-});
-
-// 查询用户及其文章
-const userWithPosts = await prisma.user.findUnique({
-  where: { id: userId },
-  include: {
-    posts: {
-      where: { published: true },
-      orderBy: { createdAt: "desc" },
-    },
-  },
-});
-```
-
-#### 2. Post模型 - 文章管理
-
-```prisma
-model Post {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  coverImage  String?
-  published   Boolean  @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  authorId String
-  author   User @relation(fields: [authorId], references: [id])
-
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  tags PostTag[]
-
-  @@map("posts")
-}
-```
-
-**字段说明：**
-
-- `title`: 文章标题
-- `slug`: URL友好的标识符，唯一约束
-- `content`: 文章内容(Markdown格式)
-- `excerpt`: 文章摘要，可选
-- `coverImage`: 封面图片URL，可选
-- `published`: 发布状态，默认草稿
-- `publishedAt`: 发布时间，可选
-
-**实际应用：**
-
-```typescript
-// 创建文章
-const post = await prisma.post.create({
-  data: {
-    title: "Next.js全栈开发指南",
-    slug: "nextjs-fullstack-guide",
-    content: "# 指南内容...",
-    excerpt: "学习Next.js全栈开发",
-    authorId: user.id,
-    categoryId: category.id,
-    tags: {
-      create: [
-        { tag: { connect: { id: tag1.id } } },
-        { tag: { connect: { id: tag2.id } } },
-      ],
-    },
-  },
-});
-
-// 查询文章详情(包含所有关联数据)
-const postDetail = await prisma.post.findUnique({
-  where: { slug: "nextjs-fullstack-guide" },
-  include: {
-    author: { select: { name: true, avatar: true } },
-    category: true,
-    tags: { include: { tag: true } },
-  },
-});
-```
-
-#### 3. Category模型 - 分类管理
-
-```prisma
-model Category {
-  id          String @id @default(cuid())
-  name        String @unique
-  slug        String @unique
-  description String?
-
-  posts Post[]
-
-  @@map("categories")
-}
-```
-
-**实际应用：**
-
-```typescript
-// 创建分类
-const category = await prisma.category.create({
-  data: {
-    name: "前端技术",
-    slug: "frontend",
-    description: "前端开发相关文章",
-  },
-});
-
-// 查询分类及其文章数量
-const categoriesWithCount = await prisma.category.findMany({
-  include: {
-    _count: {
-      select: { posts: true },
-    },
-  },
-});
-```
-
-#### 4. Tag模型 - 标签管理
-
-```prisma
-model Tag {
-  id          String @id @default(cuid())
-  name        String @unique
-  slug        String @unique
-  color       String?
-
-  posts PostTag[]
-
-  @@map("tags")
-}
-```
-
-**实际应用：**
-
-```typescript
-// 创建标签
-const tag = await prisma.tag.create({
-  data: {
-    name: "Next.js",
-    slug: "nextjs",
-    color: "#000000",
-  },
-});
-
-// 查询热门标签
-const popularTags = await prisma.tag.findMany({
-  include: {
-    _count: {
-      select: { posts: true },
-    },
-  },
-  orderBy: {
-    posts: { _count: "desc" },
-  },
-  take: 10,
-});
-```
-
-#### 5. PostTag模型 - 文章标签关联
-
-```prisma
-model PostTag {
-  postId String
-  post   Post @relation(fields: [postId], references: [id])
-  tagId  String
-  tag    Tag  @relation(fields: [tagId], references: [id])
-
-  @@id([postId, tagId])
-  @@map("post_tags")
-}
-```
-
-**实际应用：**
-
-```typescript
-// 为文章添加标签
-await prisma.postTag.create({
-  data: {
-    postId: post.id,
-    tagId: tag.id,
-  },
-});
-
-// 查询文章的所有标签
-const postWithTags = await prisma.post.findUnique({
-  where: { id: postId },
-  include: {
-    tags: {
-      include: { tag: true },
-    },
-  },
-});
-```
-
-### 复杂查询示例
-
-#### 1. 分页查询文章列表
-
-```typescript
-const posts = await prisma.post.findMany({
-  where: { published: true },
-  include: {
-    author: { select: { name: true, avatar: true } },
-    category: true,
-    tags: { include: { tag: true } },
-  },
-  orderBy: { publishedAt: "desc" },
-  skip: (page - 1) * limit, // 跳过前面的记录数，实现分页
-  take: limit, // 限制返回的记录数量
-});
-```
-
-#### 2. 按分类筛选文章
-
-```typescript
-const postsByCategory = await prisma.post.findMany({
-  where: {
-    published: true,
-    category: {
-      slug: "frontend",
-    },
-  },
-  include: {
-    author: true,
-    category: true,
-  },
-});
-```
-
-#### 3. 标签云查询
-
-```typescript
-const tagCloud = await prisma.tag.findMany({
-  include: {
-    _count: {
-      select: { posts: true },
-    },
-  },
-  orderBy: {
-    posts: { _count: "desc" },
-  },
-});
-```
-
-### 数据模型设计原则
-
-#### 1. 规范化设计
-
-- 避免数据冗余
-- 使用外键建立关联
-- 合理使用索引
-
-#### 2. 性能考虑
-
-- 主键使用cuid()而非自增ID
-- 为常用查询字段添加索引
-- 使用include控制查询深度
-
-#### 3. 扩展性
-
-- 预留可选字段
-- 使用枚举类型
-- 考虑未来需求
-
-### 学习目标
-
-通过本章，你应该理解：
-
-- 博客项目的完整数据模型设计
-- 各种关联关系的实际应用
-- 复杂查询的实现方法
-- 数据模型设计的最佳实践
-- 如何在Prisma中实现复杂的业务逻辑
-
-在下一章，我们将学习项目的整体结构，了解各个目录和文件的作用。
-
----
-
-## 第8章：项目结构全解析
-
-### 项目目录结构
-
-Spring Lament Blog采用Next.js 15的App Router架构，目录结构如下：
-
-```
-Spring-Lament-Blog/
-├── src/                          # 源代码目录
-│   ├── app/                      # Next.js App Router
-│   │   ├── admin/                # 管理后台页面
-│   │   │   ├── layout.tsx        # 后台布局
-│   │   │   ├── page.tsx          # 后台首页
-│   │   │   ├── posts/            # 文章管理
-│   │   │   │   ├── page.tsx      # 文章列表
-│   │   │   │   ├── new/          # 新建文章
-│   │   │   │   └── [id]/         # 编辑文章
-│   │   │   ├── categories/       # 分类管理
-│   │   │   ├── tags/             # 标签管理
-│   │   │   └── profile/          # 个人资料
-│   │   ├── api/                  # API路由
-│   │   │   ├── admin/            # 后台API
-│   │   │   │   ├── posts/        # 文章API
-│   │   │   │   ├── categories/   # 分类API
-│   │   │   │   └── tags/         # 标签API
-│   │   │   ├── auth/             # 认证API
-│   │   │   └── posts/            # 公开API
-│   │   ├── posts/                # 文章展示页面
-│   │   │   └── [slug]/           # 文章详情
-│   │   ├── category/             # 分类页面
-│   │   ├── login/                # 登录页面
-│   │   ├── layout.tsx            # 根布局
-│   │   └── page.tsx              # 首页
-│   ├── components/               # React组件
-│   │   ├── admin/                # 后台组件
-│   │   │   ├── post-editor.tsx   # 文章编辑器
-│   │   │   ├── unified-posts-table.tsx # 文章表格
-│   │   │   └── ...
-│   │   ├── ui/                   # shadcn/ui组件
-│   │   │   ├── button.tsx        # 按钮组件
-│   │   │   ├── form.tsx          # 表单组件
-│   │   │   └── ...
-│   │   ├── markdown/             # Markdown组件
-│   │   │   ├── markdown-renderer.tsx
-│   │   │   └── code-block.tsx
-│   │   └── layout/               # 布局组件
-│   ├── lib/                      # 工具函数库
-│   │   ├── auth.ts               # NextAuth配置
-│   │   ├── prisma.ts             # Prisma客户端
-│   │   └── utils.ts              # 通用工具
-│   └── types/                    # TypeScript类型
-├── prisma/                       # 数据库相关
-│   ├── schema.prisma             # 数据模型定义
-│   ├── seed.ts                   # 初始数据
-│   └── dev.db                    # SQLite数据库
-├── public/                       # 静态资源
-├── docs/                         # 项目文档
-├── scripts/                      # 部署脚本
-├── package.json                  # 项目配置
-├── next.config.js                # Next.js配置
-├── tailwind.config.ts            # Tailwind配置
-└── tsconfig.json                 # TypeScript配置
-```
-
-### 核心目录详解
-
-#### 1. src/app/ - Next.js App Router
-
-**页面路由 (Pages)**
-
-```typescript
-// app/page.tsx - 首页
-export default function HomePage() {
-  return <div>博客首页</div>
-}
-
-// app/posts/[slug]/page.tsx - 文章详情页
-interface Props {
-  params: { slug: string }
-}
-
-export default async function PostPage({ params }: Props) {
-  const post = await prisma.post.findUnique({
-    where: { slug: params.slug }
-  })
-
-  return <div>{post?.title}</div>
-}
-```
-
-**API路由 (API Routes)**
-
-```typescript
-// app/api/posts/route.ts - 文章API
-export async function GET() {
-  const posts = await prisma.post.findMany();
-  return Response.json(posts);
-}
-
-export async function POST(request: Request) {
-  const data = await request.json();
-  const post = await prisma.post.create({ data });
-  return Response.json(post);
-}
-```
-
-**布局组件 (Layouts)**
-
-```typescript
-// app/layout.tsx - 根布局
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="zh">
-      <body>
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-  )
-}
-
-// app/admin/layout.tsx - 后台布局
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="ml-64">
-        {children}
-      </main>
-    </div>
-  )
-}
-```
-
-#### 2. src/components/ - React组件
-
-**后台组件 (Admin Components)**
-
-```typescript
-// components/admin/post-editor.tsx
-'use client'
-
-export default function PostEditor({ post }: { post?: Post }) {
-  const [title, setTitle] = useState(post?.title || '')
-  const [content, setContent] = useState(post?.content || '')
-
-  const handleSubmit = async () => {
-    // 提交逻辑
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="文章标题"
-      />
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="文章内容"
-      />
-      <button type="submit">保存</button>
-    </form>
-  )
-}
-```
-
-**UI组件 (shadcn/ui)**
-
-```typescript
-// components/ui/button.tsx
-import { cn } from "@/lib/utils"
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "destructive" | "outline" | "secondary"
-  size?: "default" | "sm" | "lg"
-}
-
-export function Button({ className, variant, size, ...props }: ButtonProps) {
-  return (
-    <button
-      className={cn(
-        "inline-flex items-center justify-center rounded-md text-sm font-medium",
-        {
-          "bg-primary text-primary-foreground hover:bg-primary/90": variant === "default",
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90": variant === "destructive",
-        },
-        className
-      )}
-      {...props}
-    />
-  )
-}
-```
-
-#### 3. src/lib/ - 工具函数库
-
-**认证配置 (auth.ts)**
+#### 基础配置 (lib/auth.ts)
 
 ```typescript
 // lib/auth.ts
@@ -1807,238 +811,7 @@ export const authOptions: NextAuthOptions = {
 };
 ```
 
-**Prisma客户端 (prisma.ts)**
-
-```typescript
-// lib/prisma.ts
-import { PrismaClient } from "@prisma/client";
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-```
-
-**通用工具 (utils.ts)**
-
-```typescript
-// lib/utils.ts
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-}
-```
-
-#### 4. prisma/ - 数据库相关
-
-**Schema定义 (schema.prisma)**
-
-```prisma
-// prisma/schema.prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  posts    Post[]
-  profile  Profile?
-
-  @@map("users")
-}
-
-// ... 其他模型定义
-```
-
-**初始数据 (seed.ts)**
-
-```typescript
-// prisma/seed.ts
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
-
-async function main() {
-  // 创建管理员用户
-  const adminPassword = await bcrypt.hash("admin123", 10);
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@blog.com" },
-    update: {},
-    create: {
-      email: "admin@blog.com",
-      name: "博客管理员",
-      password: adminPassword,
-      role: "ADMIN",
-    },
-  });
-
-  // 创建默认分类
-  const categories = await Promise.all([
-    prisma.category.create({
-      data: {
-        name: "前端技术",
-        slug: "frontend",
-        description: "前端开发相关文章",
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: "后端技术",
-        slug: "backend",
-        description: "后端开发相关文章",
-      },
-    }),
-  ]);
-
-  console.log("种子数据创建完成");
-}
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-```
-
-### 配置文件
-
-#### package.json
-
-```json
-{
-  "name": "spring-lament-blog",
-  "version": "0.1.0",
-  "scripts": {
-    "dev": "next dev -p 7777",
-    "build": "next build",
-    "start": "next start -p 3000",
-    "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
-  },
-  "dependencies": {
-    "next": "15.0.0",
-    "react": "^18",
-    "@prisma/client": "6.16.1",
-    "next-auth": "^4.24.11"
-  }
-}
-```
-
-#### next.config.js
-
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["@prisma/client"],
-  },
-};
-
-module.exports = nextConfig;
-```
-
-### 学习目标
-
-通过本章，你应该理解：
-
-- Next.js 15项目的完整目录结构
-- 各个目录和文件的作用
-- 页面路由和API路由的组织方式
-- 组件库的层次结构
-- 工具函数库的设计
-- 数据库相关的文件组织
-- 配置文件的作用
-
-在下一章，我们将学习NextAuth认证系统，这是保护后台功能的关键。
-
----
-
-## 第9章：NextAuth认证系统
-
-### 为什么需要认证系统？
-
-在博客系统中，我们需要区分不同的用户角色：
-
-- **普通用户**：只能查看文章，不能编辑
-- **管理员**：可以管理文章、分类、标签
-- **未登录用户**：只能访问公开内容
-
-认证系统确保只有授权用户才能访问受保护的资源。
-
-### NextAuth.js简介
-
-NextAuth.js是Next.js生态中最流行的认证解决方案，支持多种认证方式：
-
-- **Credentials Provider**：用户名密码登录
-- **OAuth Providers**：Google、GitHub等第三方登录
-- **Database Sessions**：数据库会话管理
-- **JWT Sessions**：JWT令牌管理
-
-### 认证配置详解
-
-#### 1. 基础配置 (lib/auth.ts)
-
-```typescript
-// lib/auth.ts
-export const authOptions: NextAuthOptions = {
-  providers: [
-    CredentialsProvider({
-      async authorize(credentials) {
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        return isPasswordValid ? user : null;
-      },
-    }),
-  ],
-  session: { strategy: "jwt" },
-};
-```
-
-#### 2. 密码加密
+#### 密码加密
 
 ```typescript
 // 注册时加密密码
@@ -2048,9 +821,9 @@ const hashedPassword = await bcrypt.hash(password, 10);
 const isPasswordValid = await bcrypt.compare(password, user.password);
 ```
 
-### Middleware全局拦截器
+### Middleware路由保护
 
-#### 1. 路由保护 (middleware.ts)
+#### 路由保护 (middleware.ts)
 
 Next.js的Middleware可以在请求到达页面前进行拦截和验证：
 
@@ -2083,11 +856,11 @@ export const config = {
 - 用户访问`/admin/*`路由时
 - Middleware检查是否有有效的session
 - 检查用户角色是否为ADMIN
-- 如果验证失败,重定向到登录页
+- 如果验证失败，重定向到登录页
 
-#### 2. 获取当前用户信息
+### 获取用户信息
 
-**在服务端组件中：**
+#### 在服务端组件中
 
 ```typescript
 import { getServerSession } from "next-auth";
@@ -2097,7 +870,7 @@ const session = await getServerSession(authOptions);
 console.log(session?.user); // { id, email, name, role }
 ```
 
-**在客户端组件中：**
+#### 在客户端组件中
 
 ```typescript
 "use client";
@@ -2131,47 +904,474 @@ export async function POST(request: Request) {
 
 ### 学习目标
 
-通过本章,你应该理解：
+通过本章，你应该理解：
 
 - 认证系统的必要性和工作原理
 - NextAuth.js的配置和使用
 - 密码加密和验证流程
 - Middleware如何保护路由
 - 如何在服务端和客户端获取用户信息
+- 如何保护API路由和实现权限控制
+
+在下一章，我们将学习完整的功能实现，包括CRUD操作的完整流程。
 
 ---
 
-## 第12章：部署知识体系
+---
+
+## 第7章：完整功能实现
+
+通过前面几章的学习，我们已经掌握了Next.js、项目结构、数据库操作和用户认证的基础知识。现在让我们通过一个完整的实例，学习如何实现端到端的CRUD功能。
+
+### 数据流转全过程
+
+让我们通过一个具体的例子，看看数据是如何在系统中流转的：
+
+#### 场景1：用户访问文章详情页
+
+**1. 用户访问URL**
+
+```
+用户访问：/posts/nextjs-guide
+```
+
+**2. Next.js路由匹配**
+
+```
+app/posts/[slug]/page.tsx
+```
+
+**3. 服务端组件执行**
+
+```typescript
+// app/posts/[slug]/page.tsx
+import { prisma } from '@/lib/prisma'
+
+interface Props {
+  params: { slug: string }
+}
+
+export default async function PostPage({ params }: Props) {
+  // 1. 服务端直接查询数据库
+  const post = await prisma.post.findUnique({
+    where: { slug: params.slug },
+    include: {
+      author: { select: { name: true } },
+      category: true,
+      tags: { include: { tag: true } },
+    }
+  })
+
+  if (!post) {
+    return <div>文章不存在</div>
+  }
+
+  // 2. 服务端渲染HTML
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>作者：{post.author.name}</div>
+      <div>分类：{post.category?.name}</div>
+      <div>{post.content}</div>
+    </article>
+  )
+}
+```
+
+**4. 数据返回**
+
+- 服务端渲染完成
+- 返回完整HTML给浏览器
+- 用户看到完整页面（SEO友好）
+  TODO: 删除场景2
+
+#### 场景2：管理员创建新文章
+
+**1. 前端表单提交**
+
+```typescript
+// app/admin/posts/new/page.tsx
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function NewPostPage() {
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    categoryId: ''
+  })
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const response = await fetch('/api/admin/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+
+    if (response.ok) {
+      router.push('/admin/posts')
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={formData.title}
+        onChange={(e) => setFormData({...formData, title: e.target.value})}
+        placeholder="文章标题"
+      />
+      <textarea
+        value={formData.content}
+        onChange={(e) => setFormData({...formData, content: e.target.value})}
+        placeholder="文章内容"
+      />
+      <button type="submit">发布文章</button>
+    </form>
+  )
+}
+```
+
+TODO: 删除场景
+**2. API路由处理**
+
+```typescript
+// app/api/admin/posts/route.ts
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+
+export async function POST(request: Request) {
+  // 1. 身份验证
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "ADMIN") {
+    return Response.json({ error: "未授权" }, { status: 401 });
+  }
+
+  // 2. 数据解析
+  const { title, content, categoryId } = await request.json();
+
+  // 3. 数据验证
+  if (!title || !content) {
+    return Response.json({ error: "标题和内容不能为空" }, { status: 400 });
+  }
+
+  // 4. 生成slug
+  const slug = title.toLowerCase().replace(/\s+/g, "-");
+
+  // 5. 保存到数据库
+  const post = await prisma.post.create({
+    data: {
+      title,
+      content,
+      slug,
+      authorId: session.user.id,
+      categoryId: categoryId || null,
+    },
+    include: {
+      author: true,
+      category: true,
+    },
+  });
+
+  // 6. 返回结果
+  return Response.json({ message: "文章创建成功", post });
+}
+```
+
+TODO: 删除场景
+**3. 完整的CRUD操作**
+
+```typescript
+// app/api/admin/posts/route.ts - 完整API
+export async function GET() {
+  const posts = await prisma.post.findMany({
+    include: {
+      author: { select: { name: true } },
+      category: true,
+      _count: { select: { tags: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return Response.json(posts);
+}
+
+export async function POST(request: Request) {
+  // 创建逻辑 (如上)
+}
+
+// app/api/admin/posts/[id]/route.ts - 单篇文章操作
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const post = await prisma.post.findUnique({
+    where: { id: params.id },
+    include: {
+      author: true,
+      category: true,
+      tags: { include: { tag: true } },
+    },
+  });
+
+  return Response.json(post);
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "ADMIN") {
+    return Response.json({ error: "未授权" }, { status: 401 });
+  }
+
+  const { title, content, categoryId } = await request.json();
+
+  const post = await prisma.post.update({
+    where: { id: params.id },
+    data: {
+      title,
+      content,
+      categoryId,
+      updatedAt: new Date(),
+    },
+  });
+
+  return Response.json(post);
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "ADMIN") {
+    return Response.json({ error: "未授权" }, { status: 401 });
+  }
+
+  await prisma.post.delete({
+    where: { id: params.id },
+  });
+
+  return Response.json({ message: "文章删除成功" });
+}
+```
+
+### 前后端统一开发的优势
+
+#### 1. 类型安全
+
+```typescript
+// 共享类型定义
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  slug: string;
+  authorId: string;
+  categoryId?: string;
+}
+
+// 前端使用
+const [posts, setPosts] = useState<Post[]>([]);
+
+// API路由使用
+export async function GET(): Promise<Response> {
+  const posts: Post[] = await prisma.post.findMany();
+  return Response.json(posts);
+}
+```
+
+#### 2. 代码复用
+
+```typescript
+// lib/utils.ts - 共享工具函数
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// 前端使用
+const slug = generateSlug(formData.title);
+
+// 后端使用
+const post = await prisma.post.create({
+  data: { slug: generateSlug(data.title) },
+});
+```
+
+#### 3. 统一部署
+
+```bash
+# 一个命令部署整个应用
+npm run build
+npm start
+```
+
+TODO: 删除复杂业务逻辑实现
+
+### 复杂业务逻辑实现
+
+#### 文章发布流程
+
+```typescript
+// app/api/admin/posts/[id]/publish/route.ts
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "ADMIN") {
+    return Response.json({ error: "未授权" }, { status: 401 });
+  }
+
+  const post = await prisma.post.update({
+    where: { id: params.id },
+    data: {
+      published: true,
+      publishedAt: new Date(),
+    },
+  });
+
+  return Response.json({ message: "文章发布成功", post });
+}
+```
+
+#### 批量操作
+
+```typescript
+// app/api/admin/posts/batch/route.ts
+export async function POST(request: Request) {
+  const { action, postIds } = await request.json();
+
+  switch (action) {
+    case "publish":
+      await prisma.post.updateMany({
+        where: { id: { in: postIds } },
+        data: { published: true, publishedAt: new Date() },
+      });
+      break;
+
+    case "delete":
+      await prisma.post.deleteMany({
+        where: { id: { in: postIds } },
+      });
+      break;
+  }
+
+  return Response.json({ message: `批量${action}成功` });
+}
+```
+
+### 错误处理和用户体验
+
+#### API错误处理
+
+```typescript
+// lib/api-response.ts
+export function handleApiError(error: unknown) {
+  console.error("API Error:", error);
+
+  if (error instanceof Error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return Response.json({ error: "服务器内部错误" }, { status: 500 });
+}
+
+// 在API路由中使用
+export async function POST(request: Request) {
+  try {
+    // 业务逻辑
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+TODO:删除前端错误处理
+
+#### 前端错误处理
+
+```typescript
+// components/ErrorBoundary.tsx
+'use client'
+import { useEffect } from 'react'
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  useEffect(() => {
+    console.error('Application Error:', error);
+  }, [error]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold mb-4">出错了!</h2>
+        <p className="text-gray-600 mb-4">
+          {error.message || '发生了未知错误'}
+        </p>
+        <button
+          onClick={reset}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          重试
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+### 学习目标
+
+通过本章，你应该理解：
+
+- 完整的数据流转过程：用户请求 → 路由匹配 → 组件执行 → 数据库操作 → 响应返回
+- 如何实现完整的CRUD功能
+- API路由的设计和实现
+- 前后端统一开发的优势
+- 错误处理和用户体验优化
+- 复杂业务逻辑的实现方法
+
+在下一章，我们将学习如何将应用部署到生产环境。
+
+---
+
+## 第8章：部署与运维
 
 ### 环境概念
 
+在实际开发中，我们通常需要区分不同的运行环境：
+
 #### 开发环境 vs 生产环境
 
-**开发环境(Development):**
-
-- 本地电脑
-- 端口7777
-- SQLite数据库(`dev.db`)
-- `.env.local`配置文件
-- 热更新,调试模式
-
-**生产环境(Production):**
-
-- 远程服务器
-- 端口3000
-- SQLite/PostgreSQL数据库(`prod.db`)
-- `.env.production`配置文件
-- 优化构建,稳定运行
+| 环境类型     | 位置       | 端口 | 数据库            | 配置文件        | 特点               |
+| ------------ | ---------- | ---- | ----------------- | --------------- | ------------------ |
+| **开发环境** | 本地电脑   | 7777 | SQLite (dev.db)   | .env.local      | 热更新，调试模式   |
+| **生产环境** | 远程服务器 | 3000 | SQLite/PostgreSQL | .env.production | 优化构建，稳定运行 |
 
 ### 数据库选择
 
-| 数据库     | 优势            | 劣势         | 适用场景          |
-| ---------- | --------------- | ------------ | ----------------- |
-| SQLite     | 无需安装,轻量级 | 并发性能较弱 | 个人博客,小型项目 |
-| PostgreSQL | 性能强,功能完善 | 需要独立部署 | 中大型应用        |
-| MySQL      | 生态好,成熟稳定 | 配置相对复杂 | 通用场景          |
+| 数据库         | 优势                     | 劣势         | 适用场景           |
+| -------------- | ------------------------ | ------------ | ------------------ |
+| **SQLite**     | 无需安装，轻量级，零配置 | 并发性能较弱 | 个人博客，小型项目 |
+| **PostgreSQL** | 性能强，功能完善，高并发 | 需要独立部署 | 中大型应用         |
+| **MySQL**      | 生态好，成熟稳定         | 配置相对复杂 | 通用场景           |
 
-**项目当前使用**: SQLite(开发和生产都可以用)
+**项目选择**: SQLite（开发和生产都可以用，适合博客系统）
 
 ### 部署方式对比
 
@@ -2179,52 +1379,41 @@ export async function POST(request: Request) {
 
 **优点:**
 
-- 一键部署
-- 自动CI/CD
-- 全球CDN
-- 免费额度
+- 一键部署，自动CI/CD
+- 全球CDN，免费额度
+- 与Next.js完美集成
 
 **缺点:**
 
-- 不支持SQLite
+- 不支持SQLite文件存储
 - Serverless限制
 - 需要外部数据库
 
-#### 2. 宝塔+PM2 (项目采用)
+#### 2. 宝塔+PM2 (推荐)
 
 **优点:**
 
-- 完全控制
-- 支持SQLite
+- 完全控制，支持SQLite
 - 无Serverless限制
-- 稳定可靠
+- 稳定可靠，易于管理
 
 **缺点:**
 
-- 需要VPS
+- 需要VPS服务器
 - 配置稍复杂
-- 需要基础运维知识
-
-#### 3. Docker (进阶)
-
-**优点:**
-
-- 环境隔离
-- 易于迁移
-- 可扩展性强
-
-**缺点:**
-
-- 学习成本高
-- 资源占用多
 
 ### 宝塔+PM2部署实战
 
 #### 步骤1: 服务器准备
 
-1. 购买VPS(阿里云/腾讯云)
-2. 安装宝塔面板
-3. 安装Node.js 18+
+```bash
+# 1. 购买VPS (阿里云/腾讯云)
+# 2. 安装宝塔面板
+wget -O install.sh http://download.bt.cn/install/install-ubuntu_6.0.sh
+sudo bash install.sh
+
+# 3. 在宝塔面板安装 Node.js 18+
+```
 
 #### 步骤2: 上传代码
 
@@ -2243,17 +1432,14 @@ npm install
 DATABASE_URL="file:./prisma/prod.db"
 NEXTAUTH_SECRET="your-production-secret-min-32-chars"
 NEXTAUTH_URL="http://your-domain.com"
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="your-password"
 NODE_ENV="production"
 ```
 
 #### 步骤4: 初始化数据库
 
 ```bash
-npm run db:generate:prod
-npm run db:push:prod
-npm run db:seed:prod
+npm run db:push
+npm run db:seed
 ```
 
 #### 步骤5: 构建项目
@@ -2262,13 +1448,9 @@ npm run db:seed:prod
 npm run build
 ```
 
-#### 步骤6: PM2启动
+#### 步骤6: PM2配置
 
-```bash
-npm run pm2:start
-```
-
-PM2配置文件(`ecosystem.config.js`):
+创建`ecosystem.config.js`：
 
 ```javascript
 module.exports = {
@@ -2280,55 +1462,119 @@ module.exports = {
       env: {
         NODE_ENV: "production",
       },
+      error_file: "./logs/err.log",
+      out_file: "./logs/out.log",
+      log_file: "./logs/combined.log",
     },
   ],
 };
+```
+
+启动应用：
+
+```bash
+npm install -g pm2
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
 ```
 
 #### 步骤7: Nginx配置
 
 ```nginx
 server {
-  listen 80;
-  server_name your-domain.com;
+    listen 80;
+    server_name your-domain.com;
 
-  location / {
-    proxy_pass http://localhost:3000;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-  }
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
 }
 ```
 
-TODO: 补充github action一键发布部署链接
+### 常见问题解决
+
+#### 1. 端口占用
+
+```bash
+# 检查端口占用
+lsof -i :3000
+# 杀死进程
+kill -9 PID
+```
+
+#### 2. 权限问题
+
+```bash
+# 设置文件权限
+chmod -R 755 /www/wwwroot/Spring-Lament-Blog
+chown -R www:www /www/wwwroot/Spring-Lament-Blog
+```
+
+#### 3. 数据库权限
+
+```bash
+# SQLite文件权限
+chmod 664 prisma/prod.db
+chown www:www prisma/prod.db
+```
+
+### 运维管理
+
+#### PM2常用命令
+
+```bash
+pm2 list                # 查看进程
+pm2 restart app-name    # 重启应用
+pm2 stop app-name       # 停止应用
+pm2 logs app-name       # 查看日志
+pm2 monit              # 监控面板
+```
+
+#### 日志管理
+
+```bash
+# 查看应用日志
+pm2 logs spring-lament-blog
+
+# Nginx日志
+tail -f /var/log/nginx/access.log
+tail -f /var/log/nginx/error.log
+```
 
 ### 学习目标
 
-通过本章,你应该理解：
+通过本章，你应该理解：
 
 - 开发环境和生产环境的区别
 - 不同部署方式的优劣
 - 宝塔+PM2的完整部署流程
+- GitHub Actions自动化部署
 - 常见问题的排查方法
-- 如何进行代码更新和维护
+- 基本的运维管理操作
+
+在下一章，我们将学习性能优化技术，提升应用的运行效率。
 
 ---
 
-## 第13章：性能优化
+## 第9章：性能优化
 
 ### Next.js性能优化
 
-#### 1. SSG/ISR特性
+#### 1. 渲染模式优化
 
 **SSG (Static Site Generation)** - 静态站点生成：
-
 在构建时预先生成HTML页面，用户访问时直接返回静态文件，速度极快。
 
 **ISR (Incremental Static Regeneration)** - 增量静态再生：
-
 在SSG基础上，允许页面在运行时按需更新，既保证了性能又保证了内容的时效性。
 
 **三种渲染模式对比：**
@@ -2338,6 +1584,8 @@ TODO: 补充github action一键发布部署链接
 | **SSG**  | 构建时        | 性能最佳，SEO友好  | 内容更新需要重新构建 | 静态内容，如文档、博客   |
 | **ISR**  | 构建时+运行时 | 性能好，内容可更新 | 配置相对复杂         | 半静态内容，如新闻、商品 |
 | **SSR**  | 请求时        | 内容实时，交互性好 | 服务器压力大         | 动态内容，如用户面板     |
+
+**实际应用：**
 
 ```typescript
 // app/posts/[slug]/page.tsx
@@ -2357,19 +1605,37 @@ export const revalidate = 3600; // 每小时重新生成
 
 #### 2. 图片优化
 
-项目中的`ImageWithFallback`组件:
-
 ```typescript
 import Image from 'next/image'
 
+// 优化前
+<img src="/blog-cover.jpg" alt="封面" />
+
+// 优化后
 <Image
-  src={post.coverImage}
-  alt={post.title}
+  src="/blog-cover.jpg"
+  alt="封面"
   width={800}
   height={400}
-  priority={isFirstPost}
-  placeholder="blur"
+  priority={isFirstPost}  // 首屏图片优先加载
+  placeholder="blur"      // 模糊占位符
+  sizes="(max-width: 768px) 100vw, 50vw"  // 响应式尺寸
 />
+```
+
+#### 3. 代码分割
+
+```typescript
+// 动态导入，减少首屏加载时间
+import dynamic from 'next/dynamic'
+
+const AdminPanel = dynamic(() => import('@/components/AdminPanel'), {
+  loading: () => <div>加载中...</div>,
+  ssr: false, // 仅客户端渲染
+})
+
+// 路由级别的代码分割（自动）
+// app/admin/page.tsx 会自动分割为独立的chunk
 ```
 
 ### 数据库查询优化
@@ -2386,15 +1652,28 @@ const users = await prisma.user.findMany({
 });
 ```
 
-#### 2. 使用索引
+#### 2. 使用数据库索引
 
 ```prisma
 model Post {
   slug String @unique  // 自动创建索引
+  published Boolean
+  createdAt DateTime
 
   @@index([published, createdAt])  // 复合索引
+  @@index([authorId])              // 外键索引
 }
 ```
+
+### 学习目标
+
+通过本章，你应该理解：
+
+- Next.js的渲染模式优化策略
+- 图片和代码分割的最佳实践
+- 数据库查询优化技术
+
+恭喜你！通过前面9章的学习，你已经掌握了Next.js全栈开发的核心技能，可以独立构建现代化的Web应用了。
 
 ---
 
