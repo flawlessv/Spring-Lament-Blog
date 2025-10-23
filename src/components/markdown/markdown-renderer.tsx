@@ -207,8 +207,8 @@ export default function MarkdownRenderer({
 
               {/* 移动端目录内容面板 */}
               {tocOpen && (
-                <div className="mt-4">
-                  <nav className="space-y-1">
+                <div className="mt-4 max-h-80 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
+                  <nav className="space-y-1 p-3">
                     {toc.map((item) => (
                       <button
                         key={item.id}
@@ -341,17 +341,20 @@ export default function MarkdownRenderer({
                   );
                 },
                 // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
-                code: ({ className, children, ...props }: any) => {
+                code: ({ className, children, node, ...props }: any) => {
                   const match = /language-(\w+)/.exec(className || "");
-                  const language = match ? match[1] : "";
+                  const language = match ? match[1] : "text"; // 默认语言为 text
                   const code = String(children).replace(/\n$/, "");
-                  const isInline = !match;
+
+                  // 判断是否为行内代码：检查父节点是否为 pre 标签
+                  // 如果父节点是 pre，说明是代码块；如果不是，说明是行内代码
+                  const isCodeBlock = node?.parent?.tagName === "pre";
 
                   // 行内代码：如 `console.log()`
-                  if (isInline) {
+                  if (!isCodeBlock) {
                     return (
                       <code
-                        className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono"
+                        className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono"
                         {...props}
                       >
                         {children}
@@ -369,8 +372,12 @@ export default function MarkdownRenderer({
                     );
                   }
 
-                  // 代码块
-                  return <CodeBlock className={className}>{code}</CodeBlock>;
+                  // 代码块（包括没有指定语言的代码块）
+                  return (
+                    <CodeBlock className={className || "language-text"}>
+                      {code}
+                    </CodeBlock>
+                  );
                 },
                 // 自定义链接样式 - 外部链接在新窗口打开
                 a: ({ children, ...props }) => (
@@ -437,7 +444,7 @@ export default function MarkdownRenderer({
               desktopTocCollapsed ? "w-8" : "w-56"
             }`}
           >
-            <div className="sticky top-24">
+            <div className="sticky top-24 max-h-[calc(100vh-6rem)]">
               {/* 目录折叠按钮 */}
               <div className="flex items-center justify-between mb-4">
                 {!desktopTocCollapsed && (
@@ -460,25 +467,27 @@ export default function MarkdownRenderer({
 
               {/* 目录内容 */}
               {!desktopTocCollapsed && (
-                <nav className="space-y-0.5 animate-in fade-in duration-200">
-                  {toc.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => scrollToHeading(item.id)}
-                      className={`block w-full text-left py-1 px-2 text-sm rounded transition-all truncate ${
-                        activeHeading === item.id
-                          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
-                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                      style={{
-                        paddingLeft: `${(item.level - 1) * 10 + 8}px`,
-                      }}
-                      title={item.text}
-                    >
-                      {item.text}
-                    </button>
-                  ))}
-                </nav>
+                <div className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-2">
+                  <nav className="space-y-0.5 animate-in fade-in duration-200">
+                    {toc.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => scrollToHeading(item.id)}
+                        className={`block w-full text-left py-1 px-2 text-sm rounded transition-all truncate ${
+                          activeHeading === item.id
+                            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
+                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        }`}
+                        style={{
+                          paddingLeft: `${(item.level - 1) * 10 + 8}px`,
+                        }}
+                        title={item.text}
+                      >
+                        {item.text}
+                      </button>
+                    ))}
+                  </nav>
+                </div>
               )}
             </div>
           </div>
