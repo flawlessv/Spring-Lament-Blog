@@ -170,10 +170,6 @@
     @apply bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-4;
   }
 
-  .prose pre code {
-    @apply bg-transparent text-slate-100 p-0;
-  }
-
   .prose img {
     @apply rounded-lg shadow-md my-6 mx-auto;
   }
@@ -221,10 +217,6 @@
 
   .prose pre {
     @apply bg-muted border border-border rounded-lg overflow-x-auto;
-  }
-
-  .prose pre code {
-    @apply bg-transparent p-0 text-sm;
   }
 
   .prose blockquote {
@@ -330,6 +322,20 @@
 
   .hljs-strong {
     @apply font-bold;
+  }
+}
+
+/* 代码块亮色模式强制样式 */
+@layer components {
+  .code-block-wrapper.light-mode code,
+  .code-block-wrapper.light-mode span,
+  .code-block-wrapper.light-mode pre,
+  .code-block-wrapper.light-mode div {
+    color: #24292e !important;
+  }
+
+  .code-block-wrapper.light-mode {
+    background: #fafafa !important;
   }
 }
 
