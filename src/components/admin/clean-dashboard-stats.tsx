@@ -22,12 +22,16 @@ function StatCard({
   description,
 }: Omit<StatCardProps, "icon" | "gradient">) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-5">
-      <div className="text-sm text-gray-500 mb-3">{title}</div>
-      <div className="text-4xl font-bold text-gray-900 mb-2">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5 transition-colors">
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+        {title}
+      </div>
+      <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
         {value.toLocaleString()}
       </div>
-      <div className="text-sm text-gray-400">{description}</div>
+      <div className="text-sm text-gray-400 dark:text-gray-500">
+        {description}
+      </div>
     </div>
   );
 }
@@ -135,14 +139,18 @@ export default async function CleanDashboardStats() {
     <div className="space-y-8">
       {/* 欢迎信息 */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {greeting}，{displayName}
         </h2>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           已坚持{" "}
-          <span className="font-semibold text-gray-900">{daysSinceStart}</span>{" "}
+          <span className="font-semibold text-gray-900 dark:text-gray-100">
+            {daysSinceStart}
+          </span>{" "}
           天 · 距离目标还有{" "}
-          <span className="font-semibold text-gray-900">{daysUntilTarget}</span>{" "}
+          <span className="font-semibold text-gray-900 dark:text-gray-100">
+            {daysUntilTarget}
+          </span>{" "}
           天
         </p>
       </div>
