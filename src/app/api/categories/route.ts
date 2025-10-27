@@ -24,9 +24,7 @@ export async function GET() {
           },
         },
       },
-      orderBy: {
-        name: "asc",
-      },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     });
 
     return NextResponse.json({ categories });

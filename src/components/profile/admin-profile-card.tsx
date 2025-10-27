@@ -12,6 +12,12 @@ import {
   FileText,
   Tv,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AdminProfile {
   id: string;
@@ -88,7 +94,7 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="sticky top-8 w-full max-w-sm">
+      <div className="sticky top-8 w-full max-w-xs">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
           <div className="text-center">
@@ -131,7 +137,7 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-24 space-y-6 w-full max-w-sm">
+    <div className="sticky top-24 space-y-6 w-full max-w-xs">
       {/* 个人信息卡片 */}
       <div className="text-center space-y-4">
         {/* 头像 */}
@@ -168,7 +174,7 @@ export default function AdminProfileCard() {
 
         {/* Subscribe 按钮 */}
         <button className="inline-flex items-center justify-center h-9 px-6 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95">
-          Subscribe
+          Subscribe123
         </button>
       </div>
 
@@ -207,87 +213,123 @@ export default function AdminProfileCard() {
       )}
 
       {/* 社交媒体图标 */}
-      <div className="flex justify-center flex-wrap gap-2 pt-2">
-        {profile.profile?.email && (
-          <a
-            href={`mailto:${profile.profile.email}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
-            title="邮箱"
-          >
-            <Mail
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </a>
-        )}
-        {profile.profile?.phone && (
-          <a
-            href={`tel:${profile.profile.phone}`}
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
-            title="电话"
-          >
-            <Phone
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </a>
-        )}
-        {profile.profile?.wechat && (
-          <div
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors cursor-pointer"
-            title={`微信：${profile.profile.wechat}`}
-          >
-            <MessageSquare
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </div>
-        )}
-        {profile.profile?.website && (
-          <a
-            href={profile.profile.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
-            title="个人网站"
-          >
-            <Globe
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </a>
-        )}
-        {profile.profile?.github && (
-          <a
-            href={`https://github.com/${profile.profile.github}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
-            title="GitHub"
-          >
-            <Github
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </a>
-        )}
-        {profile.profile?.bilibili && (
-          <a
-            href={`https://space.bilibili.com/${profile.profile.bilibili}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
-            title="B站"
-          >
-            <Tv
-              className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-              strokeWidth={1.5}
-            />
-          </a>
-        )}
-      </div>
+      <TooltipProvider>
+        <div className="flex justify-center flex-wrap gap-2 pt-2">
+          {profile.profile?.email && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={`mailto:${profile.profile.email}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                >
+                  <Mail
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>邮箱：{profile.profile.email}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {profile.profile?.phone && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={`tel:${profile.profile.phone}`}
+                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                >
+                  <Phone
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>电话：{profile.profile.phone}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {profile.profile?.wechat && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="group relative p-1.5 rounded-full hover:bg-accent transition-colors cursor-pointer">
+                  <MessageSquare
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>微信：{profile.profile.wechat}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {profile.profile?.website && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={profile.profile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                >
+                  <Globe
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>个人网站</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {profile.profile?.github && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={`https://github.com/${profile.profile.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                >
+                  <Github
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>GitHub：{profile.profile.github}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {profile.profile?.bilibili && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={`https://space.bilibili.com/${profile.profile.bilibili}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                >
+                  <Tv
+                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
+                    strokeWidth={1.5}
+                  />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>B站：{profile.profile.bilibili}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TooltipProvider>
     </div>
   );
 }
