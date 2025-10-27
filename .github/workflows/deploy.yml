@@ -101,30 +101,28 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
+          command_timeout: 60s
           script: |
             cd /www/wwwroot/my-next-app
             
             echo "=== 停止旧应用进程 ==="
-            pm2 stop spring-lament-blog || true
-            sleep 2
+            timeout 30s pm2 stop spring-lament-blog || pm2 kill spring-lament-blog || true
+            sleep 3
             
-            echo "=== 删除旧进程（如果是 errored 状态） ==="
+            echo "=== 删除旧进程 ==="
             pm2 delete spring-lament-blog || true
             
             echo "=== 重启应用 ==="
             pm2 start ecosystem.config.js --env production
-            
-            echo "=== 等待应用启动 ==="
-            sleep 3
+            sleep 5
             
             echo "=== 验证应用状态 ==="
             if pm2 status | grep -q "spring-lament-blog.*online"; then
                 echo "✅ 应用启动成功"
             else
                 echo "❌ 应用启动失败"
-                pm2 logs spring-lament-blog
+                pm2 logs spring-lament-blog --lines 20
                 exit 1
             fi
             
-            echo "=== 保存 PM2 配置 ==="
             pm2 save
