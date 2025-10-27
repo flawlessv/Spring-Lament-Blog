@@ -43,11 +43,13 @@ export default function TagsPage() {
         {/* 页面标题 */}
         <div className="flex items-center space-x-2">
           <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
-          <h1 className="text-xl font-semibold text-gray-900">标签管理</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            标签管理
+          </h1>
         </div>
 
         {/* 标签列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
           <UnifiedTagsTable onEdit={handleEdit} onCreate={handleCreate} />
         </div>
       </div>

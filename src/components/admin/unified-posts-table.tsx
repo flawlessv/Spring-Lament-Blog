@@ -452,12 +452,12 @@ export default function UnifiedPostsTable({
         <div className="min-w-0">
           <Link
             href={`/admin/posts/${post.id}/edit`}
-            className="text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors block truncate"
+            className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block truncate"
           >
             {post.title}
           </Link>
 
-          <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500">
+          <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-1">
               <Calendar className="h-3 w-3" />
               <span>{formatDate(post.createdAt)}</span>
@@ -497,12 +497,12 @@ export default function UnifiedPostsTable({
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: post.category.color || "#6B7280" }}
               />
-              <span className="text-sm text-gray-700 truncate">
+              <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
                 {post.category.name}
               </span>
             </>
           ) : (
-            <span className="text-sm text-gray-400">-</span>
+            <span className="text-sm text-gray-400 dark:text-gray-500">-</span>
           )}
         </div>
       ),
@@ -533,12 +533,12 @@ export default function UnifiedPostsTable({
             </Badge>
           ))}
           {post.tags.length > 3 && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               +{post.tags.length - 3}
             </span>
           )}
           {post.tags.length === 0 && (
-            <span className="text-sm text-gray-400">-</span>
+            <span className="text-sm text-gray-400 dark:text-gray-500">-</span>
           )}
         </div>
       ),
@@ -566,7 +566,7 @@ export default function UnifiedPostsTable({
       width: "w-20",
       className: "text-center",
       render: (_: unknown, post: Post) => (
-        <div className="flex items-center justify-center space-x-1 text-gray-600">
+        <div className="flex items-center justify-center space-x-1 text-gray-600 dark:text-gray-400">
           <Eye className="h-4 w-4" />
           <span className="font-medium">{post.views.toLocaleString()}</span>
         </div>
@@ -578,7 +578,7 @@ export default function UnifiedPostsTable({
       width: "w-24",
       className: "text-center",
       render: (_: unknown, post: Post) => (
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {formatDate(post.updatedAt)}
         </span>
       ),
@@ -593,7 +593,7 @@ export default function UnifiedPostsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+            className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
             onClick={() => window.open(`/posts/${post.slug}`, "_blank")}
           >
             <Eye className="h-4 w-4 mr-1" />
@@ -602,7 +602,7 @@ export default function UnifiedPostsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 px-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+            className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
             onClick={() =>
               (window.location.href = `/admin/posts/${post.id}/edit`)
             }
@@ -615,23 +615,25 @@ export default function UnifiedPostsTable({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-gray-100"
+                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="rounded-xl border-gray-200"
+              className="rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
             >
-              <DropdownMenuLabel className="text-gray-700">
+              <DropdownMenuLabel className="text-gray-700 dark:text-gray-300">
                 更多操作
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => handleTogglePublish(post)}
                 className={`rounded-lg ${
-                  post.published ? "text-orange-600" : "text-green-600"
+                  post.published
+                    ? "text-orange-600 dark:text-orange-400"
+                    : "text-green-600 dark:text-green-400"
                 }`}
               >
                 {post.published ? "取消发布" : "发布"}
@@ -645,7 +647,7 @@ export default function UnifiedPostsTable({
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(post)}
-                className="rounded-lg text-red-600"
+                className="rounded-lg text-red-600 dark:text-red-400"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 删除

@@ -218,7 +218,9 @@ export default function PostsPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
-            <h1 className="text-xl font-semibold text-gray-900">文章管理</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              文章管理
+            </h1>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -242,17 +244,17 @@ export default function PostsPage() {
                   </>
                 )}
               </Button>
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <button
                   onClick={handleImportFilesClick}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
                 >
                   <FileUp className="mr-2 h-4 w-4" />
                   导入文件
                 </button>
                 <button
                   onClick={handleImportFolderClick}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
                 >
                   <FolderUp className="mr-2 h-4 w-4" />
                   导入文件夹
@@ -282,7 +284,7 @@ export default function PostsPage() {
         </div>
 
         {/* 文章列表 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
           <UnifiedPostsTable
             searchQuery={searchQuery}
             statusFilter={statusFilter}

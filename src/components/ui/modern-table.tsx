@@ -235,11 +235,13 @@ export function ModernTable<T = any>({
     return (
       <Card>
         <CardContent className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-2xl mb-4">
-            <RefreshCw className="h-8 w-8 text-red-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-950 rounded-2xl mb-4">
+            <RefreshCw className="h-8 w-8 text-red-600 dark:text-red-400" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">加载失败</h3>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            加载失败
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           {onRetry && (
             <Button onClick={onRetry} variant="outline" className="shadow-sm">
               <RefreshCw className="h-4 w-4 mr-2" />
@@ -257,12 +259,12 @@ export function ModernTable<T = any>({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {searchable && (
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 text-gray-400 -translate-y-1/2" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 -translate-y-1/2" />
             <Input
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9 border-0 bg-gray-50 focus:bg-white transition-colors rounded-xl"
+              className="pl-9 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors rounded-xl"
             />
           </div>
         )}
@@ -278,8 +280,8 @@ export function ModernTable<T = any>({
                   : "opacity-0 translate-x-4 pointer-events-none"
               )}
             >
-              <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 rounded-xl min-w-0">
-                <span className="text-sm text-blue-700 font-medium whitespace-nowrap">
+              <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 dark:bg-blue-950 rounded-xl min-w-0">
+                <span className="text-sm text-blue-700 dark:text-blue-300 font-medium whitespace-nowrap">
                   已选择 {selectedIds.length} 项
                 </span>
                 {batchActions.map((batchAction, index) => {
@@ -340,13 +342,13 @@ export function ModernTable<T = any>({
       Object.keys(filters).length === 0 ? (
         <Card>
           <CardContent className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-2xl mb-6">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl mb-6">
               {emptyIcon}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {emptyTitle}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               {searchQuery ? "未找到匹配的结果" : emptyDescription}
             </p>
             {!searchQuery &&
@@ -373,7 +375,7 @@ export function ModernTable<T = any>({
         <div className="space-y-4">
           {/* 表头 */}
           <div className="space-y-2">
-            <div className="flex items-center space-x-4 px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700">
+            <div className="flex items-center space-x-4 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300">
               {selectable && (
                 <div className="w-8">
                   <Checkbox
@@ -423,10 +425,10 @@ export function ModernTable<T = any>({
           {data.length === 0 ? (
             <Card>
               <CardContent className="text-center py-8">
-                <div className="text-gray-500">
-                  <Filter className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                <div className="text-gray-500 dark:text-gray-400">
+                  <Filter className="h-8 w-8 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
                   <p className="text-sm">没有找到匹配筛选条件的数据</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                     请尝试调整筛选条件
                   </p>
                 </div>
@@ -478,16 +480,16 @@ export function ModernTable<T = any>({
                             <DropdownMenuTrigger asChild>
                               <Button
                                 variant="ghost"
-                                className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg"
+                                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                               align="end"
-                              className="rounded-xl border-gray-200"
+                              className="rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
                             >
-                              <DropdownMenuLabel className="text-gray-700">
+                              <DropdownMenuLabel className="text-gray-700 dark:text-gray-300">
                                 操作
                               </DropdownMenuLabel>
                               <DropdownMenuSeparator />
@@ -500,15 +502,15 @@ export function ModernTable<T = any>({
                                     (typeof action.variant === "function"
                                       ? action.variant(record)
                                       : action.variant) === "danger" &&
-                                      "text-red-600",
+                                      "text-red-600 dark:text-red-400",
                                     (typeof action.variant === "function"
                                       ? action.variant(record)
                                       : action.variant) === "warning" &&
-                                      "text-orange-600",
+                                      "text-orange-600 dark:text-orange-400",
                                     (typeof action.variant === "function"
                                       ? action.variant(record)
                                       : action.variant) === "success" &&
-                                      "text-green-600",
+                                      "text-green-600 dark:text-green-400",
                                     action.className
                                   )}
                                 >
@@ -536,7 +538,7 @@ export function ModernTable<T = any>({
       {/* 分页 */}
       {pagination && pagination.total > pagination.pageSize && (
         <div className="flex items-center justify-between px-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             共 {pagination.total} 条，第 {pagination.current} /{" "}
             {Math.ceil(pagination.total / pagination.pageSize)} 页
           </div>

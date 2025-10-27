@@ -151,7 +151,7 @@ export default function UnifiedTagsTable({
       title: "URL",
       width: "flex-1",
       render: (_: unknown, tag: Tag) => (
-        <code className="bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">
+        <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-300">
           {tag.slug}
         </code>
       ),
@@ -163,10 +163,10 @@ export default function UnifiedTagsTable({
       className: "text-center",
       render: (_: unknown, tag: Tag) => (
         <div className="flex items-center justify-center space-x-2">
-          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <FileText className="h-4 w-4 text-blue-600" />
+          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
+            <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <span className="font-medium text-gray-700">
+          <span className="font-medium text-gray-700 dark:text-gray-300">
             {tag._count?.posts || 0} 篇
           </span>
         </div>
@@ -178,7 +178,7 @@ export default function UnifiedTagsTable({
       width: "w-40",
       className: "text-center",
       render: (_: unknown, tag: Tag) => (
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {formatDate(tag.createdAt)}
         </span>
       ),
@@ -193,7 +193,7 @@ export default function UnifiedTagsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            className="h-8 w-8 p-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950"
             onClick={() => onEdit?.(tag)}
             title="编辑"
           >
@@ -202,7 +202,7 @@ export default function UnifiedTagsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950"
             onClick={() => handleDelete(tag)}
             title="删除"
           >
