@@ -19,53 +19,11 @@
 
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  oneDark,
-  oneLight,
-} from "react-syntax-highlighter/dist/cjs/styles/prism";
-import {
-  List,
-  ChevronRight,
-  Copy,
-  Check,
-  ChevronDown,
-  ChevronLeft,
-} from "lucide-react";
-
-// Import specific languages to reduce bundle size
-import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
-import typescript from "react-syntax-highlighter/dist/cjs/languages/prism/typescript";
-import jsx from "react-syntax-highlighter/dist/cjs/languages/prism/jsx";
-import tsx from "react-syntax-highlighter/dist/cjs/languages/prism/tsx";
-import css from "react-syntax-highlighter/dist/cjs/languages/prism/css";
-import scss from "react-syntax-highlighter/dist/cjs/languages/prism/scss";
-import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
-import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
-import python from "react-syntax-highlighter/dist/cjs/languages/prism/python";
-import java from "react-syntax-highlighter/dist/cjs/languages/prism/java";
-import sql from "react-syntax-highlighter/dist/cjs/languages/prism/sql";
-import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
-import markdown from "react-syntax-highlighter/dist/cjs/languages/prism/markdown";
-
-// Register languages
-SyntaxHighlighter.registerLanguage("javascript", javascript);
-SyntaxHighlighter.registerLanguage("typescript", typescript);
-SyntaxHighlighter.registerLanguage("jsx", jsx);
-SyntaxHighlighter.registerLanguage("tsx", tsx);
-SyntaxHighlighter.registerLanguage("css", css);
-SyntaxHighlighter.registerLanguage("scss", scss);
-SyntaxHighlighter.registerLanguage("bash", bash);
-SyntaxHighlighter.registerLanguage("json", json);
-SyntaxHighlighter.registerLanguage("python", python);
-SyntaxHighlighter.registerLanguage("java", java);
-SyntaxHighlighter.registerLanguage("sql", sql);
-SyntaxHighlighter.registerLanguage("yaml", yaml);
-SyntaxHighlighter.registerLanguage("markdown", markdown);
+import { List, ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
 
 import Mermaid from "./mermaid";
 import CodeBlock from "./code-block";
@@ -346,9 +304,16 @@ export default function MarkdownRenderer({
                   const language = match ? match[1] : "text"; // 默认语言为 text
                   const code = String(children).replace(/\n$/, "");
 
-                  // 判断是否为行内代码：检查父节点是否为 pre 标签
-                  // 如果父节点是 pre，说明是代码块；如果不是，说明是行内代码
-                  const isCodeBlock = node?.parent?.tagName === "pre";
+                  // 判断是否为行内代码：
+                  // 1. 检查是否有 className（代码块通常有 language-xxx 类名）
+                  // 2. 检查代码是否包含换行符（行内代码通常不包含换行）
+                  // 3. 检查父节点
+                  const hasLanguageClass = /^language-/.test(className || "");
+                  const hasNewlines = code.includes("\n");
+                  const isCodeBlock =
+                    hasLanguageClass ||
+                    hasNewlines ||
+                    node?.parent?.tagName === "pre";
 
                   // 行内代码：如 `console.log()`
                   if (!isCodeBlock) {

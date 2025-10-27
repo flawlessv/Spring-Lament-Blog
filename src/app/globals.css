@@ -216,7 +216,11 @@
   }
 
   .prose pre {
-    @apply bg-muted border border-border rounded-lg overflow-x-auto;
+    @apply bg-transparent p-0 m-0;
+  }
+
+  .prose pre code {
+    @apply bg-transparent;
   }
 
   .prose blockquote {
