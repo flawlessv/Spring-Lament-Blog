@@ -8,6 +8,7 @@ import Image from "next/image";
 
 import PublicLayout from "@/components/layout/public-layout";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
+import { ImmersiveReaderToggle } from "@/components/immersive-reader";
 
 interface Post {
   id: string;
@@ -98,8 +99,8 @@ export default async function PostPage({
     <PublicLayout>
       {/* 文章头部 */}
       <header className="mb-8">
-        {/* 返回按钮 */}
-        <div className="mb-6">
+        {/* 返回按钮和沉浸式阅读按钮 */}
+        <div className="mb-6 flex items-center justify-between">
           <Link
             href="/"
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
@@ -107,6 +108,14 @@ export default async function PostPage({
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             <span>返回1234</span>
           </Link>
+
+          {/* 沉浸式阅读按钮 */}
+          <ImmersiveReaderToggle
+            title={post.title}
+            content={post.content || "暂无内容"}
+            author={post.author}
+            createdAt={post.createdAt}
+          />
         </div>
 
         {/* 标题 */}
