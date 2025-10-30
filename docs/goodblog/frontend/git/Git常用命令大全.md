@@ -4,13 +4,10 @@ slug: gitsk0hl6
 published: true
 featured: false
 category: 前端
-publishedAt: 2025-10-22T00:00:00.000Z
+publishedAt: 2025-10-22
 readingTime: 6
 tags:
   - git
-date: 2023-12-09
-id: git
-recommend: false
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/16835107832188288
 ---
 

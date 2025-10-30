@@ -3,7 +3,7 @@ title: Next.js全栈开发完全指南
 slug: nextfullstack
 published: true
 featured: true
-publishedAt: 2025-10-23T00:00:00.000Z
+publishedAt: 2025-10-23
 readingTime: 20
 category: 前端
 tags:

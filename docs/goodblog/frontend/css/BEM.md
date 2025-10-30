@@ -5,11 +5,10 @@ featured: false
 readingTime: 6
 category: 前端
 slug: BEM
-publishedAt: 2024-01-01T00:00:00Z
+publishedAt: 2024-01-01
 tags:
   - css
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17639916700028288
-excerpt: "深入解析BEM命名方法论，从基础概念到实战应用，助你构建清晰、可维护的CSS代码架构"
 ---
 
 # BEM命名规范完全指南：构建可维护CSS架构的黄金法则

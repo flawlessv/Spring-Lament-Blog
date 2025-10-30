@@ -4,7 +4,7 @@ slug: domtocd6r97
 published: true
 featured: false
 category: 源码解析
-publishedAt: 2025-06-09T00:00:00.000Z
+publishedAt: 2025-06-09
 readingTime: 7
 tags:
   - ts

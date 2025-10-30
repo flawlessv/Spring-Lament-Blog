@@ -3,7 +3,7 @@ title: Node.js 完全入门指南
 slug: nodejsrm
 published: true
 featured: true
-publishedAt: 2025-10-21T00:00:00.000Z
+publishedAt: 2025-10-21
 readingTime: 12
 category: 前端
 tags:

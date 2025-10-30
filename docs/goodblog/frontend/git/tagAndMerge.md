@@ -1,15 +1,15 @@
 ---
 title: 如何实现一键合并分支并打Tag的自动化工具
 slug: auto-merge-tag-tool
-excerpt: 背景介绍
 published: false
 featured: false
 category: 前端
-publishedAt: 2025-02-20T00:00:00.000Z
+publishedAt: 2025-02-20
 readingTime: 2
 tags:
   - js
   - git
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17871958076542336
 ---
 
 ## 1. 背景介绍

@@ -4,7 +4,7 @@ slug: mcpqweqwfuy4npp7
 published: true
 featured: true
 category: ai
-publishedAt: 2025-07-09T00:00:00.000Z
+publishedAt: 2025-07-09
 readingTime: 14
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17681258350497152
 tags:

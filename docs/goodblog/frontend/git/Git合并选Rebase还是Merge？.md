@@ -11,13 +11,11 @@ tags:
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17871836198653312
 ---
 
-> 本文深入解析了 Git 中 `rebase` 和 `merge` 的区别与使用场景。`merge` 保留完整历史，适合团队协作与公共分支合并；而 `rebase` 生成线性历史，适合本地分支整理与同步主分支。文章通过图示与代码示例，详细讲解了两者的工作原理、冲突处理方式及最佳实践，帮助开发者根据实际场景选择合适的合并策略，提升协作效率与提交历史可读性。
-
 在 Git 版本控制系统中，`git rebase` 和 `git merge` 是两种核心的分支合并策略，它们都能将不同分支的代码整合到一起，但实现方式和结果差异巨大。选择合适的合并策略不仅影响代码历史的可读性，还直接关系到团队协作的效率和项目的可维护性。
 
 本文将从底层原理出发，深入分析两种合并方式的工作机制，特别关注 rebase 过程中容易被忽视的冲突处理问题，帮助你在实际开发中做出最优选择。
 
-## 什么是 Git Merge？
+## 1. 什么是 Git Merge？
 
 ### 概念解释
 
@@ -71,7 +69,7 @@ git commit -m "修复用户头像显示问题"
 git merge feature-login
 ```
 
-## 什么是 Git Rebase？
+## 2. 什么是 Git Rebase？
 
 ### 概念解释
 
@@ -120,9 +118,9 @@ git checkout main
 git merge feature-login  # 这将是一个 fast-forward merge
 ```
 
-## 两者的核心区别
+## 3. 两者的核心区别
 
-### 1\. 提交历史的差异
+### 3.1 提交历史的差异
 
 **Merge 的特点：**
 
@@ -138,7 +136,7 @@ git merge feature-login  # 这将是一个 fast-forward merge
 - 看起来更加整洁
 - 会改变提交的 SHA 值
 
-### 2\. 可视化对比
+### 3.2 可视化对比
 
 让我们用一个更直观的例子来看看：
 
@@ -163,7 +161,7 @@ git merge feature-login  # 这将是一个 fast-forward merge
 - a1b2c3d 初始提交
 ```
 
-## 什么时候使用 Merge？
+## 4. 什么时候使用 Merge？
 
 ### 适用场景
 
@@ -185,7 +183,7 @@ git push origin main
 git log --graph --oneline
 ```
 
-## 什么时候使用 Rebase？
+## 5. 什么时候使用 Rebase？
 
 ### 适用场景
 
@@ -279,9 +277,9 @@ git rebase -i HEAD~6
 # squash 6f7g8h9 完成用户认证功能
 ```
 
-## 冲突处理
+## 6. 冲突处理
 
-### Merge 冲突处理
+### 6.1 Merge 冲突处理
 
 ```csharp
 # 当出现合并冲突时
@@ -293,7 +291,7 @@ git add .
 git commit  # Git 会自动生成合并提交信息
 ```
 
-### Rebase 冲突处理
+### 6.2 Rebase 冲突处理
 
 ```csharp
 # 当出现 rebase 冲突时
@@ -307,7 +305,7 @@ git rebase --continue
 git rebase --abort
 ```
 
-### 解决冲突的差异
+### 6.3 解决冲突的差异
 
 **Merge 的冲突处理特点：**
 
@@ -430,9 +428,9 @@ git rebase --abort
 git rebase -i HEAD~5  # 将多个小提交合并为逻辑上完整的提交
 ```
 
-## 最佳实践建议
+## 7. 最佳实践建议
 
-### 1\. 团队约定
+### 7.1 团队约定
 
 推荐的工作流：
 
@@ -440,7 +438,7 @@ git rebase -i HEAD~5  # 将多个小提交合并为逻辑上完整的提交
 2.  功能开发完成后：使用 merge 合并到主分支
 3.  推送前：使用交互式 rebase 清理提交历史
 
-### 2\. 安全原则
+### 7.2 安全原则
 
 Rebase 的黄金法则:
 
@@ -458,7 +456,7 @@ git pull --rebase origin main
 git merge main
 ```
 
-### 3\. 实用命令组合
+### 7.3 实用命令组合
 
 ```bash
 # 常用的 rebase 命令
@@ -472,9 +470,9 @@ git log --graph --pretty=oneline --abbrev-commit
 git reset --hard HEAD~1
 ```
 
-## 总结与决策指南
+## 8. 总结与决策指南
 
-### 核心差异对比
+### 8.1 核心差异对比
 
 | 对比维度     | Git Merge        | Git Rebase         |
 | ------------ | ---------------- | ------------------ |
@@ -485,7 +483,7 @@ git reset --hard HEAD~1
 | **可追溯性** | 清晰的合并点     | 可能丢失分支信息   |
 | **性能影响** | 轻量级           | 随提交数量增加     |
 
-### 决策流程图
+### 8.2 决策流程图
 
 ```
 需要合并分支？
@@ -501,14 +499,14 @@ git reset --hard HEAD~1
 使用 Merge
 ```
 
-### 团队协作的黄金法则
+### 8.3 团队协作的黄金法则
 
 1. **主分支保护**：`main`、`master`、`develop` 等主分支必须使用 merge
 2. **功能分支自由**：个人功能分支可以自由选择 rebase 或 merge
 3. **推送前检查**：执行 rebase 前确认分支未被他人使用
 4. **文档化规范**：团队应该明确定义合并策略并文档化
 
-### 常见陷阱与解决方案
+### 8.4 常见陷阱与解决方案
 
 **陷阱 1：在共享分支上执行 rebase**
 
@@ -540,7 +538,7 @@ git push --force origin feature-branch
 git push --force-with-lease origin feature-branch  # 检查是否有他人更新
 ```
 
-### 最终建议
+### 8.5 最终建议
 
 选择 `rebase` 还是 `merge` 并没有绝对的对错，关键是要根据具体场景和团队约定来决定：
 

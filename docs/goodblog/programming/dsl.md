@@ -3,12 +3,12 @@ title: 组件库DSL设计理念
 slug: programming-dsl-comprehensive-guide
 published: false
 featured: false
-category: 前端
-publishedAt: 2025-5-31T00:00:00.000Z
+publishedAt: 2025-05-31
 readingTime: 8
 tags:
   - ts
   - react
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/16951445021773184
 ---
 
 ## 1. DSL设计理念

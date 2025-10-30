@@ -3,13 +3,15 @@ title: 深入解析 JavaScript EventLoop
 slug: eventrok01t
 published: true
 featured: false
-publishedAt: 2023-01-01T00:00:00.000Z
+publishedAt: 2023-01-01
 readingTime: 12
 category: 前端
 tags:
   - js
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673910169619840
 ---
+
+TODO: 这篇文章需要详细补充、以及和NodeJS时间循环的部分
 
 ### 1.0.1. 前言
 
