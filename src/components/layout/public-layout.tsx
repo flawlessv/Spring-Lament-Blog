@@ -6,9 +6,13 @@ import { LayoutDashboard, Moon, Sun } from "lucide-react";
 
 interface PublicLayoutProps {
   children: ReactNode;
+  extraButtons?: ReactNode; // 额外的按钮，用于文章详情页的沉浸式阅读
 }
 
-export default function PublicLayout({ children }: PublicLayoutProps) {
+export default function PublicLayout({
+  children,
+  extraButtons,
+}: PublicLayoutProps) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
@@ -35,6 +39,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     <div className="min-h-screen bg-background">
       {/* 顶部右上角按钮 */}
       <div className="fixed top-0 right-0 z-50 pt-4 pr-6 lg:pr-8 flex items-center gap-2">
+        {/* 额外的按钮（如沉浸式阅读） */}
+        {extraButtons}
+
         {/* 主题切换按钮 */}
         <button
           onClick={toggleTheme}

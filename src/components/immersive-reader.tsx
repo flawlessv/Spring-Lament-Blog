@@ -87,16 +87,14 @@ export function ImmersiveReaderToggle({
 
   return (
     <>
-      {/* 沉浸式阅读按钮 */}
-      <Button
-        variant="outline"
-        size="sm"
+      {/* 沉浸式阅读按钮 - 只显示图标 */}
+      <button
         onClick={enterFullscreen}
-        className="inline-flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-accent transition-colors"
+        title="沉浸式阅读"
       >
-        <Maximize2 className="w-4 h-4" />
-        <span>沉浸式阅读</span>
-      </Button>
+        <Maximize2 className="w-4 h-4 text-foreground" strokeWidth={2} />
+      </button>
 
       {/* 沉浸式阅读模式 */}
       {isImmersive && (
