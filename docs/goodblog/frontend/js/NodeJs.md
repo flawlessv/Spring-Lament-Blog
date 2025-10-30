@@ -11,8 +11,6 @@ tags:
 coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17202184696024448
 ---
 
-# ：从零开始的服务端开发之旅
-
 ## 前言
 
 在现代 Web 开发生态中，JavaScript 已经从一个简单的浏览器脚本语言演变成为一个全栈开发的利器。Node.js 的出现打破了 JavaScript 只能在浏览器运行的限制，让前端工程师也能轻松涉足服务端开发领域。
@@ -59,71 +57,6 @@ console.log("Hello World");
 - 可调用的 API 库
 - 事件循环机制（针对 JavaScript）
 
-### 1.2 JavaScript 运行时的演变
-
-**第一阶段：浏览器时代（1995-2009）**
-
-JavaScript 诞生于 1995 年，最初只是为了让网页具备一些简单的交互能力。它只能在浏览器中运行，因为浏览器内置了 JavaScript 引擎（如 V8、SpiderMonkey）。
-
-```html
-<!-- JavaScript 只能这样运行 -->
-<script>
-  alert("我只能在浏览器中运行");
-</script>
-```
-
-**第二阶段：Node.js 革命（2009-至今）**
-
-2009 年，Ryan Dahl 创造了 Node.js，它让 JavaScript 突破了浏览器的限制。Node.js 的核心创新是：
-
-- 使用 Chrome 的 V8 引擎作为 JS 解释器
-- 提供了文件系统、网络等操作系统级别的 API
-- 采用事件驱动的非阻塞 I/O 模型
-
-这意味着 JavaScript 可以：
-
-- 读写本地文件
-- 创建 HTTP 服务器
-- 操作数据库
-- 执行系统命令
-
-**第三阶段：新兴运行时（2020-至今）**
-
-近年来出现了 Deno 和 Bun 等新兴运行时，它们试图解决 Node.js 的一些历史问题：
-
-- **Deno**：由 Node.js 创始人开发，注重安全性和现代化
-- **Bun**：专注于极致性能，内置了打包、测试等工具
-
-不过 Node.js 依然是生产环境的主流选择，拥有最成熟的生态系统。
-
-### 1.3 浏览器 vs Node.js：运行环境的本质区别
-
-| 特性         | 浏览器环境                | Node.js 环境             |
-| ------------ | ------------------------- | ------------------------ |
-| **全局对象** | `window`                  | `global`                 |
-| **DOM 操作** | ✅ 支持                   | ❌ 不支持                |
-| **文件系统** | ❌ 受限（安全性）         | ✅ 完全访问              |
-| **网络请求** | `XMLHttpRequest`、`fetch` | `http`、`https`、`fetch` |
-| **模块系统** | ES Modules                | CommonJS + ES Modules    |
-| **用途**     | 用户界面交互              | 服务器、工具链、脚本     |
-
-**一个直观的例子：**
-
-```javascript
-// ❌ 在 Node.js 中运行会报错
-document.getElementById("app").innerHTML = "Hello";
-// ReferenceError: document is not defined
-
-// ✅ 在浏览器中运行会报错
-const fs = require("fs");
-fs.readFileSync("./file.txt");
-// ReferenceError: require is not defined (需要打包工具支持)
-```
-
-**关键认知**：浏览器 API（如 `document`、`window`）和 Node.js API（如 `fs`、`http`）是完全不同的，它们由各自的运行时提供。JavaScript 语言本身（变量、函数、Promise 等）是通用的。
-
----
-
 ## 第二章：Node.js 环境搭建与基础使用
 
 ### 2.1 安装 Node.js
@@ -135,29 +68,6 @@ fs.readFileSync("./file.txt");
 - Windows：下载 `.msi` 安装包
 - macOS：下载 `.pkg` 安装包或使用 Homebrew：`brew install node`
 - Linux：使用包管理器，如 `apt install nodejs npm`
-
-**方式二：版本管理工具（推荐开发者）**
-
-使用 nvm（Node Version Manager）可以轻松切换不同版本：
-
-```bash
-# macOS/Linux
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-nvm install --lts
-nvm use --lts
-
-# Windows (使用 nvm-windows)
-# 下载安装：https://github.com/coreybutler/nvm-windows/releases
-nvm install lts
-nvm use lts
-```
-
-**验证安装：**
-
-```bash
-node --version    # 输出：v20.x.x（或更高版本）
-npm --version     # 输出：10.x.x（或更高版本）
-```
 
 ### 2.2 第一个 Node.js 程序
 

@@ -55,6 +55,19 @@ export default function MarkdownRenderer({
 
   // 使用 useMemo 优化性能，只在 content 变化时重新计算目录
   const toc = useMemo(() => {
+    // 首先移除代码块内容，避免将代码中的#号误解析为标题
+    // 匹配 ``` 包裹的代码块（包括有语言标识的和无语言标识的）
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    let contentWithoutCodeBlocks = safeContent.replace(codeBlockRegex, "");
+
+    // 同时移除行内代码，避免行内代码中的#号被解析为标题
+    // 匹配 ` 包裹的行内代码
+    const inlineCodeRegex = /`[^`]*`/g;
+    contentWithoutCodeBlocks = contentWithoutCodeBlocks.replace(
+      inlineCodeRegex,
+      ""
+    );
+
     // 正则表达式：匹配 Markdown 标题（# ## ### 等）
     // ^(#{1,6}) 匹配行首的1-6个#号
     // \s+ 匹配空格
@@ -65,7 +78,7 @@ export default function MarkdownRenderer({
     let match;
 
     // 循环匹配所有标题
-    while ((match = headingRegex.exec(safeContent)) !== null) {
+    while ((match = headingRegex.exec(contentWithoutCodeBlocks)) !== null) {
       const level = match[1].length; // #号的数量就是标题级别
       const text = match[2].trim(); // 标题文本，去除首尾空格
 
