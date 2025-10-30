@@ -176,15 +176,6 @@ export default async function PostPage({
             </span>
           )}
         </div>
-
-        {/* 摘要 */}
-        {post.excerpt && (
-          <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg mb-8 border border-slate-200 dark:border-slate-800">
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
-              {post.excerpt}
-            </p>
-          </div>
-        )}
       </header>
 
       {/* 文章内容 */}
