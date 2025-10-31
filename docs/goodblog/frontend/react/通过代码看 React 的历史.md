@@ -45,11 +45,11 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17838304385
 
 这些问题让广告团队的一位成员 Jordan Walke 感到不舒服。其实，很少有编程范式让他满意。他曾在一次社区访谈中说：
 
-“刚开始学编程时，我就觉得那种基于数据绑定和状态变更的传统 MVC 模式不太对劲。虽然当时我还没掌握像 ‘状态变异’、‘函数式编程’ 这些术语，但我知道那种方式不适合我。”
+"刚开始学编程时，我就觉得那种基于数据绑定和状态变更的传统 MVC 模式不太对劲。虽然当时我还没掌握像 '状态变异'、'函数式编程' 这些术语，但我知道那种方式不适合我。"
 
-“我的代码经常被别人说奇怪。我曾一度觉得‘大概我就是个奇怪的程序员’。后来我终于上了一门编程语言原理课，才学会用术语表达我想构建应用的方式。”
+"我的代码经常被别人说奇怪。我曾一度觉得'大概我就是个奇怪的程序员'。后来我终于上了一门编程语言原理课，才学会用术语表达我想构建应用的方式。"
 
-于是，Jordan 开始尝试着解决他认为 Bolt 和其他框架存在的问题。他最初做了一个叫 “FaxJS” 的个人项目，后来改名为 “FBolt（Functional Bolt）”，再后来，它就成了 “React”。一个小团队也开始围绕这个新工具展开开发。
+于是，Jordan 开始尝试着解决他认为 Bolt 和其他框架存在的问题。他最初做了一个叫 "FaxJS" 的个人项目，后来改名为 "FBolt（Functional Bolt）"，再后来，它就成了 "React"。一个小团队也开始围绕这个新工具展开开发。
 
 时间来到 2012 年，Facebook 状态很好 —— 好到刚花 10 亿美元收购了 Instagram。
 
@@ -63,7 +63,7 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17838304385
 
 两个团队坐下来认真讨论，发现问题的复杂度超出了他们的权限范围。此时 Facebook 正值 IPO 低谷期，而广告产品是主要收入来源，这支广告团队才刚把一个大项目迁移到 Bolt。如果换成 React，可能要花上四个月重写，中间不能加任何新功能。
 
-眼看着 React 的内部推广要泡汤了，CTO 出面了：“做正确的技术决策，着眼长远。如果这会带来短期代价，我支持你们。哪怕重写要花几个月，也去做。”
+眼看着 React 的内部推广要泡汤了，CTO 出面了："做正确的技术决策，着眼长远。如果这会带来短期代价，我支持你们。哪怕重写要花几个月，也去做。"
 
 于是广告平台也迁移到了 React，并像 Instagram 那样取得了成功。
 
@@ -103,7 +103,7 @@ const data = (
 - **内置 XSS 防护**：JSX 不是字符串模板，React 会自动对插入的内容进行转义处理，防止跨站脚本攻击（XSS）。而传统的字符串模板需要开发者手动处理转义
 - **复用 JavaScript 生态**：可以直接使用 JavaScript 的所有语言特性（map、filter、三元运算符等）来控制渲染逻辑，无需学习额外的模板语法（如 `v-if`、`*ngFor` 等）
 
-JSX 的语法也让 “模板转 JS” 这一步变得非常轻量。比如：
+JSX 的语法也让 "模板转 JS" 这一步变得非常轻量。比如：
 
 ```javascript
 function App() {
@@ -131,7 +131,7 @@ function App() {
 
 ### 1.3 "关注点分离" 其实不是你以为的那个意思
 
-JSX 经常被批评 “打破了关注点分离原则”。早期很多项目按语言类型来组织代码：
+JSX 经常被批评 "打破了关注点分离原则"。早期很多项目按语言类型来组织代码：
 
 ```css
 src/   html/     button.html     card.html   css/     button.css     card.css   js/     button.js     card.js
@@ -223,11 +223,11 @@ new CounterView({ model: counterModel });
 </script>
 ```
 
-虽然用`this.setState` 显式更新了模板，但与 Backbone 最大的区别在于：
+虽然用`this.setState` 显式更新了模板，但与 Backbone 最大的区别在于：
 
-**React 中的 render 方法不是 “初始模板”，而是 “每一次状态变化都用的模板”。**
+**React 中的 render 方法不是 "初始模板"，而是 "每一次状态变化都用的模板"。**
 
-也就是说，我们不再关心 UI 是怎么一步步 “变成” 现在这个样子的，而是用状态直接描述 “现在这个样子”。这种思维方式来源于 Jordan 对函数式编程的学习：数据应该是不可变的，视图是状态的纯函数。
+也就是说，我们不再关心 UI 是怎么一步步 "变成" 现在这个样子的，而是用状态直接描述 "现在这个样子"。这种思维方式来源于 Jordan 对函数式编程的学习：数据应该是不可变的，视图是状态的纯函数。
 
 更棒的是，这种响应式的方式也非常高效：点击按钮、更新状态、自动重新渲染 —— 一切都很自然。
 
@@ -247,7 +247,7 @@ JSX 提供了极大的灵活性，但它也意味着每次状态变化时，模�
 
 这是一项巨大的性能优化，使得 React 应用可以大规模扩展而不牺牲性能。
 
-从内部实现角度看，React 在 “协调（reconciliation）” 阶段引入了差异比较（diff）步骤。值得一提的是，React 在早期版本中就对 VDOM 的 diff 算法做了不少优化。
+从内部实现角度看，React 在 "协调（reconciliation）" 阶段引入了差异比较（diff）步骤。值得一提的是，React 在早期版本中就对 VDOM 的 diff 算法做了不少优化。
 
 ![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxuwW12fI8xVfcianibLOI0icwysl23ichic9JASgtibXp3awvTOeEQaFLmVnFReAKiaV9I7gd/640?wx_fmt=svg&from=appmsg&randomid=l607cbqd&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2)React 处理状态变化 → 触发 VDOM diff → 预更新 VDOM → 最终提交真实 DOM
 
@@ -257,7 +257,7 @@ JSX 提供了极大的灵活性，但它也意味着每次状态变化时，模�
 
 React 在 2013 年推出时采用的是类组件（class-based components）；Hooks 直到 2019 年才发布。类组件的出现很棒，它让我们可以将代码模块化，但也带来了一些问题。
 
-比如组件的核心理念是 “组合性”：可以通过已有组件构建新组件：
+比如组件的核心理念是 "组合性"：可以通过已有组件构建新组件：
 
 ```perl
 // 已有组件
@@ -310,13 +310,13 @@ class WindowSize extends React.Component {
 }
 ```
 
-这个`WindowSize` 组件获取了浏览器窗口的宽高，将其存储在 `state` 中，并在变化时触发组件的更新。
+这个`WindowSize` 组件获取了浏览器窗口的宽高，将其存储在 `state` 中，并在变化时触发组件的更新。
 
 假设我们想在多个组件中重用这套逻辑。根据面向对象编程的思路，可以使用类继承（class inheritance）。
 
-#### 直观但短视的继承方案
+#### 1.1.1 直观但短视的继承方案
 
-不修改 WindowSize 组件的代码，我们可以用`extends` 来让新组件继承它的方法和状态：
+不修改 WindowSize 组件的代码，我们可以用`extends` 来让新组件继承它的方法和状态：
 
 ```javascript
 class MyComponent extends WindowSize {
@@ -333,7 +333,7 @@ class MyComponent extends WindowSize {
 }
 ```
 
-这个简单示例可以运行，但它的问题也很明显：一旦`MyComponent` 变复杂，就得小心处理继承逻辑，比如必须调用 `super` 方法：
+这个简单示例可以运行，但它的问题也很明显：一旦`MyComponent` 变复杂，就得小心处理继承逻辑，比如必须调用 `super` 方法：
 
 ```perl
 class MyComponent extends WindowSize {
@@ -382,7 +382,7 @@ class MyComponent extends WindowSize {
 
 于是，React 社区提出了一种更好的方案：高阶组件（Higher-Order Components, HoC）。
 
-#### 社区实践：高阶组件
+#### 1.1.2 社区实践：高阶组件
 
 借助高阶组件，能够避免要求用户在其代码库中进行 super 调用，而是从基类接收参数作为 props 传递给扩展类：
 
@@ -439,13 +439,13 @@ const MyComponent = withWindowSize(MyComponentBase);
 
 在 Hooks 出现前，这是组件逻辑复用的主流方式。
 
-不过，它也有缺点：开发者需要知道有哪些 props 是高阶组件提供的，不太适合 TypeScript 类型检查，而且总给人一种 “外挂工具” 的感觉，而不像是 React 的内置能力。
+不过，它也有缺点：开发者需要知道有哪些 props 是高阶组件提供的，不太适合 TypeScript 类型检查，而且总给人一种 "外挂工具" 的感觉，而不像是 React 的内置能力。
 
-#### 类组件的早期替代方案
+#### 1.1.3 类组件的早期替代方案
 
 2015 年，React 0.14 发布，带来了类组件的替代方案：函数组件（function components）。
 
-React 团队曾说过，类组件其实就是 “一个带状态容器的 render 函数”。那如果把状态拿掉，只保留 render 呢？
+React 团队曾说过，类组件其实就是 "一个带状态容器的 render 函数"。那如果把状态拿掉，只保留 render 呢？
 
 于是下面这段类组件：
 
@@ -471,7 +471,7 @@ var Aquarium = (props) => {
 
 这限制了它在实际项目中的使用，因此许多人还是选择继续使用类组件。
 
-#### 开发体验的成熟期：Hooks 登场
+#### 1.1.4 开发体验的成熟期：Hooks 登场
 
 React 16.8 发布时，引入了 Hooks，彻底解决了函数组件无法拥有状态的问题，也为后续的 API 奠定了基础。
 
@@ -528,15 +528,15 @@ function WindowSize() {
 
 这种新 API 带来了多个好处，其中最关键的一点就是：提升了逻辑的组合能力。
 
-#### 在逻辑层应用组件的优势
+#### 1.1.5 在逻辑层应用组件的优势
 
 在类组件中，组合逻辑的主流方式是高阶组件（HoC），而在 Hooks 体系中，组合逻辑的方法是…… 🥁
 
 **另一个 Hook。😐**
 
-这听起来可能理所当然，但正是这种 “理所当然”，让 Hook 拥有了强大的能力 —— 无论是现在还是将来。
+这听起来可能理所当然，但正是这种 "理所当然"，让 Hook 拥有了强大的能力 —— 无论是现在还是将来。
 
-来看一个自定义的`useWindowSize` Hook：
+来看一个自定义的`useWindowSize` Hook：
 
 ```javascript
 function useWindowSize() {
@@ -561,7 +561,7 @@ function useWindowSize() {
 
 📌**说明**
 
-你可能注意到了，我们几乎不需要改动原来组件中的逻辑。正是这种 “逻辑抽离后几乎无改动” 的特性，让 Hook 的组合能力非常强大。
+你可能注意到了，我们几乎不需要改动原来组件中的逻辑。正是这种 "逻辑抽离后几乎无改动" 的特性，让 Hook 的组合能力非常强大。
 
 然后这个自定义 Hook 就可以在任意函数组件中复用：
 
@@ -578,11 +578,11 @@ function MyComponent() {
 }
 ```
 
-#### 持续一致的 I/O 处理方式
+#### 1.1.6 持续一致的 I/O 处理方式
 
 我可以花几个小时聊编程中的副作用。这里只做个简单概括：
 
-- “副作用” 指的是从组件 / 函数外部改变状态的行为。
+- "副作用" 指的是从组件 / 函数外部改变状态的行为。
 
 ![图片](https://mmbiz.qpic.cn/sz_mmbiz/meG6Vo0MevgQ8o5ibKkNM29ZHP4AbxUwDT8cOA8v47IvXhp7hBicwScYc3ZKP8Iic8UD7xEOgH0V0cZgPfrtJT9aA/640?wx_fmt=other&from=appmsg&randomid=x2zotzkt&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3)纯函数只能在自身作用域内修改状态，而副作用则是改变外部环境中的数据。
 
@@ -590,7 +590,7 @@ function MyComponent() {
 
 大多数 I/O 操作都需要在某个时机进行清理：要么取消监听，要么重置设置的状态，否则就可能造成 bug 或内存泄漏。
 
-React 的`useEffect` Hook 正是为了解决这个问题，它鼓励开发者以更规范的方式处理副作用和清理逻辑。
+React 的`useEffect` Hook 正是为了解决这个问题，它鼓励开发者以更规范的方式处理副作用和清理逻辑。
 
 来看类组件中副作用的处理方式：
 
@@ -610,9 +610,9 @@ class Listener extends React.Component {
 
 📌**说明**
 
-你可能会疑惑：为什么`handleResize` 必须是箭头函数？因为如果不是，`this` 会指向 `window` 而不是组件实例。
+你可能会疑惑：为什么`handleResize` 必须是箭头函数？因为如果不是，`this` 会指向 `window` 而不是组件实例。
 
-而在函数组件中，用`useEffect` 来处理就简单直观多了：
+而在函数组件中，用`useEffect` 来处理就简单直观多了：
 
 ```javascript
 function Listener() {
@@ -628,13 +628,13 @@ function Listener() {
 
 这也是 React 没有为函数组件设计 1:1 对应的类生命周期方法的原因之一：Hook 的方式更优雅，也更利于副作用的管理和清理。
 
-#### 解决 React 的一致性问题
+#### 1.1.7 解决 React 的一致性问题
 
-React 18 发布时，很多人发现他们的应用在开发模式下突然 “出问题” 了。
+React 18 发布时，很多人发现他们的应用在开发模式下突然 "出问题" 了。
 
-实际发生的是：React 故意对开发模式下的`<StrictMode>` 组件做了变更，而这个组件默认出现在大多数 React 应用模板中。
+实际发生的是：React 故意对开发模式下的`<StrictMode>` 组件做了变更，而这个组件默认出现在大多数 React 应用模板中。
 
-在此之前，`<StrictMode>` 主要用来提示开发者使用了过时的 API 或生命周期方法。
+在此之前，`<StrictMode>` 主要用来提示开发者使用了过时的 API 或生命周期方法。
 
 而现在，它更出名的原因是这个：
 
@@ -666,7 +666,7 @@ function BoxAddition() {
 }
 ```
 
-每次渲染这个组件，都会 “添加一个箱子”。但如果我们不断地挂载 / 卸载这个组件，系统里总箱子数会出问题，表现不一致。
+每次渲染这个组件，都会 "添加一个箱子"。但如果我们不断地挂载 / 卸载这个组件，系统里总箱子数会出问题，表现不一致。
 
 比如这样写：
 
@@ -683,7 +683,7 @@ function CheckBoxAddsOnce() {
 }
 ```
 
-这会导致`BoxAddition` 不断被挂载卸载，`window.addBox()` 被调用了很多次，而没有对应的清理逻辑。
+这会导致`BoxAddition` 不断被挂载卸载，`window.addBox()` 被调用了很多次，而没有对应的清理逻辑。
 
 所以正确写法是这样的：
 
@@ -697,23 +697,23 @@ function BoxAddition() {
 }
 ```
 
-这就是为什么 React 18 改变了`<StrictMode>` 的行为，用来提醒你注意这些 “非幂等” 问题。
+这就是为什么 React 18 改变了`<StrictMode>` 的行为，用来提醒你注意这些 "非幂等" 问题。
 
 而且，这并不是 React 18 新加的偶然想法。**幂等性**早在 Facebook 团队第二次公开讲解 React 时就被列为核心设计原则。
 
-#### 为保持一致性而制定的规则
+#### 1.1.8 为保持一致性而制定的规则
 
 不过这不代表你可以随意编写 Hook。React 明确规定了 Hook 的一套使用规则：
 
 - 所有 Hook 都必须是函数
-- 函数名称必须以 `use` 开头
+- 函数名称必须以 `use` 开头
 - 不允许在条件语句中调用 Hook
 - Hook 必须在组件最顶层调用
 - 不允许动态调用 Hook
 
 - **传给 Hook 的参数必须保持稳定**：由于 React 使用参数的引用来判断是否需要重新执行 Hook 的逻辑，如果传入的对象或数组每次都是新创建的，会导致不必要的重新执行。应该使用 `useMemo` 或 `useCallback` 来保持引用稳定，或者避免在 Hook 内部直接修改传入的参数
 
-无论是官方的还是自定义的 Hook，从早期的`useState` 到后来的 `useActionState`，这些规则都适用。
+无论是官方的还是自定义的 Hook，从早期的`useState` 到后来的 `useActionState`，这些规则都适用。
 
 小提示：在项目中启用 `eslint-plugin-react-hooks`（Rules of Hooks）可自动校验上述规则，降低踩坑概率。
 
@@ -748,11 +748,11 @@ function DisallowedHooksUsage() {
 
 接下来我们来看看：为什么这些规则如此重要？
 
-#### 发挥虚拟 DOM 的全部潜力
+#### 1.1.9 发挥虚拟 DOM 的全部潜力
 
 我们的故事讲到了 React 18 以及它所带来的变化，但在展望未来之前，我们先回到过去。让我们把时间拨回到 2016 年。
 
-在 ReactNext 2016 上，Andrew Clark 做了一个名为「React 的下一步」的演讲。他介绍了一个名叫**Fiber** 的实验项目。
+在 ReactNext 2016 上，Andrew Clark 做了一个名为「React 的下一步」的演讲。他介绍了一个名叫**Fiber** 的实验项目。
 
 有没有注意到？
 
@@ -769,7 +769,7 @@ function DisallowedHooksUsage() {
 
 这些能力虽然对 Hooks 做出了一些限制，但同时也解锁了大量新特性，为 React 的未来打下了基础。
 
-#### 解决错误处理问题
+#### 1.1.10 解决错误处理问题
 
 Fiber 解锁的第一个特性是在 React 16 中引入的 错误边界（Error Boundaries）。到了 React 16.6，这个机制获得了改进，解决了 React 应用长久以来的一个难题。
 
@@ -777,11 +777,11 @@ Fiber 解锁的第一个特性是在 React 16 中引入的 错误边界（Error 
 
 ![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxugP1alWeldiaLpC43Zhc6icIzSN2pt0gtVEyW34BVy2ibtIv8qQKv5pStvpMILrEiclYQ/640?wx_fmt=svg&from=appmsg&randomid=la776wmn&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=7)没有错误边界时，即使是叶子节点出错，也可能导致整个应用崩溃
 
-但由于组件是树状结构的，我们可以在潜在出错的组件与其他状态之间建立 “边界”。
+但由于组件是树状结构的，我们可以在潜在出错的组件与其他状态之间建立 "边界"。
 
 ![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxu4vymJicnzZIUW2vDUpeutKMgRzvYPJjbTC4ia1yJffnGdPy7CC9kThTjj3UAdA4zj5/640?wx_fmt=svg&from=appmsg&randomid=ylgk3oyn&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=8)有了错误边界，错误事件只会上冒到最近的边界，不会影响整个应用
 
-不仅单个组件适用，还可以通过将一组组件包在同一个`ErrorBoundary` 中，实现分组隔离错误：
+不仅单个组件适用，还可以通过将一组组件包在同一个`ErrorBoundary` 中，实现分组隔离错误：
 
 ```javascript
 import React, { useState } from "react";
@@ -819,11 +819,11 @@ function App() {
 }
 ```
 
-![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxuslrgJJ6WfU8FXA2IOHauhaeAaEFaWLElEsTPyicPZ8Q8nQMblP2ODjTT5LmjJ9pVj/640?wx_fmt=svg&from=appmsg&randomid=9n2f5ba7&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=9)如果 `ErrorBoundary` 中的某个子组件出错，它会移除所有子节点，并显示备用 UI，而外部组件则不受影响。
+![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxuslrgJJ6WfU8FXA2IOHauhaeAaEFaWLElEsTPyicPZ8Q8nQMblP2ODjTT5LmjJ9pVj/640?wx_fmt=svg&from=appmsg&randomid=9n2f5ba7&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=9)如果 `ErrorBoundary` 中的某个子组件出错，它会移除所有子节点，并显示备用 UI，而外部组件则不受影响。
 
-这类错误隔离机制正是因为 Fiber 能 “中止任务” 而实现的。
+这类错误隔离机制正是因为 Fiber 能 "中止任务" 而实现的。
 
-#### 解决代码拆分（bundle splitting）问题
+#### 1.1.11 解决代码拆分（bundle splitting）问题
 
 除了错误处理，React 16.6 还引入了 懒加载组件（lazy loading） 的机制：
 
@@ -845,7 +845,7 @@ function MyComponent() {
 
 这使得通过网络加载组件及其相关代码（在此例中为 LargeBundleComponent ）来进一步将 VDOM 用作复杂状态的表示成为可能。
 
-#### 解决加载状态处理问题
+#### 1.1.12 解决加载状态处理问题
 
 但懒加载组件存在一个问题：加载过程中用户看到的是什么？
 
@@ -865,7 +865,7 @@ function MyComponent() {
 }
 ```
 
-就像`ErrorBoundary` 用来捕获错误一样，`Suspense` 用来捕获 “加载中的状态”，让我们能优雅地控制哪些地方展示 Loading。
+就像`ErrorBoundary` 用来捕获错误一样，`Suspense` 用来捕获 "加载中的状态"，让我们能优雅地控制哪些地方展示 Loading。
 
 还可以为多个异步组件分别设置 Suspense：
 
@@ -901,7 +901,7 @@ function MyOtherComponent() {
 
 有迹象表明，Suspense 未来可能还会用于数据请求场景……👀
 
-#### 并发渲染的探索
+#### 1.1.13 并发渲染的探索
 
 Fiber 带来了许多能力，但直到 React 18，我们才真正看到一系列 API 来支持这些底层行为。
 
@@ -912,7 +912,7 @@ Fiber 带来了许多能力，但直到 React 18，我们才真正看到一系�
 - `useDeferredValue`
 - `startTransition`
 
-我们以`startTransition` 为例来看看它的用途。
+我们以`startTransition` 为例来看看它的用途。
 
 假设我们有一个组件要渲染大量列表项，我们想将用户输入的文本映射到这些元素上：
 
@@ -947,7 +947,7 @@ const LegacyDemo = () => {     const [inputText, setInputText] = useState("")
 
 然而，如果我们这样做，就会发现当用户输入时，输入框会因为列表重新渲染而出现延迟：
 
-这种情况的发生是因为渲染列表所需的时间比用户输入每个单独字符的时间要长。为了解决这个问题，我们需要一种方法来告诉 React 暂缓对列表的更新，优先处理输入元素的变化。幸运的是，Fiber 就是为了实现这一功能而编写的。我们可以使用 useTransition API 与[Fiber](https://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651270702&idx=1&sn=cd05377b765df5c042e1b96e919262c7&scene=21#wechat_redirect) 进行交互来解决这个问题：
+这种情况的发生是因为渲染列表所需的时间比用户输入每个单独字符的时间要长。为了解决这个问题，我们需要一种方法来告诉 React 暂缓对列表的更新，优先处理输入元素的变化。幸运的是，Fiber 就是为了实现这一功能而编写的。我们可以使用 useTransition API 与[Fiber](https://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651270702&idx=1&sn=cd05377b765df5c042e1b96e919262c7&scene=21#wechat_redirect) 进行交互来解决这个问题：
 
 ```javascript
 const ConcurrentDemo = () => {
@@ -971,20 +971,20 @@ const ConcurrentDemo = () => {
 
 这样输入就不会再卡顿，体验流畅许多。
 
-#### 终极目标：原生数据请求支持
+#### 1.1.14 终极目标：原生数据请求支持
 
 Fiber 奠定了未来的基础，而直到 React 19，这些积累最终汇聚成一个重大方向：原生的数据请求 API。
 
 多年来，React 团队一直在强调「提升状态（lift state）」的重要性。他们早在 2017 年就把这点写进了官方文档，Dan 甚至在 2015 年的 GitHub 评论中提到过这个问题。
 
-React 19 的`use` API 和 `Suspense` API 正是以此理念为基础构建的。
+React 19 的`use` API 和 `Suspense` API 正是以此理念为基础构建的。
 
 具体做法：
 
-- 在父组件中生成 `Promise`
-- 将 `Promise` 传给子组件
-- 子组件用 `use(promise)` 获取数据
-- 用 `Suspense` 包裹处理加载状态
+- 在父组件中生成 `Promise`
+- 将 `Promise` 传给子组件
+- 子组件用 `use(promise)` 获取数据
+- 用 `Suspense` 包裹处理加载状态
 
 ```javascript
 function Child({ promise }) {
@@ -1014,9 +1014,9 @@ React 首先会尝试检查该 Promise 是否已被读取过，无论是通过�
 
 而 Fiber 的机制正是允许中断和恢复组件渲染，因此这一切才能实现。
 
-### 并行 vs 瀑布式数据请求
+### 2.2 并行 vs 瀑布式数据请求
 
-你可能会说：“等等！我也可以用`useFetcher` 把数据请求逻辑提升到上层呀！”
+你可能会说："等等！我也可以用`useFetcher` 把数据请求逻辑提升到上层呀！"
 
 你说得没错，确实可以！
 
@@ -1104,19 +1104,19 @@ export default function App() {
 - 每个子组件都要传多个 props（loading、error、data）
 - 如果我们想统一一个全局的 loading 状态，或者合并多个状态，就需要较大幅度的重构
 
-#### 使用 `use` + `Suspense` 优雅统一加载状态
+#### 2.2.1 使用 `use` + `Suspense` 优雅统一加载状态
 
-React 19 的`use` API 搭配 `Suspense`，就可以完美解决这些问题。
+React 19 的`use` API 搭配 `Suspense`，就可以完美解决这些问题。
 
-你可以自由地选择在组件树的哪个位置放置 Suspense 边界，React 会自动接管加载状态。你无需手动传递`loading` 和 `error`。
+你可以自由地选择在组件树的哪个位置放置 Suspense 边界，React 会自动接管加载状态。你无需手动传递`loading` 和 `error`。
 
 这不仅简化了代码结构，也大大提高了可维护性和代码可组合性。
 
-#### React 数据请求方案的优势
+#### 2.2.2 React 数据请求方案的优势
 
-你可能会问：“但 Corbin，React 社区早就有很多数据请求库了，比如 SWR、React Query，这些都很好用。那为什么还要用`use` 呢？”
+你可能会问："但 Corbin，React 社区早就有很多数据请求库了，比如 SWR、React Query，这些都很好用。那为什么还要用`use` 呢？"
 
-这是个好问题！我也曾深入比较过这些方案，最后发现，React 自带的`use` API 有两个关键优势：
+这是个好问题！我也曾深入比较过这些方案，最后发现，React 自带的`use` API 有两个关键优势：
 
 **1、强制提升数据请求逻辑到组件树更高层**
 
@@ -1130,17 +1130,17 @@ React 19 的`use` API 搭配 `Suspense`，就可以完美解决这些问题。
 
 - 瀑布式请求是先请求用户信息，再加载帖子
 - 并行请求可以大幅减少等待时间
-- 使用 `use` + `Suspense` 后，甚至可以做到代码结构整洁、逻辑清晰、状态统一
+- 使用 `use` + `Suspense` 后，甚至可以做到代码结构整洁、逻辑清晰、状态统一
 
 这不仅是一次 API 设计优化，更是 React 走向原生异步 UI 渲染的关键一步。
 
-#### 融合旧与新：错误处理与数据请求
+#### 2.2.3 融合旧与新：错误处理与数据请求
 
-很多人常常忽略一点：“渲染” 本身也是一种副作用。在 React 中，更新界面就是将数据转化为输出结果，而输出（I/O）本质上就是副作用。
+很多人常常忽略一点："渲染" 本身也是一种副作用。在 React 中，更新界面就是将数据转化为输出结果，而输出（I/O）本质上就是副作用。
 
 这是真的！而正因为如此，我们之前用于处理错误的机制（ErrorBoundary 错误边界组件），同样可以用来处理数据请求中的错误。
 
-来看一个例子，演示如何捕获通过`use` API 抛出的错误：
+来看一个例子，演示如何捕获通过`use` API 抛出的错误：
 
 ```javascript
 class ErrorBoundary extends React.Component {
@@ -1188,26 +1188,26 @@ function App() {
 
 ![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxuOxog1G6GssK8zCrD5scAA57DlTucIKaicuLJDiazNN7kyibCGbRRX0qU8Jibc1XXsdpT/640?wx_fmt=svg&from=appmsg&randomid=a66484eo&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=13)
 
-这个例子中，父组件通过 Suspense 和 ErrorBoundary 包裹了子组件。`use(promise)` 在加载失败时会抛出错误，Suspense 捕捉到 “加载状态”，ErrorBoundary 捕捉到最终的错误，展现备用 UI。
+这个例子中，父组件通过 Suspense 和 ErrorBoundary 包裹了子组件。`use(promise)` 在加载失败时会抛出错误，Suspense 捕捉到 "加载状态"，ErrorBoundary 捕捉到最终的错误，展现备用 UI。
 
-#### 转向服务端
+### 2.3 转向服务端
 
-**服务端渲染（SSR）** 在 Web 的发展历程中由来已久。不论是 WordPress、Ruby on Rails 还是早期的 React SSR，本质上都是将模板渲染为 HTML/CSS/JS，返回给浏览器。
+**服务端渲染（SSR）** 在 Web 的发展历程中由来已久。不论是 WordPress、Ruby on Rails 还是早期的 React SSR，本质上都是将模板渲染为 HTML/CSS/JS，返回给浏览器。
 
 虽然 Next.js（2016）简化了 React 的 SSR 使用方式，但早在 React 0.4 版本时，React 就已支持服务端渲染。甚至在官网博客中，还展示了与 Ruby 和 Python 的结合方式。
 
-##### 解决 “两个计算机” 的问题
+##### 2.3.1 解决 "两个计算机" 的问题
 
 从 React 0.4 到 React Server Components（RSC） 发布前，SSR 总存在一个问题：
 
 ![图片](https://mmbiz.qpic.cn/mmbiz_svg/Tjnia6K0WAwyKU1rKibcOM4KxJKhVQZnxu3css5SXtX9KhXMQjhr7tCr94IgQiaWLnYHwQ7vtY1jU9cRkepCMcgyGwp2U3Exovy/640?wx_fmt=svg&from=appmsg&randomid=z9lo9z8g&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=14)  
-页面首次由服务端渲染后，浏览器拿到页面后仍需重新渲染所有组件，做一次 “重演”。
+页面首次由服务端渲染后，浏览器拿到页面后仍需重新渲染所有组件，做一次 "重演"。
 
 直到 2023 年 Next.js 开始采用 RSC，并在 React 19 中正式稳定，我们才有了彻底的解决方案。
 
 📌**历史小知识**
 
-Next.js 13.4 发布于 2023 年 5 月，而 React 19 正式版直到 2024 年 12 月才发布。在此期间，Next.js 使用了 React 19 的 “canary”（实验）版本。
+Next.js 13.4 发布于 2023 年 5 月，而 React 19 正式版直到 2024 年 12 月才发布。在此期间，Next.js 使用了 React 19 的 "canary"（实验）版本。
 
 [【第3440期】探索 React 19：性能、开发体验与创新特性的全面提升](https://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651274939&idx=1&sn=5237262ecd21d75b8dcaa6e56ee72c2a&scene=21#wechat_redirect)
 
@@ -1217,15 +1217,15 @@ Next.js 13.4 发布于 2023 年 5 月，而 React 19 正式版直到 2024 年 12
 
 React Server Components 的实现原理如下：
 
-- 开发者使用 `use client` 标记需要在客户端运行的组件，未标记的默认视为服务端组件。
+- 开发者使用 `use client` 标记需要在客户端运行的组件，未标记的默认视为服务端组件。
 - 所有组件都在服务端渲染。
 - 客户端只重新渲染那些被标记为 client 的组件。
 - 服务端将 VDOM 状态序列化，并与 HTML 一起发送到浏览器。
-- 客户端根据 VDOM 状态 “跳过” 已完成渲染的服务端组件，避免重复计算。
+- 客户端根据 VDOM 状态 "跳过" 已完成渲染的服务端组件，避免重复计算。
 
 注意：服务端组件不可直接使用浏览器 API 或状态钩子；如需交互，请通过 props 将数据传给带有 `"use client"` 的客户端组件。
 
-##### 从服务端加载数据
+##### 2.3.2 从服务端加载数据
 
 虽然 React 并未支持在客户端直接使用`await`，但在服务端组件中完全没问题：
 
@@ -1238,16 +1238,16 @@ async function UserProfile({ userId }) {
 
 无需封装缓存，无需特殊处理，因为服务端组件只执行一次，不会重复运行。
 
-这种在组件中进行`await` 的能力，完全是由于 React 过去所做的决定才得以实现：
+这种在组件中进行`await` 的能力，完全是由于 React 过去所做的决定才得以实现：
 
 - 虚拟 DOM 用于在服务器上表示状态，而非依赖浏览器的 DOM。
 - Fiber's 暂停、停止、出错以及优先处理工作的能力
 
-##### 向服务端发送数据
+##### 2.3.3 向服务端发送数据
 
 从服务器获取数据解决了一个方向，但我们还需要一个方法将数据发送回服务端，这就是 Server Actions 的作用。
 
-通过在服务端组件中声明`"use server"` 指令，并将函数绑定到 `<form action={handle}>` 中：
+通过在服务端组件中声明`"use server"` 指令，并将函数绑定到 `<form action={handle}>` 中：
 
 ```csharp
 async function handleLikePost(formData) {
@@ -1277,11 +1277,11 @@ async function handleLikePost(formData) {
 
 我们可以看到，浏览器的内置功能如何帮助确定了服务器操作 API 的设计 —— 这使得其功能比 React 团队在没有这种考虑的情况下自行搭建解决方案要强大得多。
 
-#### 双向数据同步：引入 useActionState
+#### 2.3.4 双向数据同步：引入 useActionState
 
-虽然可以提交数据了，但提交后我们还在用`redirect()` 来刷新页面，这与 React 的 “无需刷新 UI” 理念相悖。
+虽然可以提交数据了，但提交后我们还在用`redirect()` 来刷新页面，这与 React 的 "无需刷新 UI" 理念相悖。
 
-于是，我们使用`useActionState` 实现响应式状态更新：
+于是，我们使用`useActionState` 实现响应式状态更新：
 
 ```javascript
 "use client";
@@ -1314,7 +1314,7 @@ export async function handleLikePost(_prevState, formData) {
 
 这样提交点赞后无需刷新页面，页面数据自动响应式更新。
 
-#### 超越基础 SSR：Next.js 的部分预渲染（PPR）
+#### 2.3.5 超越基础 SSR：Next.js 的部分预渲染（PPR）
 
 虽然不是 React 核心功能，但我们不能不提 Next.js 推出的 Partial Pre-rendering（部分预渲染）。
 
@@ -1328,13 +1328,13 @@ export async function handleLikePost(_prevState, formData) {
 
 PPR 的实现依赖于 React 能清晰区分「客户端」和「服务端」组件的机制，这再次验证了 React 构建边界的成功。
 
-#### React 的未来
+### 2.4 React 的未来
 
 虽然我们已经介绍了目前为止发布的所有稳定特性，但 React 的未来仍然令人兴奋。接下来我们看几个前瞻性的实验功能。
 
-#### 保留隐藏状态：Activity API
+#### 2.4.1 保留隐藏状态：Activity API
 
-React 新增的`<Activity>` 组件，可以隐藏 DOM 节点的同时保留组件状态：
+React 新增的`<Activity>` 组件，可以隐藏 DOM 节点的同时保留组件状态：
 
 ```javascript
 import { unstable_Activity as Activity, useState } from "react";
@@ -1357,12 +1357,12 @@ export default function App() {
 }
 ```
 
-以前隐藏组件意味着状态丢失。现在你可以隐藏 DOM，但状态保留在 VDOM 中，稍后再 “复活”。
+以前隐藏组件意味着状态丢失。现在你可以隐藏 DOM，但状态保留在 VDOM 中，稍后再 "复活"。
 
 ![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)  
 ![图片](data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='1px' height='1px' viewBox='0 0 1 1' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0'%3E%3Cg transform='translate(-249.000000, -126.000000)' fill='%23FFFFFF'%3E%3Crect x='249' y='126' width='1' height='1'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)这对于带 Tab 页、切换视图等场景非常实用。
 
-##### 自动优化：React 编译器（Compiler）
+##### 2.4.2 自动优化：React 编译器（Compiler）
 
 React 正在开发编译器，可自动对代码进行性能优化（如自动缓存）。
 
@@ -1372,7 +1372,7 @@ React 正在开发编译器，可自动对代码进行性能优化（如自动�
 
 前提是你严格遵循 React Hook 规则、使用 StrictMode、遵守 ESLint 指南。
 
-其实，这并不是 React 团队第一次尝试。早在 2017 年，Facebook 就开发过一个叫 Prepack 的 JS 编译器，尝试在构建时优化代码（例如提前计算`fibonacci(10)` 得到 `55`）。
+其实，这并不是 React 团队第一次尝试。早在 2017 年，Facebook 就开发过一个叫 Prepack 的 JS 编译器，尝试在构建时优化代码（例如提前计算`fibonacci(10)` 得到 `55`）。
 
 而 React Compiler 的构想甚至早于 Hooks 的出现。React 团队在设计 Hook 的规则时，早已为未来的编译器做了准备。
 
@@ -1380,13 +1380,13 @@ React 正在开发编译器，可自动对代码进行性能优化（如自动�
 
 当然，其他框架也有类似优化策略，比如：
 
-- Angular 的 `runOutsideAngular`、`OnPush`
-- Vue 的 `v-once` 和 `v-memo`
-- Solid.js 的 `createMemo`
+- Angular 的 `runOutsideAngular`、`OnPush`
+- Vue 的 `v-once` 和 `v-memo`
+- Solid.js 的 `createMemo`
 
 可见，不同框架虽然机制不同，但对性能的追求是一致的。
 
-#### 总结：React 的一贯哲学
+### 2.5 总结：React 的一贯哲学
 
 纵观 React 的发展历程，我们可以清晰看到一条主线：
 
