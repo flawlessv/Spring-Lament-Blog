@@ -218,12 +218,6 @@ export default function PostList({
           </div>
         </div>
       )}
-
-      {!hasMore && posts.length > 0 && (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">没有更多文章了</p>
-        </div>
-      )}
     </div>
   );
 }
