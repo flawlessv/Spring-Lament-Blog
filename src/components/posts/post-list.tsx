@@ -146,11 +146,11 @@ export default function PostList({
   }
 
   return (
-    <div className={`space-y-[60px] ${className}`}>
+    <div className={`space-y-[60px] sm:space-y-[60px] ${className}`}>
       {posts.map((post, index) => (
         <article key={post.id}>
           <Link href={`/posts/${post.slug}`}>
-            <div className="relative w-full max-w-[680px] h-[285px] mx-auto overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
+            <div className="relative w-full max-w-[680px] h-[220px] sm:h-[285px] mx-auto overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
               {/* 优化的背景图片 */}
               <div className="absolute inset-0">
                 <BackgroundImage
@@ -164,12 +164,12 @@ export default function PostList({
 
               {/* 文章内容覆盖层 */}
               <div
-                className="relative h-full p-8 flex flex-col justify-between text-white"
+                className="relative h-full p-4 sm:p-8 flex flex-col justify-between text-white"
                 style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
               >
                 {/* 顶部：日期和精选标识 */}
                 <div className="flex items-start justify-between">
-                  <div className="text-sm opacity-90 font-medium tracking-wider">
+                  <div className="text-xs sm:text-sm opacity-90 font-medium tracking-wider">
                     {format(
                       new Date(post.publishedAt || post.createdAt),
                       "MMM dd, yyyy",
@@ -179,24 +179,24 @@ export default function PostList({
                     ).toUpperCase()}
                   </div>
                   {post.featured && (
-                    <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full shadow-lg"></div>
                   )}
                 </div>
 
                 {/* 中间：标题 - 垂直居中 */}
                 <div className="flex-1 flex items-center">
-                  <h2 className="text-2xl md:text-3xl font-bold leading-tight line-clamp-3 transition-all duration-300 group-hover:scale-[1.02]">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight line-clamp-3 transition-all duration-300 group-hover:scale-[1.02]">
                     {post.title}
                   </h2>
                 </div>
 
                 {/* 底部：分类标签 */}
                 {post.categories.length > 0 && (
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
                     {post.categories.slice(0, 2).map((category) => (
                       <span
                         key={category.id}
-                        className="inline-block px-3 py-1 text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
+                        className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
                       >
                         {category.name}
                       </span>

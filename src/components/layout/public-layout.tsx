@@ -2,21 +2,25 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, Moon, Sun, Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PublicLayoutProps {
   children: ReactNode;
   extraButtons?: ReactNode; // 额外的按钮，用于文章详情页的沉浸式阅读
   leftButtons?: ReactNode; // 左侧按钮，用于返回等操作
+  sidebar?: ReactNode; // 侧边栏内容（个人信息和分类）
 }
 
 export default function PublicLayout({
   children,
   extraButtons,
   leftButtons,
+  sidebar,
 }: PublicLayoutProps) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -39,9 +43,47 @@ export default function PublicLayout({
 
   return (
     <div className="min-h-screen bg-background">
+      {/* 汉堡菜单按钮 - 仅移动端显示，与右侧按钮水平对齐，与文章左对齐 */}
+      {sidebar && (
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 pt-4 pointer-events-none">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 pointer-events-auto">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-accent transition-colors"
+            >
+              {sidebarOpen ? (
+                <X className="w-4 h-4 text-foreground" strokeWidth={2} />
+              ) : (
+                <Menu className="w-4 h-4 text-foreground" strokeWidth={2} />
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 遮罩层 - 移动端显示 */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* 侧边栏 - 移动端滑出 */}
+      {sidebar && (
+        <aside
+          className={cn(
+            "fixed left-0 top-0 h-full w-80 bg-background border-r border-border transform transition-transform duration-300 ease-in-out z-40 overflow-y-auto",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:hidden"
+          )}
+        >
+          <div className="p-6">{sidebar}</div>
+        </aside>
+      )}
+
       {/* 顶部左侧按钮 - 与内容区域对齐 */}
       {leftButtons && (
-        <div className="fixed top-0 left-0 right-0 z-50 pt-6 pointer-events-none">
+        <div className="fixed top-0 left-0 z-50 pt-6 pointer-events-none">
           <div className="max-w-7xl mx-auto px-6 lg:px-8 pointer-events-auto">
             {leftButtons}
           </div>

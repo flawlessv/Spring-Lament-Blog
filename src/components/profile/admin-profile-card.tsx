@@ -94,14 +94,14 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="sticky top-8 w-full max-w-xs">
+      <div className="lg:sticky lg:top-24 w-full max-w-xs mx-auto">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
           <div className="text-center">
-            <div className="w-28 h-28 bg-gray-200 rounded-full mx-auto mb-3"></div>
-            <div className="h-5 bg-gray-200 rounded w-32 mx-auto mb-1"></div>
-            <div className="h-4 bg-gray-200 rounded w-40 mx-auto mb-3"></div>
-            <div className="h-8 bg-gray-200 rounded-full w-24 mx-auto mb-6"></div>
+            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-3"></div>
+            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32 mx-auto mb-1"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40 mx-auto mb-3"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24 mx-auto mb-6"></div>
           </div>
 
           {/* 分类 */}
@@ -110,10 +110,10 @@ export default function AdminProfileCard() {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-8 bg-gray-200 rounded flex items-center space-x-2"
+                  className="h-8 bg-gray-200 dark:bg-gray-700 rounded flex items-center space-x-2"
                 >
-                  <div className="w-4 h-4 bg-gray-300 rounded"></div>
-                  <div className="flex-1 h-4 bg-gray-300 rounded"></div>
+                  <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  <div className="flex-1 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
                 </div>
               ))}
             </div>
@@ -122,7 +122,10 @@ export default function AdminProfileCard() {
           {/* 社交媒体图标 */}
           <div className="flex justify-center space-x-3 pt-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-5 h-5 bg-gray-200 rounded"></div>
+              <div
+                key={i}
+                className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded"
+              ></div>
             ))}
           </div>
         </div>
@@ -137,7 +140,7 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="sticky top-24 space-y-6 w-full max-w-xs">
+    <div className="lg:sticky lg:top-24 space-y-6 w-full max-w-xs mx-auto">
       {/* 个人信息卡片 */}
       <div className="text-center space-y-4">
         {/* 头像 */}
@@ -146,12 +149,12 @@ export default function AdminProfileCard() {
             <img
               src={avatar}
               alt={displayName}
-              className="w-32 h-32 rounded-full object-cover border-2 border-border shadow-xl"
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-border shadow-xl"
             />
           ) : (
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border shadow-xl">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border shadow-xl">
               <User
-                className="w-16 h-16 text-muted-foreground"
+                className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground"
                 strokeWidth={1.5}
               />
             </div>
@@ -160,13 +163,13 @@ export default function AdminProfileCard() {
 
         {/* 名称 */}
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
             {displayName || profile.username}
           </h1>
 
           {/* 个人简介 */}
           {bio && (
-            <p className="text-base text-muted-foreground leading-relaxed px-2">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed px-2">
               {bio}
             </p>
           )}
