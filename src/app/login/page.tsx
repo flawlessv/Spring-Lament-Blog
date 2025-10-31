@@ -217,7 +217,7 @@ function LoginForm() {
 
         {/* 底部提示 */}
         <p className="mt-8 text-center text-sm text-gray-500 animate-fade-in">
-          © 2024 SpringLament Blog. All rights reserved.
+          © 2025 SpringLament Blog. All rights reserved.
         </p>
       </div>
     </div>

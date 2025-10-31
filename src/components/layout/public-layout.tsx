@@ -89,11 +89,11 @@ export default function PublicLayout({
       <footer className="border-t border-border/40 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
           <div className="flex flex-col items-center justify-center space-y-4">
-            <p className="text-sm text-muted-foreground">
-              © 2024 SpringLament Blog. All rights reserved.
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              春光摧折，夏花凋零，秋叶飘零，冬雪纷飞
+            <p className="text-xs text-muted-foreground/60 text-center">
+              &ldquo;哪里的海都一样 东京也可以变成獾子岛&rdquo;
+              <br />
+              &ldquo;The sea is the same everywhere，even Tokyo can become
+              Badger Island.&rdquo;
             </p>
           </div>
         </div>
