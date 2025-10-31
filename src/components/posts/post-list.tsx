@@ -19,6 +19,7 @@ interface Post {
   excerpt?: string;
   coverImage?: string;
   createdAt: Date;
+  publishedAt?: Date;
   featured: boolean;
   categories: Array<{
     id: string;
@@ -169,9 +170,13 @@ export default function PostList({
                 {/* 顶部：日期和精选标识 */}
                 <div className="flex items-start justify-between">
                   <div className="text-sm opacity-90 font-medium tracking-wider">
-                    {format(new Date(post.createdAt), "MMM dd, yyyy", {
-                      locale: zhCN,
-                    }).toUpperCase()}
+                    {format(
+                      new Date(post.publishedAt || post.createdAt),
+                      "MMM dd, yyyy",
+                      {
+                        locale: zhCN,
+                      }
+                    ).toUpperCase()}
                   </div>
                   {post.featured && (
                     <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>

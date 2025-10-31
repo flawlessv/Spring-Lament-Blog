@@ -70,6 +70,7 @@ export async function GET(
       featured: post.featured,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
+      publishedAt: post.publishedAt,
       author: post.author,
       categories: post.category ? [post.category] : [],
       tags: post.tags.map((postTag) => postTag.tag),

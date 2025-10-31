@@ -83,6 +83,9 @@ export async function GET(request: NextRequest) {
           featured: "desc",
         },
         {
+          publishedAt: "desc",
+        },
+        {
           createdAt: "desc",
         },
       ],
@@ -105,6 +108,7 @@ export async function GET(request: NextRequest) {
       coverImage: post.coverImage,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
+      publishedAt: post.publishedAt,
       author: post.author,
       categories: post.category ? [post.category] : [],
       tags: post.tags.map((postTag) => postTag.tag),

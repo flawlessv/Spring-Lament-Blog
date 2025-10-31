@@ -19,6 +19,7 @@ interface Post {
   featured: boolean;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string;
   author: {
     id: string;
     username: string;
@@ -97,6 +98,15 @@ export default async function PostPage({
 
   return (
     <PublicLayout
+      leftButtons={
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          <span>返回</span>
+        </Link>
+      }
       extraButtons={
         <ImmersiveReaderToggle
           title={post.title}
@@ -108,28 +118,15 @@ export default async function PostPage({
     >
       {/* 文章头部 */}
       <header className="mb-8">
-        {/* 返回按钮 */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span>返回1234</span>
-          </Link>
-        </div>
-
         {/* 标题 */}
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight font-sans">
-          {post.featured && (
-            <span className="inline-flex items-center mr-4">
-              <span className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse"></span>
-              <span className="ml-2 text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide">
-                精选
-              </span>
-            </span>
-          )}
           {post.title}
+          {/* 精选标记 - 右上角上标样式 */}
+          {post.featured && (
+            <sup className="ml-2 inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-sm">
+              精选
+            </sup>
+          )}
         </h1>
 
         {/* 文章信息 */}
@@ -155,7 +152,7 @@ export default async function PostPage({
                   .toUpperCase()}
               </div>
             )}
-            <span className="font-medium">
+            <span className="font-medium text-base">
               {post.author.profile?.displayName || post.author.username}
             </span>
           </div>
@@ -168,9 +165,13 @@ export default async function PostPage({
               />
             </svg>
             <span>
-              {format(new Date(post.createdAt), "yyyy年MM月dd日", {
-                locale: zhCN,
-              })}
+              {format(
+                new Date(post.publishedAt || post.createdAt),
+                "yyyy年MM月dd日",
+                {
+                  locale: zhCN,
+                }
+              )}
             </span>
           </span>
           {post.commentsCount > 0 && (
