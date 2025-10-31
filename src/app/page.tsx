@@ -9,7 +9,7 @@ export default function Home() {
     <PublicLayout sidebar={<AdminProfileCard />}>
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6">
         {/* 桌面端：个人信息在左侧 */}
-        <aside className="hidden lg:block lg:col-span-3 order-1 lg:order-none">
+        <aside className="hidden lg:block lg:col-span-3 order-1 lg:order-none lg:pl-20">
           <AdminProfileCard />
         </aside>
 

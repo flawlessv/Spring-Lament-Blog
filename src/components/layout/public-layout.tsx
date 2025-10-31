@@ -42,7 +42,7 @@ export default function PublicLayout({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* 汉堡菜单按钮 - 仅移动端显示，与右侧按钮水平对齐，与文章左对齐 */}
       {sidebar && (
         <div className="lg:hidden fixed top-0 left-0 right-0 z-50 pt-4 pointer-events-none">
@@ -123,21 +123,19 @@ export default function PublicLayout({
       </div>
 
       {/* 主要内容 */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-20 animate-fade-in">
+      <main className="flex-1 max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-8 animate-fade-in w-full">
         {children}
       </main>
 
       {/* 极简底部 */}
-      <footer className="border-t border-border/40 bg-background">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <p className="text-xs text-muted-foreground/60 text-center">
-              &ldquo;哪里的海都一样 东京也可以变成獾子岛&rdquo;
-              <br />
-              &ldquo;The sea is the same everywhere，even Tokyo can become
-              Badger Island.&rdquo;
-            </p>
-          </div>
+      <footer className="border-t border-border/40 bg-background mt-auto">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-2">
+          <p className="text-[10px] text-muted-foreground/50 text-center leading-relaxed">
+            &ldquo;哪里的海都一样 东京也可以变成獾子岛&rdquo;
+            <br />
+            &ldquo;The sea is the same everywhere，even Tokyo can become Badger
+            Island.&rdquo;
+          </p>
         </div>
       </footer>
     </div>

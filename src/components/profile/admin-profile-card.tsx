@@ -94,33 +94,33 @@ export default function AdminProfileCard() {
 
   if (loading) {
     return (
-      <div className="lg:sticky lg:top-24 w-full max-w-xs mx-auto">
+      <div className="lg:sticky lg:top-24 w-full max-w-xs">
         <div className="animate-pulse space-y-6">
           {/* 头像和名称 */}
-          <div className="text-center">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-3"></div>
-            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32 mx-auto mb-1"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40 mx-auto mb-3"></div>
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24 mx-auto mb-6"></div>
+          <div>
+            <div className="w-28 h-28 bg-gray-200 dark:bg-gray-700 rounded-full mb-3"></div>
+            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40 mb-3"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24 mb-6"></div>
           </div>
 
           {/* 分类 */}
           <div className="min-h-[200px]">
-            <div className="space-y-2">
+            <div className="space-y-1">
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-8 bg-gray-200 dark:bg-gray-700 rounded flex items-center space-x-2"
+                  className="h-7 bg-gray-200 dark:bg-gray-700 rounded flex items-center space-x-1.5"
                 >
-                  <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                  <div className="flex-1 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  <div className="w-3.5 h-3.5 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                  <div className="flex-1 h-3.5 bg-gray-300 dark:bg-gray-600 rounded"></div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* 社交媒体图标 */}
-          <div className="flex justify-center space-x-3 pt-4">
+          <div className="flex space-x-2 pt-2">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
@@ -140,21 +140,21 @@ export default function AdminProfileCard() {
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="lg:sticky lg:top-24 space-y-6 w-full max-w-xs mx-auto">
+    <div className="lg:sticky lg:top-24 space-y-6 w-full max-w-xs">
       {/* 个人信息卡片 */}
-      <div className="text-center space-y-4">
+      <div className="space-y-4">
         {/* 头像 */}
-        <div className="flex justify-center">
+        <div className="flex">
           {avatar ? (
             <img
               src={avatar}
               alt={displayName}
-              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-border shadow-xl"
+              className="w-28 h-28 rounded-full object-cover border-2 border-border"
             />
           ) : (
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border shadow-xl">
+            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border">
               <User
-                className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground"
+                className="w-14 h-14 text-muted-foreground"
                 strokeWidth={1.5}
               />
             </div>
@@ -163,49 +163,49 @@ export default function AdminProfileCard() {
 
         {/* 名称 */}
         <div className="space-y-2">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             {displayName || profile.username}
           </h1>
 
           {/* 个人简介 */}
           {bio && (
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed px-2">
+            <p className="text-base text-muted-foreground leading-relaxed">
               {bio}
             </p>
           )}
         </div>
 
         {/* Subscribe 按钮 */}
-        <button className="inline-flex items-center justify-center h-9 px-6 rounded-full bg-foreground text-background hover:opacity-90 transition-all duration-300 text-sm font-medium transform hover:scale-105 active:scale-95">
-          Subscribe123
+        <button className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all duration-200 text-sm font-medium">
+          Subscribe
         </button>
       </div>
 
       {/* 分类导航 */}
       {categories.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-1">
           <div className="space-y-0.5">
             {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/category/${category.slug}`}
-                className="flex items-center gap-2 py-2 px-3 text-sm rounded-lg hover:bg-accent transition-all duration-200 group"
+                className="flex items-center gap-1.5 py-1.5 text-sm hover:text-foreground transition-colors group"
               >
                 {category.icon ? (
-                  <span className="w-4 h-4 text-center flex items-center justify-center flex-shrink-0">
+                  <span className="w-3.5 h-3.5 text-center flex items-center justify-center flex-shrink-0 text-xs">
                     {category.icon}
                   </span>
                 ) : (
                   <FileText
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
+                    className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
                     strokeWidth={1.5}
                   />
                 )}
-                <span className="flex-1 font-medium group-hover:text-foreground transition-colors">
+                <span className="text-muted-foreground group-hover:text-foreground transition-colors">
                   {category.name}
                 </span>
                 {category._count?.posts ? (
-                  <span className="text-xs text-muted-foreground font-medium px-2 py-0.5 rounded-full bg-secondary">
+                  <span className="text-xs text-muted-foreground ml-1 font-mono">
                     {category._count.posts}
                   </span>
                 ) : null}
@@ -217,7 +217,7 @@ export default function AdminProfileCard() {
 
       {/* 社交媒体图标 */}
       <TooltipProvider>
-        <div className="flex justify-center flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2">
           {profile.profile?.email && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -225,7 +225,7 @@ export default function AdminProfileCard() {
                   href={`mailto:${profile.profile.email}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                  className="group relative p-1 hover:bg-accent transition-colors rounded"
                 >
                   <Mail
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
@@ -243,7 +243,7 @@ export default function AdminProfileCard() {
               <TooltipTrigger asChild>
                 <a
                   href={`tel:${profile.profile.phone}`}
-                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                  className="group relative p-1 hover:bg-accent transition-colors rounded"
                 >
                   <Phone
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
@@ -259,7 +259,7 @@ export default function AdminProfileCard() {
           {profile.profile?.wechat && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="group relative p-1.5 rounded-full hover:bg-accent transition-colors cursor-pointer">
+                <div className="group relative p-1 hover:bg-accent transition-colors cursor-pointer rounded">
                   <MessageSquare
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
                     strokeWidth={1.5}
@@ -278,7 +278,7 @@ export default function AdminProfileCard() {
                   href={profile.profile.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                  className="group relative p-1 hover:bg-accent transition-colors rounded"
                 >
                   <Globe
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
@@ -298,7 +298,7 @@ export default function AdminProfileCard() {
                   href={`https://github.com/${profile.profile.github}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                  className="group relative p-1 hover:bg-accent transition-colors rounded"
                 >
                   <Github
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
@@ -318,7 +318,7 @@ export default function AdminProfileCard() {
                   href={`https://space.bilibili.com/${profile.profile.bilibili}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative p-1.5 rounded-full hover:bg-accent transition-colors"
+                  className="group relative p-1 hover:bg-accent transition-colors rounded"
                 >
                   <Tv
                     className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
