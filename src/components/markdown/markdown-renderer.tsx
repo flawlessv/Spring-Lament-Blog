@@ -159,9 +159,9 @@ export default function MarkdownRenderer({
         />
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex gap-8 min-w-0">
         {/* 文章内容区域 */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 overflow-x-hidden">
           {/* 移动端目录切换按钮 */}
           {showToc && toc.length > 0 && (
             <div className="mb-6 xl:hidden">
@@ -205,7 +205,7 @@ export default function MarkdownRenderer({
 
           {/* Markdown 内容渲染区域 */}
           <div
-            className="prose prose-lg prose-gray dark:prose-invert max-w-none font-serif
+            className="prose prose-lg prose-gray dark:prose-invert w-full max-w-full min-w-0 overflow-x-hidden break-words break-all font-serif
           prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-bold prose-headings:font-sans
           prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 dark:prose-h1:border-gray-700 prose-h1:pb-3
           prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-8 prose-h2:text-gray-800 dark:prose-h2:text-gray-200
@@ -215,13 +215,16 @@ export default function MarkdownRenderer({
           prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2 prose-li:leading-relaxed
           prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-strong:font-semibold
           prose-em:text-gray-600 dark:prose-em:text-gray-400 prose-em:italic
-          prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-          prose-pre:bg-transparent prose-pre:p-0
+          prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:break-words prose-code:break-all
+          prose-pre:bg-transparent prose-pre:p-0 prose-pre:overflow-x-auto prose-pre:max-w-full
           prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-950 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:font-serif prose-blockquote:italic
           prose-table:text-sm prose-table:font-sans
           prose-th:bg-gray-50 dark:prose-th:bg-gray-800 prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:font-medium
           prose-td:border-gray-300 dark:prose-td:border-gray-700 dark:prose-td:text-gray-300
-          prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+          prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:break-words prose-a:break-all
+          prose-img:max-w-full
+          [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:whitespace-nowrap
+          [&_iframe]:max-w-full [&_iframe]:w-full
         "
           >
             <ReactMarkdown
