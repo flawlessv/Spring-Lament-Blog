@@ -41,12 +41,14 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
+          command_timeout: 30m  # 增加超时时间到 30 分钟
           script: |
             cd /www/wwwroot/my-next-app
             echo "=== 清理旧依赖（避免文件损坏）==="
             rm -rf node_modules package-lock.json
-            echo "=== 安装所有依赖 ==="
-            npm install
+            echo "=== 使用淘宝镜像加速安装 ==="
+            npm install --registry=https://registry.npmmirror.com --no-audit --no-fund
+            echo "=== 依赖安装完成 ==="
 
       # 在服务器上配置环境变量并构建项目
       - name: 在服务器上构建项目
