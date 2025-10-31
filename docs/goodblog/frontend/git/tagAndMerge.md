@@ -20,16 +20,16 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17871958076
 
 ## 2. 工具功能特点
 
-### 1.2.1. 核心功能
+### 2.1. 核心功能
 
 - **自动分支合并**：将当前分支自动合并到指定的环境分支
-- **智能标签创建**：根据环境和应用自动生成标准化的Tag
+- **智能标签创建**：根据环境自动生成标准化的Tag
 - **工作区保护**：自动保存和恢复未提交的工作区修改
-- **交互式操作**：提供直观的环境和应用选择界面
+- **交互式操作**：提供直观的环境选择界面
 - **自动推送**：完成合并后自动推送代码到远程仓库
 - **安全机制**：操作前确认、出错时自动回滚
 
-### 1.2.2. 技术亮点
+### 2.2. 技术亮点
 
 - 使用 ES6 模块化开发
 - 集成 inquirer 提供友好的交互界面
@@ -39,19 +39,15 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17871958076
 
 ## 3. 执行流程
 
-以下是工具的完整执行流程图：
-
-![一键合并分支并打Tag工具流程图](/images/others/image.png)
-
-从流程图可以看出，整个过程包括以下关键步骤：
+以下是工具的完整执行流程：
 
 1. **开始执行**：启动脚本
-2. **交互式选择**：配置环境和应用选择
-3. **确认操作信息**：用户确认发布信息
+2. **交互式选择**：配置环境选择
+3. **确认操作信息**：用户确认合并信息
 4. **获取远程更新**：执行 `git fetch`
 5. **保存工作区修改**：执行 `git stash`
 6. **推送当前分支**：执行 `git push`
-7. **切换到目标分支**：切换到环境分支
+7. **切换到目标分支**：切换到环境分支（test/pre）
 8. **合并源分支**：执行分支合并操作
 9. **判断合并内容**：检查是否有新的合并内容
 10. **创建标签**：如果有新内容则创建Tag，否则跳过
@@ -65,18 +61,16 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17871958076
 
 ```bash
 # 1. 安装必要的依赖包
-npm install inquirer @mi/workflow-tag @mi/workflow-utils
+npm install inquirer
 ```
 
-### 1.0.1. 依赖说明
+### 4.1. 依赖说明
 
 - **inquirer**：提供交互式命令行界面
-- **@mi/workflow-tag**：内部标签管理工具
-- **@mi/workflow-utils**：内部工作流工具集
 
-## 1.1. 详细使用指南
+## 5. 详细使用指南
 
-### 1.1.1. 基本使用步骤
+### 5.1. 基本使用步骤
 
 1. **切换到源分支**
 
@@ -91,50 +85,46 @@ npm install inquirer @mi/workflow-tag @mi/workflow-utils
    ```
 
 3. **选择目标环境**
-   - `test (黄区)`：测试环境
-   - `pre (红区)`：预发布环境
+   - `test`：测试环境分支
+   - `pre`：预发布环境分支
 
-4. **选择应用类型**
-   - `main`：主应用
-   - `r`：R应用
-   - `r2`：R2应用
+4. **确认操作信息**
 
-5. **确认操作信息**
    系统会显示详细的操作信息供确认：
 
    ```
    确认以下发布信息?
    源分支: feature/your-feature-branch
-   目标分支: feature/new-biz-test
+   目标分支: develop-test
    发布环境: test
-   发布应用: r2
    ```
 
-6. **等待自动执行**
+5. **等待自动执行**
+
    脚本会自动完成所有Git操作和标签创建
 
-### 1.1.2. 配置说明
+### 5.2. 配置说明
 
 工具通过 `BRANCH_CONFIG` 配置不同环境的分支映射关系：
 
 ```javascript
 const BRANCH_CONFIG = {
   test: {
-    branch: "feature/new-biz-test",
-    tagPrefix: dftTagPrefixMap.test,
+    branch: "develop-test",
+    tagPrefix: "test",
   },
   pre: {
-    branch: "feature/main-new-pre",
-    tagPrefix: dftTagPrefixMap.pre,
+    branch: "develop-pre",
+    tagPrefix: "pre",
   },
 };
 ```
 
-标签命名规则：`{环境前缀}-mipoc-{应用}-{日期}`
+标签命名规则：`{环境前缀}-release-{日期}` 或 `{环境前缀}-release-{版本号}`
 
-## 1.2. 核心代码实现
+## 6. 核心代码实现
 
-### 1.2.1. 交互式配置选择
+### 6.1. 交互式配置选择
 
 ```javascript
 async function promptConfig() {
@@ -146,17 +136,10 @@ async function promptConfig() {
       name: "env",
       message: "选择发布环境:",
       choices: [
-        { name: "test (黄区)", value: "test" },
-        { name: "pre (红区)", value: "pre" },
+        { name: "test（测试环境）", value: "test" },
+        { name: "pre（预发布环境）", value: "pre" },
       ],
       default: "test",
-    },
-    {
-      type: "list",
-      name: "app",
-      message: "选择要发布的应用:",
-      choices: ["main", "r", "r2"],
-      default: "r2",
     },
   ]);
 
@@ -166,17 +149,17 @@ async function promptConfig() {
     {
       type: "confirm",
       name: "confirmed",
-      message: `确认以下发布信息?\n源分支: ${sourceBranch}\n目标分支: ${targetBranch}\n发布环境: ${answers.env}\n发布应用: ${answers.app}`,
+      message: `确认以下信息?\n源分支: ${sourceBranch}\n目标分支: ${targetBranch}\n环境: ${answers.env}`,
     },
   ]);
 
   if (!confirmed) exit("操作已取消");
 
-  return { sourceBranch, targetBranch, env: answers.env, app: answers.app };
+  return { sourceBranch, targetBranch, env: answers.env };
 }
 ```
 
-### 1.2.2. 命令执行封装
+### 6.2. 命令执行封装
 
 ```javascript
 function runCommand(command, args) {
@@ -200,26 +183,24 @@ function runCommand(command, args) {
 }
 ```
 
-### 1.2.3. 标签创建逻辑
+### 6.3. 标签创建逻辑
 
 ```javascript
-async function createTag(targetBranch, env, app) {
-  const tagPrefixMap = {
-    [targetBranch]: BRANCH_CONFIG[env].tagPrefix,
-  };
+async function createTag(env) {
+  const date = new Date().toISOString().split("T")[0];
+  const tagPrefix = BRANCH_CONFIG[env].tagPrefix;
+  const tagName = `${tagPrefix}-release-${date}`;
 
-  await MiTag({
-    tagPrefixMap,
-    customFullPrefix({ prefix, curDate }) {
-      return `${prefix}-mipoc-${app}-${curDate}`;
-    },
-  });
+  await runCommand("git", ["tag", tagName]);
+  await runCommand("git", ["push", "origin", tagName]);
+
+  console.log(`标签 ${tagName} 创建成功`);
 }
 ```
 
-## 1.3. 异常处理与安全机制
+## 7. 异常处理与安全机制
 
-### 1.3.1. 错误处理策略
+### 7.1. 错误处理策略
 
 1. **合并冲突处理**
 
@@ -250,6 +231,7 @@ async function createTag(targetBranch, env, app) {
    ```
 
 3. **分支切换保护**
+
    ```javascript
    finally {
      console.log(`切换回 ${sourceBranch} 分支...`)
@@ -257,29 +239,29 @@ async function createTag(targetBranch, env, app) {
    }
    ```
 
-## 1.4. 最佳实践建议
+## 8. 最佳实践建议
 
-### 1.4.1. 使用前检查
+### 8.1. 使用前检查
 
 - 确保本地仓库状态干净
 - 重要修改建议先提交
 - 确认远程分支存在且可访问
 
-### 1.4.2. 操作规范
+### 8.2. 操作规范
 
 - 选择正确的目标环境
-- 确认应用类型无误
 - 仔细检查确认信息
+- 在执行前确认与团队的合并计划
 
-### 1.4.3. 故障排除
+### 8.3. 故障排除
 
 - **合并失败**：检查并解决代码冲突
 - **标签创建失败**：确认标签权限和重名情况
 - **分支不存在**：检查分支配置是否正确
 
-## 1.5. 扩展功能
+## 9. 扩展功能
 
-### 1.5.1. 自定义分支配置
+### 9.1. 自定义分支配置
 
 可以根据项目需求修改 `BRANCH_CONFIG`：
 
@@ -287,43 +269,47 @@ async function createTag(targetBranch, env, app) {
 const BRANCH_CONFIG = {
   // 添加新环境
   staging: {
-    branch: "feature/staging",
+    branch: "develop-staging",
     tagPrefix: "staging",
   },
   // 修改现有环境
   test: {
-    branch: "feature/your-test-branch",
+    branch: "develop-test",
     tagPrefix: "test",
   },
 };
 ```
 
-### 1.5.2. 增加应用类型
+### 9.2. 增加环境类型
 
-在 `promptConfig` 函数中扩展应用选择：
+在 `promptConfig` 函数中扩展环境选择：
 
 ```javascript
 {
   type: 'list',
-  name: 'app',
-  message: '选择要发布的应用:',
-  choices: ['main', 'r', 'r2', 'new-app'], // 添加新应用
-  default: 'r2',
+  name: 'env',
+  message: '选择发布环境:',
+  choices: [
+    { name: 'test（测试环境）', value: 'test' },
+    { name: 'pre（预发布环境）', value: 'pre' },
+    { name: 'staging（预演环境）', value: 'staging' },
+  ],
+  default: 'test',
 }
 ```
 
-## 1.6. 总结
+## 10. 总结
 
 这个一键合并分支并打Tag的自动化工具，通过标准化的流程和友好的交互界面，有效解决了手动操作容易出错的问题。它不仅提高了开发效率，还保证了发布流程的一致性和可靠性。
 
-### 1.6.1. 主要优势
+### 10.1. 主要优势
 
 - **提高效率**：一键完成复杂的Git操作流程
 - **减少错误**：自动化减少人为操作失误
 - **标准化**：统一的分支管理和标签命名规范
 - **安全性**：完善的错误处理和回滚机制
 
-### 1.6.2. 学习资源
+### 10.2. 学习资源
 
 - [Git官方文档](https://git-scm.com/docs)
 - [Node.js子进程文档](https://nodejs.org/api/child_process.html)
