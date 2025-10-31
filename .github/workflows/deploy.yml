@@ -33,7 +33,7 @@ jobs:
           overwrite: true                           # 覆盖已存在的文件
           rm: false                                 # 不删除目标目录其他文件（保留 .env.production）
 
-      # 在服务器上安装依赖
+      # 在服务器上安装依赖（仅在需要时）
       - name: 在服务器上安装依赖
         uses: appleboy/ssh-action@master
         with:
@@ -44,10 +44,24 @@ jobs:
           command_timeout: 30m  # 增加超时时间到 30 分钟
           script: |
             cd /www/wwwroot/my-next-app
-            echo "=== 清理旧依赖（避免文件损坏）==="
-            rm -rf node_modules package-lock.json
-            echo "=== 使用淘宝镜像加速安装 ==="
-            npm install --registry=https://registry.npmmirror.com --no-audit --no-fund
+
+            # 检查 package.json 是否有变化
+            if [ -f "node_modules/.package-lock.json" ]; then
+              echo "=== 检查依赖是否需要更新 ==="
+              CURRENT_HASH=$(md5sum package.json package-lock.json 2>/dev/null | md5sum | cut -d' ' -f1)
+              CACHED_HASH=$(cat node_modules/.dep-hash 2>/dev/null || echo "")
+
+              if [ "$CURRENT_HASH" = "$CACHED_HASH" ]; then
+                echo "✅ 依赖未变化，跳过安装"
+                exit 0
+              fi
+            fi
+
+            echo "=== 安装依赖 ==="
+            npm install --registry=https://registry.npmmirror.com --no-audit --no-fund --production=false
+
+            # 保存依赖哈希值
+            md5sum package.json package-lock.json 2>/dev/null | md5sum | cut -d' ' -f1 > node_modules/.dep-hash
             echo "=== 依赖安装完成 ==="
 
       # 在服务器上配置环境变量并构建项目
@@ -65,7 +79,7 @@ jobs:
           envs: DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL
           script: |
             cd /www/wwwroot/my-next-app
-            
+
             echo "=== 配置环境变量文件 ==="
             cat > .env.production << EOF
             DATABASE_URL="${DATABASE_URL}"
@@ -75,19 +89,20 @@ jobs:
             EOF
             chmod 600 .env.production
             echo "环境变量文件已更新"
-            
+
             echo "=== 生成 Prisma Client ==="
-            npm run db:generate:prod
-            
+            export DATABASE_URL="${DATABASE_URL}"
+            npx prisma generate
+
             echo "=== 推送数据库变更 ==="
-            npm run db:push:prod
-            
+            npx prisma db push
+
             echo "=== 清理旧的 Next.js 构建产物 ==="
             rm -rf .next
-            
+
             echo "=== 构建 Next.js 项目 ==="
             npm run build
-            
+
             echo "=== 验证构建是否成功 ==="
             if [ ! -d ".next" ]; then
                 echo "❌ 错误: 构建失败，.next 目录未生成"
