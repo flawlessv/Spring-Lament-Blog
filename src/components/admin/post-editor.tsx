@@ -554,7 +554,7 @@ export default function PostEditor({ mode, postId }: PostEditorProps) {
                   className="w-full"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  返回
+                  返回1
                 </Button>
               </CardContent>
             </Card>
