@@ -101,17 +101,10 @@ jobs:
             echo "=== 清理旧的 Next.js 构建产物 ==="
             rm -rf .next
 
-            echo "=== 系统资源检查 ==="
-            echo "可用内存:"
-            free -h
-            echo "磁盘空间:"
-            df -h .
 
             echo "=== 构建 Next.js 项目 ==="
             echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
 
-            # 设置 Node.js 内存限制
-            export NODE_OPTIONS="--max-old-space-size=2048"
 
             # 运行构建，确保等待完成
             npm run build 2>&1 | tee build.log
