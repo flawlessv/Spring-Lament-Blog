@@ -76,6 +76,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
+          command_timeout: 20m
           envs: DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL
           script: |
             cd /www/wwwroot/my-next-app
@@ -101,7 +102,17 @@ jobs:
             rm -rf .next
 
             echo "=== 构建 Next.js 项目 ==="
-            npm run build
+            echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+            npm run build 2>&1 | tee build.log
+            BUILD_EXIT_CODE=${PIPESTATUS[0]}
+            echo "结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+
+            if [ $BUILD_EXIT_CODE -ne 0 ]; then
+                echo "❌ 构建命令执行失败，退出码: $BUILD_EXIT_CODE"
+                echo "=== 构建日志尾部 ==="
+                tail -50 build.log
+                exit 1
+            fi
 
             echo "=== 验证构建是否成功 ==="
             if [ ! -d ".next" ]; then
