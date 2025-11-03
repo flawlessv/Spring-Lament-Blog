@@ -108,7 +108,15 @@ jobs:
                 echo "❌ 错误: 构建失败，.next 目录未生成"
                 exit 1
             fi
+
+            if [ ! -f ".next/BUILD_ID" ]; then
+                echo "❌ 错误: 构建不完整，BUILD_ID 文件缺失"
+                exit 1
+            fi
+
             echo "✅ 构建验证成功"
+            echo "Build ID: $(cat .next/BUILD_ID)"
+            ls -lh .next/ | head -20
 
       # 重启 PM2 应用
       - name: 重启应用
@@ -122,6 +130,25 @@ jobs:
           script: |
             cd /www/wwwroot/my-next-app
 
+            echo "=== 检查环境 ==="
+            echo "Node version: $(node --version)"
+            echo "NPM version: $(npm --version)"
+            echo "PM2 version: $(pm2 --version)"
+
+            echo "=== 检查 .next 目录 ==="
+            if [ ! -d ".next" ]; then
+                echo "❌ 错误: .next 目录不存在"
+                exit 1
+            fi
+            echo "✅ .next 目录存在"
+
+            echo "=== 检查环境变量文件 ==="
+            if [ ! -f ".env.production" ]; then
+                echo "❌ 错误: .env.production 文件不存在"
+                exit 1
+            fi
+            echo "✅ .env.production 文件存在"
+
             echo "=== 停止旧应用进程 ==="
             pm2 stop spring-lament-blog || true
             sleep 2
@@ -130,20 +157,31 @@ jobs:
             pm2 delete spring-lament-blog || true
 
             echo "=== 启动应用 ==="
-            pm2 start ecosystem.config.js --env production
+            pm2 start ecosystem.config.js --env production --update-env
 
             echo "=== 等待应用启动 ==="
             sleep 15
 
             echo "=== 验证应用状态 ==="
+            pm2 list
+
             if pm2 list | grep -q "spring-lament-blog.*online"; then
                 echo "✅ 应用启动成功"
-                pm2 list
+
+                echo "=== 检查端口 3000 是否监听 ==="
+                if netstat -tuln | grep -q ":3000"; then
+                    echo "✅ 端口 3000 正在监听"
+                else
+                    echo "⚠️  警告: 端口 3000 未监听，但进程显示 online"
+                fi
             else
                 echo "❌ 应用启动失败"
-                pm2 list
-                pm2 logs spring-lament-blog --lines 30 --nostream
+                echo "=== PM2 进程详情 ==="
+                pm2 describe spring-lament-blog || true
+                echo "=== 最近日志 ==="
+                pm2 logs spring-lament-blog --lines 50 --nostream || true
                 exit 1
             fi
 
             pm2 save
+            echo "=== 部署完成 ==="

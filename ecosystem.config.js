@@ -5,26 +5,24 @@ module.exports = {
   apps: [
     {
       name: "spring-lament-blog",
-      script: "npm",
-      args: "start",
+      script: "./node_modules/.bin/next",
+      args: "start -p 3000",
       cwd: "/www/wwwroot/my-next-app",
       instances: 1,
+      exec_mode: "cluster",
       autorestart: true,
       watch: false,
       max_memory_restart: "1G",
       min_uptime: "10s", // 最小运行时间
-      max_restarts: 5, // 最大重启次数
+      max_restarts: 10, // 最大重启次数
       restart_delay: 4000, // 重启延迟
       kill_timeout: 5000, // 强制杀死进程的超时时间
       wait_ready: false, // Next.js 不需要等待就绪信号
-      listen_timeout: 30000, // 监听超时时间增加到30秒
-      env: {
+      listen_timeout: 30000, // 监听超时时间
+      env_production: {
         NODE_ENV: "production",
-        PORT: 3000,
-        // 从 .env.production 加载的环境变量
-        DATABASE_URL: process.env.DATABASE_URL,
-        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+        PORT: "3000",
+        // 这些环境变量将从 .env.production 文件加载
       },
       error_file: "./logs/err.log",
       out_file: "./logs/out.log",
