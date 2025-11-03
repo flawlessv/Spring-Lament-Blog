@@ -16,8 +16,8 @@ module.exports = {
       max_restarts: 5, // 最大重启次数
       restart_delay: 4000, // 重启延迟
       kill_timeout: 5000, // 强制杀死进程的超时时间
-      wait_ready: true, // 等待应用就绪信号
-      listen_timeout: 10000, // 监听超时时间
+      wait_ready: false, // Next.js 不需要等待就绪信号
+      listen_timeout: 30000, // 监听超时时间增加到30秒
       env: {
         NODE_ENV: "production",
         PORT: 3000,
