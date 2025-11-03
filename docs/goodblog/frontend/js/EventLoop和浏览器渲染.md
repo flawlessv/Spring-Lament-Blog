@@ -12,6 +12,115 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673910169
 ---
 
 TODO: 这篇文章需要详细补充、以及和NodeJS时间循环的部分
+TODO:- 来一个比较难的题和解析（格式化下面的内容）
+【微/宏任务】给出执行顺序（同步和异步，宏任务和微任务
+setTimeout(function () {
+console.log(" set1");
+new Promise(function (resolve) {
+resolve();
+}).then(function () {
+new Promise(function (resolve) {
+resolve();
+}).then(function () {
+console.log("then4");
+});
+console.log("then2 ");
+});
+});
+
+new Promise(function (resolve) {
+console.log("pr1");
+resolve();
+}).then(function () {
+console.log("then1");
+});
+
+setTimeout(function () {
+console.log("set2");
+});
+
+console.log(2);
+
+new Promise(function (resolve) {
+resolve();
+}).then(function () {
+console.log("then3");
+});
+我们来逐步分析这个代码的执行顺序。为了理解异步代码的执行顺序，需要清楚 JavaScript 的事件循环机制 ，包括 宏任务（macro-task） 和 微任务（micro-task） 的执行顺序。
+
+- 宏任务 包括： setTimeout 等回调。
+- 微任务 包括： Promise.then() 。
+  执行过程 ：
+
+1. 同步任务 （直接执行）
+   首先，JavaScript 先执行同步代码，所有的同步代码会进入主线程并立即执行。
+   new Promise(function (resolve) {
+   console.log("pr1"); // (1) 同步执行
+   resolve();
+   }).then(function () {
+   console.log("then1"); // (微任务1)
+   });
+
+console.log(2); // (2) 同步执行
+输出结果：
+pr1 // (1)
+2 // (2) 2. 微任务 （Promise.then）
+接下来，主线程中的同步任务执行完毕，进入微任务队列。由于 Promise.then 是微任务，它会优先于 setTimeout 等宏任务执行。
+// 微任务队列中的第一个微任务
+.then(function () {
+console.log("then1");
+})
+// 微任务队列中的第二个微任务
+.then(function () {
+console.log("then3");
+});
+输出结果：
+then1 // (3)
+then3 // (4) 3. 宏任务 （setTimeout）
+同步任务和微任务都执行完毕后，开始执行宏任务队列中的任务。
+setTimeout(function () {
+console.log(" set1"); // (宏任务1)
+new Promise(function (resolve) {
+resolve();
+}).then(function () {
+new Promise(function (resolve) {
+resolve();
+}).then(function () {
+console.log("then4"); // (微任务3)
+});
+console.log("then2 "); // (微任务2)
+});
+});
+
+- setTimeout 的回调会在下一个宏任务阶段执行，所以 " set1" 会在 "then3" 之后输出。
+- 在 setTimeout 的回调里， Promise.then 又会生成新的微任务，这些微任务会在当前宏任务执行完成后立即执行。
+  输出结果：
+  set1 // (5)
+  then2 // (6) 微任务2
+  then4 // (7) 微任务3
+  最后一个 setTimeout 回调：
+  setTimeout(function () {
+  console.log("set2");
+  });
+  set2 会在下一个宏任务中执行。
+  输出结果：
+  set2 // (8)
+  完整的输出顺序：
+  pr1
+  2
+  then1
+  then3
+  set1
+  then2
+  then4
+  set2
+
+TODO:补充浏览器线程相关的内容（互斥等
+参考文章（第二章）：https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5
+参考文章：https://segmentfault.com/a/1190000012925872
+
+TODO: 补充NodeJs的事件循环
+参考文章：https://juejin.cn/post/7326803868326592539?searchId=202511031024380A7BF1F3E50798995A63
 
 ### 1.0.1. 前言
 
