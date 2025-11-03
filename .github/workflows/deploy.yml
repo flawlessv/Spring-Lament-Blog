@@ -101,18 +101,33 @@ jobs:
             echo "=== 清理旧的 Next.js 构建产物 ==="
             rm -rf .next
 
+            echo "=== 系统资源检查 ==="
+            echo "可用内存:"
+            free -h
+            echo "磁盘空间:"
+            df -h .
+
             echo "=== 构建 Next.js 项目 ==="
             echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
+
+            # 设置 Node.js 内存限制
+            export NODE_OPTIONS="--max-old-space-size=2048"
+
+            # 运行构建，确保等待完成
             npm run build 2>&1 | tee build.log
             BUILD_EXIT_CODE=${PIPESTATUS[0]}
+
             echo "结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "构建退出码: $BUILD_EXIT_CODE"
 
             if [ $BUILD_EXIT_CODE -ne 0 ]; then
                 echo "❌ 构建命令执行失败，退出码: $BUILD_EXIT_CODE"
-                echo "=== 构建日志尾部 ==="
-                tail -50 build.log
+                echo "=== 构建日志（最后100行） ==="
+                tail -100 build.log
                 exit 1
             fi
+
+            echo "✅ 构建命令执行完成"
 
             echo "=== 验证构建是否成功 ==="
             if [ ! -d ".next" ]; then
