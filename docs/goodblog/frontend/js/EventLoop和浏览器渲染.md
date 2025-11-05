@@ -15,6 +15,8 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673910169
 
 ## 前言
 
+> JavaScript 在设计之初是作为浏览器脚本语言，主要用于与用户进行页面交互和操纵 DOM。因此，为避免由不可预测的用户操作可能带来的复杂的并发问题，JavaScript 只能设计成单线程的，这也是这门语言的核心特征之一。
+
 关于 Event Loop 的文章很多，但是有很多只是在讲「宏任务」、「微任务」，我先提出几个深入的问题：
 
 1. 每一轮 Event Loop 都会伴随着渲染吗？
@@ -846,6 +848,7 @@ new Promise(function (resolve) {
    - 输出：`2`
 
 5. **遇到第二个 `new Promise`**
+
    ```js
    new Promise(function (resolve) {
      resolve(); // 同步执行
@@ -878,6 +881,7 @@ new Promise(function (resolve) {
    - 输出：`then1`
 
 2. **执行第二个微任务**
+
    ```js
    function () {
      console.log("then3");
