@@ -1,88 +1,15 @@
 ---
-created: 2025-11-03T10:33:57 (UTC +08:00)
+title: 浏览器从输入URL到页面渲染加载的过程
+slug: gfj4cu12313
+published: true
+featured: false
+category: 前端
+publishedAt: 2023-11-04
+readingTime: 3
 tags:
-  [
-    浏览器中文技术社区,
-    前端开发社区,
-    前端技术交流,
-    前端框架教程,
-    JavaScript 学习资源,
-    CSS 技巧与最佳实践,
-    HTML5 最新动态,
-    前端工程师职业发展,
-    开源前端项目,
-    前端技术趋势,
-  ]
-source: https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5
-author: 铁锤妹妹i
+  - js
+coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ab03f29.jpg
 ---
-
-# 浏览器从输入URL到页面渲染加载的过程（浏览器知识体系整理）以 前端领域 的知识为重点，并且本文内容超多，建议先了解主干 - 掘金
-
-> ## Excerpt
->
-> 以 前端领域 的知识为重点，并且本文内容超多，建议先了解主干，然后分批次阅读。 这篇文章真的写了好久好久…
-
----
-
-#### 文章目录
-
-- [前言](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_5 "#_5")
-- [一、梳理主干流程](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_17 "#_17")
-- [二、浏览器接收url并开启一个新进程](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#url_33 "#url_33")
-- - [1\. 浏览器是多进程的](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#1__38 "#1__38")
-  - [2\. 浏览器内核是多线程的](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#2__57 "#2__57")
-  - [3\. JS引擎单线程的原因](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#3_JS_76 "#3_JS_76")
-  - [4\. GUI渲染线程与JS引擎线程互斥](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#4_GUIJS_83 "#4_GUIJS_83")
-  - [5\. 渲染过程中遇到 JS 文件如何处理？](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#5__JS__93 "#5__JS__93")
-- [二、解析URL](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#URL_110 "#URL_110")
-- [三、DNS域名解析](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#DNS_126 "#DNS_126")
-- - [1\. DNS是什么？](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#1_DNS_128 "#1_DNS_128")
-  - [2\. IP和域名的关系](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#2_IP_134 "#2_IP_134")
-  - [3\. 域名服务器概念图](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#3__139 "#3__139")
-  - [4\. DNS域名解析过程](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#4_DNS_144 "#4_DNS_144")
-  - [5\. DNS解析时发现域名和IP不一致，访问了该域名会如何？](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#5_DNSIP_168 "#5_DNSIP_168")
-- [四、建立 TCP 连接](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_TCP__182 "#_TCP__182")
-- - [1\. 三次握手](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#1__186 "#1__186")
-  - [2\. 四次挥手](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#2__217 "#2__217")
-  - [3\. 为什么是三次握手？不是两次、四次？](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#3__266 "#3__266")
-  - [4\. TCP/IP的分层管理](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#4_TCPIP_272 "#4_TCPIP_272")
-- [五、浏览器向服务器发送 HTTP 请求](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_HTTP__306 "#_HTTP__306")
-- - [1\. HTTP请求报文都有什么组成？](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#1_HTTP_307 "#1_HTTP_307")
-  - [2\. 常见状态码含义](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#2__320 "#2__320")
-  - [3\. 请求/响应头部](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#3__344 "#3__344")
-  - [4\. 请求/响应体](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#4__404 "#4__404")
-  - [5\. cookie以及优化](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#5_cookie_427 "#5_cookie_427")
-  - [6\. HTTP协议各版本的区别](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#6_HTTP_464 "#6_HTTP_464")
-- [六、单独拎出来的缓存问题，HTTP缓存策略](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#HTTP_520 "#HTTP_520")
-- [七、页面渲染流程](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_533 "#_533")
-- - [1\. 流程简述](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#1__534 "#1__534")
-  - [2\. 解析HTML，构建DOM树](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#2_HTMLDOM_543 "#2_HTMLDOM_543")
-  - [3\. 解析CSS，构建CSSOM树](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#3_CSSCSSOM_581 "#3_CSSCSSOM_581")
-  - [4\. 合成渲染树（样式计算）](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#4__587 "#4__587")
-  - [5\. 布局](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#5__603 "#5__603")
-  - [6\. 分层](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#6__617 "#6__617")
-  - [7\. 绘制](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#7__625 "#7__625")
-  - [6\. 浏览器回流和重绘](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#6__637 "#6__637")
-- [总结](https://juejin.cn/post/7316775422187061300?searchId=2025110310190358682FD65BB26CBE6DF5#_698 "#_698")
-
----
-
-## [](https://link.juejin.cn/?target=)前言
-
-写这篇文章的初衷：
-
-> 记得最开始学前端知识时，是一点一点的积累，一个知识点一个知识点的攻克。  
-> 就这样，虽然在很长一段时间内积累了不少的知识，但是，总是无法将它串联到一起。每次梳理时都是很分散的，无法保持思路连贯性。  
-> 直到最近，在将DNS域名解析、建立TCP连接、构建HTTP请求、浏览器渲染过程‘’流程梳理一遍后，感觉就跟打通了任督二脉一样，有了一个整体的架构，以前的知识点都连贯起来了，至少现在知道了它的大部分骨架。  
-> 梳理出一个知识体系，以后就算再学新的知识，也会尽量往这个体系上靠拢，环环相扣，更容易理解，也更不容易遗忘。这也是本文的目标。
-
-以 **前端领域** 的知识为重点，并且本文内容超多，建议先了解主干，然后分批次阅读。  
-这篇文章真的写了好久好久…
-
----
-
-## [](https://link.juejin.cn/?target=)一、梳理主干流程
 
 知识体系中，最重要的是骨架，脉络。有了骨架后，才方便填充细节。所以，先梳理下主干流程：
 
@@ -98,15 +25,13 @@ author: 铁锤妹妹i
 
 梳理出主干骨架，然后就需要往骨架上填充细节内容。
 
----
-
-## [](https://link.juejin.cn/?target=)二、浏览器接收url并开启一个新进程
+## 二、浏览器接收url并开启一个新进程
 
 这部分内容开始之前我们需要先通过一张图对 进程 和 线程 的关系有一个初步的了解。
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54a222107e4949dc8af23a02ea3ed484~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=707&h=387&s=48843&e=png&b=f8f3f3)
+![进程线程关系图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54a222107e4949dc8af23a02ea3ed484~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=707&h=387&s=48843&e=png&b=f8f3f3)
 
-### [](https://link.juejin.cn/?target=)1\. 浏览器是多进程的
+### 1\. 浏览器是多进程的
 
 浏览器是多进程的，有一个主进程，每打开一个tab页面都会新开一个**进程**（某些情况下多个tab会合并进程）。
 
@@ -124,9 +49,9 @@ author: 铁锤妹妹i
 下图以 chrome浏览器 为例。我们可以自己通过Chrome的更多工具 =》 任务管理器 自行验证查看，可以看到chrome的任务管理器中有多个进程（分别是每一个Tab页面有一个独立的进程，以及一个主进程）  
 然后能看到每个进程的内存资源信息以及cpu占有率。
 
-![浏览器多进程图示：](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c585401ad41d427ab33a44184779ce6c~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=641&h=381&s=42667&e=png&b=ffffff)
+![浏览器多进程图示](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c585401ad41d427ab33a44184779ce6c~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=641&h=381&s=42667&e=png&b=ffffff)
 
-### [](https://link.juejin.cn/?target=)2\. 浏览器内核是多线程的
+### 2\. 浏览器内核是多线程的
 
 每一个tab页面可以看作是浏览器内核的一个进程，然后这个进程是多线程的，它有几大类子线程
 
@@ -136,16 +61,16 @@ author: 铁锤妹妹i
 - **定时器触发线程**：主要控制 setInterval和 setTimeout，用来计时，计时完毕后，则把定时器的处理函数推进事件队列中，等待 JS 引擎线程。
 - **异步http请求线程**：通过XMLHttpRequest连接后，通过浏览器新开的一个线程，监控readyState状态变更时，如果设置了该状态的回调函数，则将该状态的处理函数推进事件队列中，等待JS引擎线程执行。
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc610cf8db204afca4eeb8d38872433c~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=287&h=577&s=28161&e=png&a=1&b=ffffff)
+![浏览器内核线程结构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc610cf8db204afca4eeb8d38872433c~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=287&h=577&s=28161&e=png&a=1&b=ffffff)
 
 可以看到，里面的JS引擎是内核进程中的一个线程，这也是为什么常说JS引擎是单线程的。
 
 虽然 JS 是单线程的，但实际上参与工作的线程一共有四个：  
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc1dae154b2b4892ba826bda06bdd551~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=942&h=265&s=29982&e=png&b=ffffff)
+![线程协作示意图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc1dae154b2b4892ba826bda06bdd551~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=942&h=265&s=29982&e=png&b=ffffff)
 
 后面三个只是协助，只有 JS 引擎线程是真正执行的。
 
-### [](https://link.juejin.cn/?target=)3\. JS引擎单线程的原因
+### 3\. JS引擎单线程的原因
 
 JS引擎之所以是单线程，是由于JavaScript最初是作为浏览器脚本语言开发的，并且JavaScript需要操作DOM等浏览器的API，如果多个线程同时进行DOM更新等操作则可能会出现各种问题（如竞态条件、数据难以同步、复杂的锁逻辑等），因此将JS引擎设计成单线程的形式就可以避免这些问题。  
 虽然JS引擎是单线程的，但是通过使用 **异步编程模型** 和 **事件循环机制**，JS仍然可以实现高并发处理。
@@ -154,7 +79,7 @@ JS引擎之所以是单线程，是由于JavaScript最初是作为浏览器脚�
 > 那么现在有2个线程，process1 process2，由于是多线程的JS，所以他们对同一个dom，同时进行操作  
 > process1 删除了该dom，而process2 编辑了该dom，同时下达2个矛盾的命令，浏览器究竟该如何执行呢？这时可能就会出现问题了。
 
-### [](https://link.juejin.cn/?target=)4\. GUI渲染线程与JS引擎线程互斥
+### 4\. GUI渲染线程与JS引擎线程互斥
 
 由于JavaScript是可操纵DOM的，如果在修改这些元素属性同时渲染界面（即JS线程和UI线程同时运行），那么渲染线程前后获得的元素数据就可能不一致了。
 
@@ -162,9 +87,9 @@ JS引擎之所以是单线程，是由于JavaScript最初是作为浏览器脚�
 GUI更新则会被保存在一个队列中等到JS引擎线程空闲时立即被执行。
 
 因为本文主要讲输入URL后页面的渲染过程，所以关于浏览器开启网络请求线程这部分详细内容大家可以移步查看，里面包括JS运行机制，进程线程的详解：  
-[从浏览器多进程到JS单线程，JS运行机制最全面的一次梳理](https://link.juejin.cn/?target=https%3A%2F%2Fsegmentfault.com%2Fa%2F1190000012925872 "https://segmentfault.com/a/1190000012925872")
+[从浏览器多进程到JS单线程，JS运行机制最全面的一次梳理](https://segmentfault.com/a/1190000012925872)
 
-### [](https://link.juejin.cn/?target=)5\. 渲染过程中遇到 JS 文件如何处理？
+### 5\. 渲染过程中遇到 JS 文件如何处理？
 
 JS的加载、解析与执行会阻塞文档的解析，也就是说，在构建 DOM 时，HTML 解析器若遇到了 JavaScript，那么它会暂停文档的解析，将控制权移交给 JS 引擎，等 JS 引擎运行完毕，浏览器再从中断的地方恢复继续解析文档。  
 也就是说，如果想要首屏渲染的越快，就越不应该在首屏就加载 JS 文件，这也是建议将 script 标签放在 body 标签底部的原因。当然在当下，并不是说 script 标签必须放在底部，因为你可以给 `script` 标签添加 `defer` 或者 `async` 属性。
@@ -176,11 +101,11 @@ JS的加载、解析与执行会阻塞文档的解析，也就是说，在构建
 - 一句话，`defer`是“`渲染完再执行`”，`async`是“`下载完就执行`”。
 - 另外，如果有多个defer脚本，会按照它们在页面出现的顺序加载，而多个async脚本是不能保证加载顺序的。（因为只要该模块加载完成，就执行该模块，不确定模块什么时候能加载完）
 
-[关于defer/async用法解释](https://link.juejin.cn/?target=https%3A%2F%2Fwww.kancloud.cn%2Fcyyspring%2Fmore%2F2401820 "https://www.kancloud.cn/cyyspring/more/2401820")
+[关于defer/async用法解释](https://www.kancloud.cn/cyyspring/more/2401820)
 
 ---
 
-## [](https://link.juejin.cn/?target=)二、解析URL
+## 三、解析URL
 
 输入URL后，会进行解析（URL的本质就是统一资源定位符）
 
@@ -193,36 +118,36 @@ URL一般包括几大部分：
 5.  **查询参数**（Query）：指对资源请求的参数，格式为 key=value，多个参数间使用 `&` 连接。
 6.  **锚点**（Fragment）：指 `#` 后的hash值，一般用来定位到某个位置。
 
-> 举个例子，[www.example.com/index.html?…](https://link.juejin.cn/?target=http%3A%2F%2Fwww.example.com%2Findex.html%3Fkey1%3Dvalue1%26key2%3Dvalue2%23section "http://www.example.com/index.html?key1=value1&key2=value2#section") 表示了一个 URL，  
-> 其中协议为 HTTP，主机名为 [www.example.com，路径为](https://link.juejin.cn/?target=http%3A%2F%2Fwww.example.com%25EF%25BC%258C%25E8%25B7%25AF%25E5%25BE%2584%25E4%25B8%25BA "http://www.example.com%EF%BC%8C%E8%B7%AF%E5%BE%84%E4%B8%BA") /index.html，查询参数为 key1=value1 和 key2=value2，锚点为 section。
+> 举个例子，http://www.example.com/index.html?key1=value1&key2=value2#section 表示了一个 URL，
+> 其中协议为 HTTP，主机名为 www.example.com，路径为 /index.html，查询参数为 key1=value1 和 key2=value2，锚点为 section。
 
 ---
 
-## [](https://link.juejin.cn/?target=)三、DNS域名解析
+## 四、DNS域名解析
 
 在解析过程之前我们先理解几个概念。
 
-### [](https://link.juejin.cn/?target=)1\. DNS是什么？
+### 1\. DNS是什么？
 
 DNS（Domain Name System）是一种用于将`域名`解析为`IP地址`的系统。（把我们的域名映射为IP地址，这就是DNS的作用）  
 **它可以将人们易于记忆的域名转换为服务器可识别的IP地址，这样用户就可以使用域名访问网站，而不必直接输入数字格式的IP地址。**
 
 在浏览器中输入网址时，电脑会先向`DNS服务器`发送请求，获取该网址对应的`IP地址`，**并在成功获取后直接连接该IP地址对应的服务器**，在**服务器**端获取网页内容并显示出来，完成整个访问过程。因此，DNS在互联网中起着至关重要的作用。
 
-### [](https://link.juejin.cn/?target=)2\. IP和域名的关系
+### 2\. IP和域名的关系
 
 IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接到互联网上的每个计算机、服务器和其他设备。域名则是网站的人类可读的名称。域名系统（DNS服务器）可以将域名转换为与之关联的IP地址。  
 简单来说，**IP地址是网络设备的标识符，而域名则是方便人们记忆和使用的网络地址别名。**  
 域名系统通过将 `域名` 映射到 `IP地址`，使互联网上的用户能够以易记的方式访问特定的网站或服务器。
 
-### [](https://link.juejin.cn/?target=)3\. 域名服务器概念图
+### 3\. 域名服务器概念图
 
-![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0340661f21bc47be873f09875e72c066~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=850&h=398&s=211248&e=png&b=fffdfd)
+![DNS服务器层次结构图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0340661f21bc47be873f09875e72c066~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=850&h=398&s=211248&e=png&b=fffdfd)
 
 从上面这张图可以看到，域名的管理是分层次的。最高级是根，也叫做`根服务器`。从上往下功能逐渐细化。DNS就是和这些服务器进行打交道。  
 有了上面的这些概念，现在我们再来认识一下DNS域名解析过程就容易多了。
 
-### [](https://link.juejin.cn/?target=)4\. DNS域名解析过程
+### 4\. DNS域名解析过程
 
 > 1.  **首先会在浏览器缓存中查询是否有该域名对应的IP地址，若有则直接返回，解析过程结束。**
 > 2.  **如果浏览器缓存中没有该域名对应的IP地址，则向本地DNS服务器发送查询请求。**
@@ -246,7 +171,7 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 
 > 如果之前的过程无法解析时，**操作系统**会把这个域名发送给这个本地DNS服务器。每个完整的内网通常都会配置本地DNS服务器，例如用户是在学校或工作单位接入互联网，那么用户的本地DNS服务器肯定在学校或工作单位里面。它们一般都会缓存域名解析结果，当然缓存时间是受到域名的失效时间控制的。大约80%的域名解析到这里就结束了，后续的DNS迭代和递归也是由本地DNS服务器负责。
 
-### [](https://link.juejin.cn/?target=)5\. DNS解析时发现域名和IP不一致，访问了该域名会如何？
+### 5\. DNS解析时发现域名和IP不一致，访问了该域名会如何？
 
 - 域名和IP不一致，域名解析成了其他的的IP地址，但是这个IP地址正确。访问该域名就会访问其他的网站。
 
@@ -255,17 +180,17 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 
 - 域名和IP不一致，域名解析成了其他的的IP地址，但是这个IP地址错误，访问该域名就会失败。
 
-可参考：[DNS解析时发现域名和IP不一致，访问了该域名会如何（大厂真题）](https://link.juejin.cn/?target=https%3A%2F%2Fblog.csdn.net%2Fjava_xiaoo%2Farticle%2Fdetails%2F108719646 "https://blog.csdn.net/java_xiaoo/article/details/108719646")
+可参考：[DNS解析时发现域名和IP不一致，访问了该域名会如何（大厂真题）](https://blog.csdn.net/java_xiaoo/article/details/108719646)
 
 ---
 
-## [](https://link.juejin.cn/?target=)四、建立 TCP 连接
+## 五、建立 TCP 连接
 
 需要了解3次握手规则建立连接以及断开连接时的四次挥手。
 
 拿到了IP地址后，就可以发起HTTP请求了。HTTP请求的本质就是TCP/IP的请求构建。建立连接时需要 3次握手 进行验证，断开链接也同样需要 4次挥手 进行验证，保证传输的可靠性。
 
-### [](https://link.juejin.cn/?target=)1\. 三次握手
+### 1\. 三次握手
 
 模拟三次握手（场景对话版）：
 
@@ -293,7 +218,7 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 **TCP 三次握手的建立连接的过程就是相互确认初始序号的过程**。告诉对方，什么样序号的报文段能够被正确接收。  
 **第三次握手的作用是：** `客户端对服务器端的初始序列号的确认，如果只使用两次握手，那么服务器就没有办法知道自己的序号是否已被确认。同时这样也是为了防止失效的请求报文被服务器接收，而出现错误的情况。`
 
-### [](https://link.juejin.cn/?target=)2\. 四次挥手
+### 2\. 四次挥手
 
 模拟四次挥手（场景对话版）：
 
@@ -339,7 +264,7 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 > 2.  客户端发送FIN报文终止连接后，`服务器可能还有数据需要发送`（比如上一次的响应），所以服务器会先发送ACK报文确认收到FIN报文，并将未发送的数据发送出去，然后再发送自己的FIN报文终止连接。
 > 3.  客户端接收到服务器的FIN报文后也需要发送ACK报文确认收到，才能正式关闭连接。
 
-### [](https://link.juejin.cn/?target=)3\. 为什么是三次握手？不是两次、四次？
+### 3\. 为什么是三次握手？不是两次、四次？
 
 为了确认双方的 **接收能力** 和 **发送能力** 都正常。
 
@@ -347,7 +272,7 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 如客户端发出连接请求，但因连接请求报文丢失而未收到确认，于是客户端再重传一次连接请求。后来收到了确认，建立了连接。数据传输完毕后，就释放了连接，此时客户端共发出了两个连接请求报文段。  
 其中第一个丢失，第二个到达了服务端，但是第一个丢失的报文段只是在某些网络节点长时间滞留了，延误到连接释放以后的某个时间才到达服务端，此时服务端误以为客户端又发出一次新的连接请求，于是就向客户端发出确认报文段，同意建立连接，不采用三次握手；只要服务端发出确认，就建立新的连接了。此时客户端忽略服务端发来的确认，也不发送数据，则服务端一直等待客户端发送数据，浪费了资源。
 
-### [](https://link.juejin.cn/?target=)4\. TCP/IP的分层管理
+### 4\. TCP/IP的分层管理
 
 按层次分为以下四层：`应用层`、`传输层`、`网络层`和`数据链路层`。
 
@@ -380,9 +305,9 @@ IP（Internet Protocol）地址是一个数字标识，用于唯一识别连接�
 
 ---
 
-## [](https://link.juejin.cn/?target=)五、浏览器向服务器发送 HTTP 请求
+## 六、浏览器向服务器发送 HTTP 请求
 
-### [](https://link.juejin.cn/?target=)1\. HTTP请求报文都有什么组成？
+### 1\. HTTP请求报文都有什么组成？
 
 HTTP请求报文主要由三个部分组成：`请求行`、`请求头`和`请求体`。具体如下：
 
@@ -398,7 +323,7 @@ HTTP请求报文主要由三个部分组成：`请求行`、`请求头`和`请�
 > 因为 HTTP 协议并没有规定报头部分的键值对有多少个。空行就相当于是 “报头的结束标记”, 或者是 “报头和正文之间的分隔符”。  
 > HTTP 在传输层依赖 TCP 协议, TCP 是面向字节流的. 如果没有这个空行, 就会出现 “粘包问题”
 
-### [](https://link.juejin.cn/?target=)2\. 常见状态码含义
+### 2\. 常见状态码含义
 
 **区分状态码**  
 1××开头 - 信息性状态码，表示HTTP请求已被接收，需要进一步处理。  
@@ -423,7 +348,7 @@ HTTP请求报文主要由三个部分组成：`请求行`、`请求头`和`请�
 500 - 服务器内部错误，无法完成请求  
 503 - 服务器当前无法处理请求，一般是因为过载或维护
 
-### [](https://link.juejin.cn/?target=)3\. 请求/响应头部
+### 3\. 请求/响应头部
 
 请求和响应头部也是分析时常用到的。
 
@@ -472,21 +397,21 @@ HTTP请求报文主要由三个部分组成：`请求行`、`请求头`和`请�
 
 **请求头的Content-Type常见取值：**
 
-```css
+```http
 application/x-www-form-urlencoded  //以键值对的数据格式提交
 multipart/form-data //用于上传文件图片等二进制数据
 ```
 
 **响应头的Content-Type常见取值：**
 
-```css
+```http
 text/html // body 数据格式是 HTML
 text/css  // body 数据格式是 CSS
 application/javascript // body 数据格式是 JavaScript
 application/json //body 数据格式是 JSON （最常见的）
 ```
 
-### [](https://link.juejin.cn/?target=)4\. 请求/响应体
+### 4\. 请求/响应体
 
 http 请求 时，除了头部，还有`消息实体`，一般来说，  
 请求实体中会将一些需要的参数都放入（用于`post`请求）。  
@@ -507,7 +432,7 @@ http 请求 时，除了头部，还有`消息实体`，一般来说，
 > 不一定。这时候要判断Connection字段, 如果请求头或响应头中包含`Connection: Keep-Alive`，  
 > 表示建立了`持久连接`，这样TCP连接会一直保持，之后请求统一站点的资源会复用这个连接。否则断开TCP连接, 请求-响应流程结束。
 
-### [](https://link.juejin.cn/?target=)5\. cookie以及优化
+### 5\. cookie以及优化
 
 cookie是浏览器的一种本地存储方式，一般用来帮助 **客户端** 和 **服务端** 通信的，常用来进行身份校验，结合服务端的 **session** 使用。
 
@@ -543,7 +468,7 @@ cookie是浏览器的一种本地存储方式，一般用来帮助 **客户端**
 关于cookie的交互，可以看下图总结  
 ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/321367eeba5441e787b25fc798f2d119~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=908&h=599&s=80594&e=png&b=ffffff)
 
-### [](https://link.juejin.cn/?target=)6\. HTTP协议各版本的区别
+### 6\. HTTP协议各版本的区别
 
 HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.1`和`HTTP/2`等版本，它们之间的主要区别如下：
 
@@ -595,12 +520,11 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 > 在 HTTP/1.x 中，只能一辆车（请求或响应）通过这条公路，其他车必须等待前面的车通过后再行驶；  
 > 而在 HTTP/2 中，则允许多辆车同时在这条公路上行驶，它们之间不会互相干扰或阻塞，从而提高了公路的使用效率和通行能力。
 
-关于HTTP协议这部分感兴趣的可以看 [HTTP的前世今生  
-](https://link.juejin.cn/?target=https%3A%2F%2Fcoolshell.cn%2Farticles%2F19840.html "https://coolshell.cn/articles/19840.html")
+关于HTTP协议这部分感兴趣的可以看 [HTTP的前世今生](https://coolshell.cn/articles/19840.html)
 
 ---
 
-## [](https://link.juejin.cn/?target=)六、单独拎出来的缓存问题，HTTP缓存策略
+## 七、单独拎出来的缓存问题，HTTP缓存策略
 
 **浏览器缓存的特点：**
 
@@ -614,9 +538,9 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 
 ---
 
-## [](https://link.juejin.cn/?target=)七、页面渲染流程
+## 八、页面渲染流程
 
-### [](https://link.juejin.cn/?target=)1\. 流程简述
+### 1\. 流程简述
 
 浏览器内核拿到内容后，渲染步骤大致可以分为以下几步：
 
@@ -627,7 +551,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 > 5）**绘制页面**：将生成的布局信息交给浏览器的绘图引擎，通过 **`GPU`** 加速将像素绘制（Paint）到屏幕上。  
 > 6）**浏览器回流和重绘**：如果页面发生改变，浏览器需要重新计算布局和绘制，这可能会导致性能问题。因此我们应尽量避免频繁的 DOM 操作和调整元素样式，以减少不必要的回流和重绘。
 
-### [](https://link.juejin.cn/?target=)2\. 解析HTML，构建DOM树
+### 2\. 解析HTML，构建DOM树
 
 > **解析过程中遇到 CSS 解析 CSS，遇到 JS 执行 JS。为了提高解析效率，浏览器在开始解析前，会启动一个预解析的线程，率先下载 HTML 中的外部 CSS 文件和 外部的 JS 文件。  
 > 如果主线程解析到`link`位置，此时外部的 CSS 文件还没有下载解析好，主线程不会等待，继续解析后续的 HTML。这是因为下载和解析 CSS 的工作是在预解析线程中进行的。这就是 CSS 不会阻塞 HTML 解析的根本原因。  
@@ -641,16 +565,16 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 
 比如假设有这样一个HTML页面：（以下部分的内容出自参考来源，修改了下格式）
 
-```php-template
+```html
 <html>
   <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="style.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link href="style.css" rel="stylesheet" />
     <title>Critical Path</title>
   </head>
   <body>
     <p>Hello <span>web performance</span> students!</p>
-    <div><img src="awesome-photo.jpg"></div>
+    <div><img src="awesome-photo.jpg" /></div>
   </body>
 </html>
 ```
@@ -664,7 +588,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 > 1.  将字符串转换成Token，例如：`<html>`、`<head>`、`<body>`等。**Token中会标识出当前Token是 “开始标签” 或是 “结束标签” 亦或是 “文本” 等信息。**
 > 2.  构建DOM的过程中，不是等所有Token都转换完成后再去生成节点对象，而是一边生成Token，一边消耗Token来生成节点对象。换句话说，每个Token被生成后，会立刻消耗这个Token创建出节点对象。**注意：带有结束标签标识的Token不会再去创建节点对象。**
 
-### [](https://link.juejin.cn/?target=)3\. 解析CSS，构建CSSOM树
+### 3\. 解析CSS，构建CSSOM树
 
 构建 CSSOM 树的过程与 构建DOM 的过程非常相似，当浏览器接收到一段CSS，浏览器首先要做的是识别出Token，然后 构建节点 并生成 CSSOM。简述为：
 
@@ -672,7 +596,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 
 这一过程中，CSS匹配HTML元素是一个相当复杂和有性能问题的事情，浏览器得递归CSSOM树，确定每一个节点的样式到底是什么，所以DOM树要小，CSS尽量用id和class，千万不要过度层叠下去。
 
-### [](https://link.juejin.cn/?target=)4\. 合成渲染树（样式计算）
+### 4\. 合成渲染树（样式计算）
 
 当我们生成 DOM 树和 CSSOM 树以后，就需要将这两棵树组合为 渲染树。  
 （以下图片出自参考来源）
@@ -684,7 +608,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 > 在这一过程中，很多预设值会变成绝对值，比如`red`会变成`rgb(255,0,0)`；相对单位会变成绝对单位，比如`em`会变成`px`  
 > 这一步完成后，会得到一棵带有样式的 DOM 树。
 
-### [](https://link.juejin.cn/?target=)5\. 布局
+### 5\. 布局
 
 布局完成后会生成布局树。  
 当浏览器生成渲染树以后，就会根据渲染树来进行布局（也可以叫做 **`回流`** ）。这一阶段浏览器要做的事情是要弄清楚各个节点在页面中的确切 **`位置和大小`**。通常这一行为也被称为“自动重排”。
@@ -700,7 +624,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 
 ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f30dacf15624e46ace4f0695adf9c21~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=789&h=350&s=31595&e=png&b=fefcfc)
 
-### [](https://link.juejin.cn/?target=)6\. 分层
+### 6\. 分层
 
 主线程会使用一套复杂的策略对整个布局树中进行分层。  
 分层的好处在于，**将来某一个层改变后，仅会对该层进行后续处理，从而提升效率**。  
@@ -709,7 +633,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 关于分层我们可以f12查看layers这一项，没有的话，就去浏览器更多工具里打开。  
 ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f012bea40ffa4839b34ff4d5d1824a57~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=716&h=587&s=84113&e=png&b=fffefe)
 
-### [](https://link.juejin.cn/?target=)7\. 绘制
+### 7\. 绘制
 
 主线程会为每个层单独产生绘制指令集，用于描述这一层的内容该如何画出来。  
 完成绘制后，主线程将每个图层的绘制信息提交给合成线程，剩余工作将由合成线程完成。  
@@ -720,7 +644,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/44d2689ca45c4a2f9f48b0b62cdf66ed~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=774&h=351&s=64446&e=png&b=fdf9f9)  
 ![在这里插入图片描述](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cf896962b8be4570a2b0673a4a493a43~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=792&h=403&s=59698&e=png&b=fdfaf9)
 
-### [](https://link.juejin.cn/?target=)6\. 浏览器回流和重绘
+### 6\. 浏览器回流和重绘
 
 **（1）回流**  
 回流 的本质就是重新计算 `layout 树`。  
@@ -775,13 +699,13 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 **需要注意几个事项：**
 
 > **1\. CSSOM会阻塞渲染，只有当CSSOM构建完毕后才会进入下一个阶段构建渲染树。（这点与浏览器优化有关，防止css规则不断改变，避免了重复的构建）**  
-> **2\. 通常情况下DOM和CSSOM是并行构建的，但是当浏览器遇到一个script标签时，DOM构建将暂停，直至JS脚本下载完成并执行后才会继续解析HTML。因为 JavaScript 可以使用诸如 document.write() 更改整个 DOM 结构之类的东西来更改文档的形状，因此 HTML 解析器必须等待 JavaScript 运行才能恢复HTML文档解析。**  
+> **2\. 通常情况下DOM和CSSOM是并行构建的，但是当浏览器遇到一个script标签时，DOM构建将暂停，直至JS脚本下载完成并执行后才会继续解析HTML。因为 JavaScript 可以使用诸如 document.write 更改整个 DOM 结构之类的东西来更改文档的形状，因此 HTML 解析器必须等待 JavaScript 运行才能恢复HTML文档解析。**  
 > **3\. 如果你想首屏渲染的越快，就越不应该在首屏就加载 JS 文件，建议将 script 标签放在 body 标签底部。**  
 > **4\. 如果主线程解析到`link`位置，此时外部的 CSS 文件还没有下载解析好，主线程不会等待，继续解析后续的 HTML。这是因为下载和解析 CSS 的工作是在预解析线程中进行的。这就是 CSS 不会阻塞 HTML 解析的根本原因。**
 
 ---
 
-## [](https://link.juejin.cn/?target=)总结
+## 总结
 
 本文的目的：**梳理出自己的知识体系。**
 
@@ -789,8 +713,7 @@ HTTP协议的版本历经多次更新迭代，主要包括 `HTTP/1.0`、`HTTP/1.
 
 以后再有相关问题，也会继续在这个骨架上填充细节。
 
-可参考：  
-[从输入URL到页面加载的过程？如何由一道题完善自己的前端知识体系！](https://juejin.cn/post/6844903574535667719#heading-7 "https://juejin.cn/post/6844903574535667719#heading-7")  
-[超详细讲解页面加载过程](https://link.juejin.cn/?target=https%3A%2F%2Fblog.csdn.net%2Fjava_xiaoo%2Farticle%2Fdetails%2F121226677 "https://blog.csdn.net/java_xiaoo/article/details/121226677")  
-[浏览器渲染](https://link.juejin.cn/?target=https%3A%2F%2Fzhuanlan.zhihu.com%2Fp%2F274645320 "https://zhuanlan.zhihu.com/p/274645320")  
-[前端知识体系整理 - 浏览器页面加载过程](https://link.juejin.cn/?target=https%3A%2F%2Fwww.kancloud.cn%2Fcyyspring%2Fmore%2F2401820 "https://www.kancloud.cn/cyyspring/more/2401820")
+可参考：
+[超详细讲解页面加载过程](https://blog.csdn.net/java_xiaoo/article/details/121226677)
+[浏览器渲染](https://zhuanlan.zhihu.com/p/274645320)
+[前端知识体系整理 - 浏览器页面加载过程](https://www.kancloud.cn/cyyspring/more/2401820)
