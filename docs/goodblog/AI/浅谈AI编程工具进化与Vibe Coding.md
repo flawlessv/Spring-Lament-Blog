@@ -13,19 +13,15 @@ tags:
 
 本来是想顺应部门的节奏分享一篇关于全栈基础知识的博客，但是最近涌现了很多五花八门不同形式的AI辅助编程工具（包括但不限于CodeX、Claude Code等），公司的MiCode也开始大范围推广并且取得了不错的效果，而且最近好像又开始鼓励AI方面的分享，想了想还是写一篇博客来表达我对各种AI工具的理解以及日常Vibe Coding的一些技巧。
 
-从发展历程来看，当前的AI编程工具可以大致分为三代：第一代以GitHub Copilot为代表，第二代以Cursor（包括Trace、Windsurf等）为代表，第三代则是Claude Code（Gemini CLI）等命令行工具。
+从发展历程来看，当前的AI编程工具可以大致分为三代：第一代以GitHub Copilot（类似的有Codeium、Mi Copilot等）为代表，第二代以Cursor（类似的有Trace、Windsurf等）为代表，第三代则是Claude Code（类似的有Gemini CLI、MI Code）等命令行工具。
 
-虽然没有时间去体验市面上所有的 AI IDE，但我想这三个产品对于 AI 辅助编程而言还是有里程碑式意义的，也可以说我是积累了一些经验来谈一谈 Vibe Coding 的。
+虽然没有时间去体验市面上所有的 AI 工具，但我想这三个产品对于 AI 辅助编程而言还是有里程碑式意义的，也可以说我是积累了一些经验来谈一谈 Vibe Coding 的。
 
 ## 到底什么是Vibe Coding
 
 Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉AI总监，OpenAI创始成员之一）在一条推特上提出。
 
 ![Vibe Coding](https://storage.guangzhengli.com/images/vibe-coding.jpg)
-
-原文：
-
-> There's a new kind of coding I call "vibe coding", where you fully give in to the vibes, embrace exponentials, and forget that the code even exists. It's possible because the LLMs (e.g. Cursor Composer w Sonnet) are getting too good. Also I just talk to Composer with SuperWhisper so I barely even touch the keyboard. I ask for the dumbest things like "decrease the padding on the sidebar by half" because I'm too lazy to find it. I "Accept All" always, I don't read the diffs anymore. When I get error messages I just copy paste them in with no comment, usually that fixes it. The code grows beyond my usual comprehension, I'd have to really read through it for a while. Sometimes the LLMs can't fix a bug so I just work around it or ask for random changes until it goes away. It's not too bad for throwaway weekend projects, but still quite amusing. I'm building a project or webapp, but it's not really coding - I just see stuff, say stuff, run stuff, and copy paste stuff, and it mostly works.
 
 基于原文的内容，我们可以提炼出Vibe Coding的几个核心特征：
 
@@ -43,20 +39,6 @@ Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉
 为什么说当前阶段应该叫Context Coding而不是Vibe Coding更合适呢?
 因为我个人认为从GitHub Copilot 到Cursor 再到Claude Code 等工具AI编程能力的不断提升，除了大模型本身编程能力的增强（如从GPT升级到Claude）之外，另一个关键因素是上下文工程（Context Engineering）能力的显著提升。
 
-```mermaid
-graph LR
-    A[开发者] -->|提问| B[AI编程工具]
-    B -->|获取上下文| C[代码库]
-    B -->|获取上下文| D[Rules]
-    B -->|获取上下文| E[对话历史]
-    B -->|获取上下文| F[工具调用结果]
-    C -->|RAG/Grep| B
-    D -->|规则文件| B
-    E -->|历史记录| B
-    F -->|工具执行| B
-    B -->|生成代码| A
-```
-
 在大模型能力不变的前提下，AI辅助编程的所有提升都源于向LLM传递更合适的上下文信息。无论是Chat、RAG、Rules、MCP，还是Claude Code最新推出的Skills功能，以及未来可能出现的各种新技术，其本质都是围绕上下文优化展开的。
 
 因此，下面我将简单介绍一下这三类AI编程工具分别是如何传递上下文给大模型的，只有简单了解原理之后，我们才能知道如何做才能更好的使用AI进行辅助编程。
@@ -65,7 +47,7 @@ graph LR
 
 GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除了AI对话功能外，最令人印象深刻的是其代码补全能力。
 
-第二，Copilot能够根据当前代码文件的上下文进行智能补全。它会将光标位置的代码上下文提供给LLM，据此生成代码建议。
+Copilot能够根据当前代码文件的上下文进行智能补全。它会将光标位置的代码上下文提供给LLM，据此生成代码建议。
 
 基于这一特性，开发者可以采用"注释驱动开发"的模式：先编写函数注释，让Copilot基于注释生成函数实现，再进行细节调整。这种模式显著提升了编码效率。
 
@@ -76,8 +58,6 @@ GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除�
 ### Cursor
 
 Copilot推出后，市场上涌现出大量IDE插件形式的AI辅助工具，它们主要在prompt工程和LLM选择上进行优化。直到Cursor以完整AI IDE的形态出现，这一领域的竞争格局才基本确立。
-
-> 这里补充两点与上下文工程无关的技术进步：其一，Cursor为Tab自动补全设计了专用模型，其响应速度和精准度令人印象深刻，代码建议的接受率显著提升，业界戏称程序员从"Copy工程师"进化为"Tab工程师"。其二，Claude 3.5 Sonnet模型的发布带来了比GPT更强的编程能力，配合更长的上下文窗口和直接文件编辑功能。Cursor的专用Tab模型与Claude 3.5 Sonnet的结合，标志着AI辅助编程从"代码补全工具"向"编程智能体"的跨越。
 
 Cursor相比GitHub Copilot在多个维度都有显著提升，比如支持让大模型直接编辑代码（即早期的Agent功能）。但本文重点要探讨的是Cursor的上下文工程创新。
 
@@ -209,8 +189,6 @@ graph TD
 - **高效完整性校验，防篡改**：每个对象都用哈希值唯一标识，任何内容变动都会导致哈希变化。只要根哈希（commit 哈希）没变，说明整个项目历史、内容都没被篡改。
 - **高效对比和查找变更**：只需对比 tree 或 commit 的哈希，就能快速判断两次提交是否完全一致。递归对比 tree 结构，可以高效定位到具体变动的文件和内容。
 - **高效存储与去重**：相同内容的文件或目录结构只存一份，极大节省空间。没有变动的部分直接复用历史对象，无需重复存储。
-
-如果你想要对 embedding 和向量数据库有更多了解。可以查看我 2023 年的博客 [GPT 应用开发和思考](https://guangzhengli.com/blog/zh/gpt-embeddings) 和 [向量数据库](https://guangzhengli.com/blog/zh/vector-database)。
 
 基于这种能力，Cursor 可以检索出和你当前对话相关的代码上下文，并一同提供给 LLM。这样 LLM 有了多个文件的上下文后，可以做到：
 
