@@ -11,11 +11,15 @@ tags:
   - AI
 ---
 
-本来是想顺应部门的节奏分享一篇关于全栈基础知识的博客，但是最近涌现了很多五花八门不同形式的AI辅助编程工具（包括但不限于CodeX、Claude Code等），公司的MiCode也开始大范围推广并且取得了不错的效果，而且最近好像又开始鼓励AI方面的分享，想了想还是写一篇博客来表达我对各种AI工具的理解以及日常Vibe Coding的一些技巧。
+> 本来是想顺应部门的战略写一篇关于全栈基础知识的文章，但是最近涌现了很多五花八门不同形式的AI辅助编程工具（包括但不限于CodeX、Claude Code等），公司的MiCode也开始大范围推广并且取得了不错的效果，而且最近好像又开始鼓励AI方面的分享，想了想还是写一篇文章来简单介绍下不同形式AI工具的原理，以及我日常Vibe Coding的感想。
 
-从发展历程来看，当前的AI编程工具可以大致分为三代：第一代以GitHub Copilot（类似的有Codeium、Mi Copilot等）为代表，第二代以Cursor（类似的有Trace、Windsurf等）为代表，第三代则是Claude Code（类似的有Gemini CLI、MI Code）等命令行工具。
+从发展历程来看，当前的AI编程工具可以大致分为三代：第一代以GitHub Copilot（类似的有Codeium、Mi Copilot等代码提示插件）为代表，第二代以Cursor（类似的有Trace、Windsurf等AI IDE）为代表，第三代则是以Claude Code（类似的有Gemini CLI、MI Code等终端命令行工具）为代表
 
-虽然没有时间去体验市面上所有的 AI 工具，但我想这三个产品对于 AI 辅助编程而言还是有里程碑式意义的，也可以说我是积累了一些经验来谈一谈 Vibe Coding 的。
+虽然没有时间去体验市面上所有的 AI 工具，但我想这三个产品对于 AI 辅助编程而言还是有里程碑式意义的。
+
+下面将简单介绍下这三种AI编程工具的发展历程以及它们关于上下文的不同处理方式，然后再结合这些原理简单聊下如何更好的进行 “Vibe Coding”
+
+TODO:这里可以补充一个图,带上时间
 
 ## 到底什么是Vibe Coding
 
@@ -29,10 +33,11 @@ Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉
 2. **完全不手动干预**：即使是小bug也交由AI修复，而非手动修改
 3. **跳过代码审查**：不再详细review AI生成的代码，只关注最终效果
 
-因此，Vibe Coding本质上描述的是一种全新的编程范式——完全基于与LLM的对话来进行程序开发。
+因此，`Vibe Coding`本质上描述的是一种全新的编程范式——完全基于与LLM的对话来进行程序开发。
 
-由于"Vibe Coding"这一术语缺乏明确的中文对应概念，目前业界普遍将所有AI辅助编程行为都统称为Vibe Coding。但严格来说，当前的AI技术尚未达到真正意义上的Vibe Coding水平（即完全无需编写代码且无需代码审查）。
-所以对于目前大家用AI写代码更准确的说法应该是"AI辅助编程"，亦或者说应该"Context Coding"（基于上下文的编程）。
+由于`Vibe Coding`这一术语缺乏明确的中文对应概念，目前业界普遍将所有AI辅助编程行为都统称为`Vibe Coding`。
+但严格来说，当前的AI技术尚未达到真正意义上的`Vibe Coding`水平（即完全无需编写代码且无需代码审查）。
+所以我个人认为对于目前大家用AI写代码更准确的说法应该是**AI辅助编程**，亦或者说应该称为**Context Coding**（基于上下文的编程）。
 
 ## Context Coding
 
@@ -45,19 +50,21 @@ Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉
 
 ### GitHub Copilot
 
-GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除了AI对话功能外，最令人印象深刻的是其代码补全能力。
+GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除了AI对话功能外，最令人印象深刻的是其**代码补全能力**。
 
 Copilot能够根据当前代码文件的上下文进行智能补全。它会将光标位置的代码上下文提供给LLM，据此生成代码建议。
 
 基于这一特性，开发者可以采用"注释驱动开发"的模式：先编写函数注释，让Copilot基于注释生成函数实现，再进行细节调整。这种模式显著提升了编码效率。
+![vscode代码提示](https://vscode.js.cn/assets/docs/copilot/inline-suggestions/ts-suggest-code-comment.png)
 
-但是有一个关键的问题是，Copilot只能将当前打开窗口的代码文件作为上下文，无法利用其他文件或整个项目的上下文信息。这导致LLM无法提供跨文件的代码建议——当开发者在A文件中实现了某个方法，切换到B文件时，LLM缺少A文件的上下文，无法生成基于该方法的调用代码。对于需要跨多个文件协同修改的编程任务，在当时几乎无法实现。
+但是有一个关键的问题是，Copilot**只能将当前打开窗口的代码文件作为上下文**，无法利用其他文件或整个项目的上下文信息。
+这导致LLM无法提供跨文件的代码建议，例如当我们在A文件中实现了某个方法，切换到B文件时，LLM缺少A文件的上下文，无法生成基于该方法的调用代码。对于需要跨多个文件协同修改的编程任务，在当时几乎无法实现。
 
 正是在这样的背景下，提供更强大上下文能力的Cursor应运而生。
 
 ### Cursor
 
-Copilot推出后，市场上涌现出大量IDE插件形式的AI辅助工具，它们主要在prompt工程和LLM选择上进行优化。直到Cursor以完整AI IDE的形态出现，这一领域的竞争格局才基本确立。
+> Copilot推出后，市场上涌现出大量IDE插件形式的AI辅助工具，它们主要在prompt工程和LLM选择上进行优化。直到Cursor以完整AI IDE的形态出现，这一领域的竞争格局才基本确立。
 
 Cursor相比GitHub Copilot在多个维度都有显著提升，比如支持让大模型直接编辑代码（即早期的Agent功能）。但本文重点要探讨的是Cursor的上下文工程创新。
 
@@ -71,153 +78,43 @@ Cursor在上下文工程方面的第一个关键突破，是采用RAG（Retrieva
 
 #### Cursor RAG 的工作原理
 
-在用户导入项目时，Cursor 会启动一个 Codebase Indexing 流程，这一步主要有 7 个步骤：
+> 如果你不理解下面的描述，可以简单理解为我们用cursor打开一个项目的时候，它就把项目所有的代码都存到了一个数据库里，然后每次我们问问题的时候会在数据库里查询跟我们的问题最相似的代码，然后一同把查到的代码+问题丢给大模型处理
+
+在我们用cursor打开一个项目时，Cursor 会启动一个 Codebase Indexing 流程，这一步主要有 7 个步骤：
+TODO:更多细节可以看这篇文章：
 
 1. 你的工作区文件会与 Cursor 的服务器安全同步，确保索引始终最新。
-2. 文件被拆分为有意义的片段，聚焦函数、类和逻辑代码块，而非任意文本段。
-3. 每个片段使用 AI 模型转为向量表示，生成能捕捉语义的数学"指纹"。
+2. 遍历项目目录，读取并预处理所有代码文件，文件被拆分为有意义的片段，聚焦函数、类和逻辑代码块，而非任意文本段。
+3. 每个片段都通过embedding算法转为向量表示，生成能捕捉语义的数学"指纹"。
 4. 这些向量嵌入存储在专用的向量数据库中，支持在数百万代码片段中进行高速相似度搜索。
-5. 当你搜索时，查询会用与处理代码相同的 AI 模型转为向量。
+5. 当你询问问题的时候，cursor会把你的问题和提供给它的上下文用与处理代码相同的embedding算法转为向量。
 6. 系统将你的查询向量与已存储的嵌入向量进行比对，找到最相似的代码片段。
-7. 你会获得包含文件位置和上下文的相关代码片段，并按与查询的语义相似度排序。
-
-#### 索引构建的详细流程
-
-**项目初始化阶段：**
-
-- 扫描项目文件夹，建立文件清单
-- 计算Merkle树哈希值，用于后续变更检测
-- 根据.gitignore和.cursorignore规则过滤文件
-- 执行初始Merkle树同步到服务器
-
-**增量同步机制：**
-
-- 系统每10分钟执行一次变更检测
-- 通过哈希值比较识别文件变更
-- 仅上传发生变更的文件，实现增量同步
-
-**服务器端处理：**
-
-- 对同步的文件进行分块处理
-- 计算文件内容的向量表示
-- 并行存储到Turbopuffer数据库和AWS缓存
-
-![索引构建流程图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJLeCrr4mqxQfpt4PhFX2hkkxkx9T7cF1ByfNibEkib3o4ia7cq0BywDB1w/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-#### 用户查询流程
-
-**查询向量化：**
-
-- 用户提交自然语言查询
-- 本地计算查询的向量表示，捕获语义信息
-
-**相似度搜索：**
-
-- 使用Turbopuffer数据库进行最近邻搜索
-- 基于向量相似度找到最相关的代码片段
-- 返回混淆的文件路径和行号信息
-
-**代码片段获取：**
-
-- 客户端根据返回的路径和行号本地读取代码片段
-- 确保获取的是用户环境中的实际代码内容
-
-**AI答案生成：**
-
-- 将代码片段上传到服务器
-- AI模型结合用户查询和代码上下文生成最终答案
-
-![用户查询流程图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJV0LXibfromrOjbA3ibjMrC8sCaOLcWAic9RSEN8Erf95j0aZCUU5G9xRQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-Turbopuffer 是基于对象存储从头构建的无服务器向量和全文搜索，如果你不太清楚向量搜索，你可以简单理解为语义搜索，可以搜索出意思相近的词。
-
-#### Merkle Tree 增量块验证
-
-Cursor 的代码库检索是使用RAG实现的，在召回信息完整的同时做到了极致的检索速度，体验下来要比Claude Code 快很多。为了保证这一性能优势，需要在检索的每一个步骤都保持高速。
-
-- **导入**：Indexing是离线的，核心是 Chunking & Embedding，一般在10分钟左右完成，与仓库总代码量有关。不过一次导入终生享受，这个时间成本并不影响体验；在indexing建立好之前，Cursor 会通过基础工具（比如grep）来进行代码检索，保证可用性。
-- **查询**：query 的 embedding 和向量检索都是在线的，可以做到秒级。
-- **增量导入**：因为我们的修改是实时的，且可能发生在任何阶段，所以需要一种能够快速判断"哪些代码是新增的 / 被更新了"的方法。
-
-对于"增量导入"的部分，Cursor 实际使用了一种数据结构——Merkle Tree。实际上我们常用的版本控制工具Git的底层用的也是这种数据结构。
-
-**什么是Merkle Tree：**
-
-默克尔树（Merkle Tree）也叫哈希树，是一种树形数据结构：
-
-- 叶子节点（Leaf Node）：每个叶子节点存储的是某个数据块的加密哈希值。
-- 非叶子节点（Branch/Inner Node）：每个非叶子节点存储的是其所有子节点哈希值拼接后的哈希。
-
-![Merkle Tree 结构示意图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJsZqXzB207RSnd0S0OiazRBbs6aqKegmIx0XAqqoFvkqj2icSTEPlncIw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-下面是一个 Merkle Tree 的简化示例：
-
-```mermaid
-graph TD
-    Root[Root Hash<br/>H1234] --> L1[Hash H12]
-    Root --> R1[Hash H34]
-    L1 --> L2[Hash H1]
-    L1 --> R2[Hash H2]
-    R1 --> L3[Hash H3]
-    R1 --> R3[Hash H4]
-    L2 --> D1[Data Block 1]
-    R2 --> D2[Data Block 2]
-    L3 --> D3[Data Block 3]
-    R3 --> D4[Data Block 4]
-
-    style Root fill:#e1f5ff
-    style L1 fill:#fff4e1
-    style R1 fill:#fff4e1
-    style D1 fill:#e8f5e9
-    style D2 fill:#e8f5e9
-    style D3 fill:#e8f5e9
-    style D4 fill:#e8f5e9
-```
-
-**Merkle Tree 的作用：**
-
-1. **高效验证**：要证明某个数据块属于这棵树，只需要提供从该叶子节点到根节点路径上的"兄弟节点"哈希值。验证复杂度为O(log n)，而不是O(n)。
-
-2. **数据完整性保证**：只要根哈希（Merkle Root）保持不变，就能确保整个数据集未被篡改。任何底层数据的修改都会导致根哈希发生变化。
-
-3. **增量同步**：通过比较不同版本的Merkle Tree，可以快速定位发生变化的数据块，实现高效的增量同步。
-
-![Merkle Tree 功能示意图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJREVwaPy6BAXcfSJVwZDjSsRppmh5nb28nGLkKLS4vSCZH5xqUIdibEA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-**Merkle Tree功能总结：**
-
-- **高效完整性校验，防篡改**：每个对象都用哈希值唯一标识，任何内容变动都会导致哈希变化。只要根哈希（commit 哈希）没变，说明整个项目历史、内容都没被篡改。
-- **高效对比和查找变更**：只需对比 tree 或 commit 的哈希，就能快速判断两次提交是否完全一致。递归对比 tree 结构，可以高效定位到具体变动的文件和内容。
-- **高效存储与去重**：相同内容的文件或目录结构只存一份，极大节省空间。没有变动的部分直接复用历史对象，无需重复存储。
+7. 返回混淆的文件路径和行号信息、客户端根据返回的路径和行号本地读取代码片段
+8. AI模型结合用户查询和代码上下文生成最终答案
 
 基于这种能力，Cursor 可以检索出和你当前对话相关的代码上下文，并一同提供给 LLM。这样 LLM 有了多个文件的上下文后，可以做到：
 
-- 实现跨文件的方法调用
+- 能够实现跨文件的Tab提示
 - 修复涉及多个文件的bug
 - 重构整个模块
 - 添加需要修改多处文件代码的新功能
 
 在这个基础上，Cursor 也支持直接 @ 某个文件/文件夹来给 LLM 提供上下文，并且在后续加上了索引 Git 历史记录的能力。
 
-从上下文工程的角度来讲，可以说 Cursor 比 Copilot 成功的地方在于，Cursor 给 LLM 提供了更全面的代码上下文，并且给了用户更自主控制上下文的能力。
-
-除此之外，Cursor 在后续添加了文档的索引功能，可以帮助你给 LLM 提供最新的技术文档上下文。并且添加了 Rules 相关的功能，可以给 LLM 提供通用的编程规则，确保 LLM 生成的代码与你的项目架构、编码风格和技术栈保持一致。
+从上下文工程的角度来讲，可以说 Cursor 比 Copilot 成功的地方在于，**Cursor 给 LLM 提供了更全面的代码上下文**，并且给了用户更自主控制上下文的能力。
 
 这些功能无一例外都是为了给 LLM 提供更丰富、更合适的上下文而展开的，所以我更愿意称它为 Context Coding。
 
 ### Claude Code
 
 在 Cursor 以各种优化上下文工程保持领先状态时，Claude Code 以一种完全意想不到的方式杀入了比赛。
+// TODO:补充一个cc的图
+由于Cursor能解决我开发中的大部分问题，所以Claude Code问世后很长时间我都没有使用过，直到有一天有一个问题在Cursor上纠缠了很久还是没解决，于是想要尝试一下Claude Code。
+但是实际使用下来非常容易上手，并且编程效果不输给 Cursor，甚至部分情况下实际效果还要超越 Cursor。
 
-虽然之前没有体验过终端命令行这种 AI 产品的形态，最开始产品发布的时候，我只是被 Unix 风格吸引，想要尝试一下。但是实际使用下来非常容易上手，并且编程效果不输给 Cursor，甚至部分情况下实际效果还要超越 Cursor。
+在使用两周后，个人感觉在中小型编程任务中，Claude Code 的效果和 Cursor 差不多（两个工具都是使用 Claude 4 sonnet），Cursor 在实际编程体验上还是要更便捷一点，因为还是会使用 command + K 或者 Tab 补全。
 
-实际测试编写 Next.js 程序，在中小型编程任务中，Claude Code 的效果和 Cursor 差不多，毕竟我两个工具通常情况下都是使用 Claude 4 sonnet 或者 Opus 模型，Cursor 在实际编程体验上还是要更便捷一点，因为还是会使用 command + K 或者 Tab 补全。
-
-但在大型编程任务中，例如一次要检索修改超过 10 个文件的情况下，Claude Code 的编程效果远超 Cursor。我认为根本原因在于 Claude Code 给 LLM 提供上下文采用的是"量大管饱"的策略。
-
-Cursor 因为是大模型基座提供商(例如 Claude)的下游产品，如果想要在商业领域取得成功，那么就需要在用户付费和实际 Tokens 的使用上取得平衡。所以有了很多引起程序员不满的调整模型速度、使用次数限制、自动引入低能力模型的各种骚操作。
-
-与 Cursor 不同的是，Claude Code 由于本身是大语言模型基座提供商 Anthropic 的产品，在消耗 tokens 这件事上并没有那么畏手畏脚。
+但在大型编程任务中，例如一次要检索修改超过 10 个文件的情况下（可以理解为上下文特别多的时候），Claude Code 的编程效果远超 Cursor。我认为根本原因在于 Claude Code 给 LLM 提供上下文的方式与Cursor完全不同，而且内容要比Cursor多的多。
 
 Claude Code 每次一上来就先通过终端命令开始分析代码库的项目结构和基本的技术栈信息，这与 Cursor 关注点在具体的任务和少数的代码文件中不同，Claude Code 以一种更全局的视角先分析项目整体情况，然后再开始开发。虽然这肯定是更加消耗 tokens ，但是有了这些项目整体信息后，Claude Code 编写的代码确实更加符合项目原本的开发模式和编码规范。
 
@@ -227,19 +124,9 @@ Claude Code 选择了一套和 Cursor 完全不同的检索代码上下文的方
 
 Claude Code 选择的就是这种上下文工程模式，在你提问之后，基于你的提问进行关键词不断检索，直到找到项目中所有需要的上下文代码，然后再开始编程，亦或者是一轮一轮的对话、编程和检索，一直重复这个过程，直到 LLM 认为找全了上下文。
 
+TODO:贴个图
+
 #### Claude Code 的模型调用机制
-
-与 Cursor 类似，Claude Code 也有自己的一套模型调用提示词，准确来说，这是一套完整的上下文工程。这里面有用户环境、用户问题、系统提示词、工作过程管理（自动生成并按顺序执行TODO）等部分。
-
-Claude Code 的系统提示词大致如下：
-
-```
-You are Claude Code, Anthropic's official CLI for Claude. You are an interactive CLI tool that helps users with software engineering tasks. Use the instructions below and the tools available to you to assist the user.
-```
-
-这套提示词设计体现了 Anthropic 对模型和用户体验的深度洞察，很多常见的痛点（比如生成太多单测、非最小范围修改）问题，已经被写进了 Claude Code 的系统提示词中。
-
-Claude Code 选择这个和 Cursor RAG 不同的方案后，社区中有大量的争议出现。
 
 ```mermaid
 graph TB
@@ -264,6 +151,8 @@ graph TB
     style B5 fill:#fff4e1
 ```
 
+#### RAG跟grep到底哪个好
+
 RAG 一派认为 grep 方案的召回率低，检索出大量不相关的内容，不仅费 token，并且效率慢，因为 LLM 需要不断对话和不断检索新的上下文。
 
 grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的方案在代码检索的精度上，表现的并不佳，毕竟代码的语义相似度不等于代码关联的上下文，更不等于业务上下文。
@@ -276,7 +165,7 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 
 当然，这并不意味着Grep方案就是终极答案。可以预见，在不久的将来，成熟的AI IDE会同时提供RAG和Grep两种能力，根据具体场景选择性使用。Cursor必然会加强Grep方案的支持，而不会完全依赖RAG。
 
-#### 从传统Editor AI的转变
+#### cursor跟cladue code 到底哪个好
 
 传统编辑器AI工具的核心问题在于**缺乏全局视角**。典型的使用场景是：打开一个文件，选中几行代码，然后让AI进行修改。这种交互模式天然地将开发者的思维局限在**当前文件**甚至**当前几行代码**的范围内。
 
@@ -286,9 +175,7 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 
 命令行工具从设计理念上就有所不同：没有图形界面，没有实时代码提示，开发者在过程中难以直接进行"微调"。但正是这种"简陋"，让它能够更深入地理解和操作整个项目。它不会被某个文件或某几行代码限制视野，而是从项目根目录开始，建立对整个代码库的全局认知。去除编辑器这个中间层后，开发者难以直接修改代码，这在一定程度上"促使"开发者更充分地使用AI，提供更多信息和反馈，反而能发挥更大效能。
 
-当然，编辑器AI并非毫无价值。客观来说，两者的差异更多源于使用方式和模型质量，而非架构本身。Claude Code背靠Anthropic，模型质量有保障；更关键的是，它在Token使用上相对宽松（虽然最近增加了weekly限制），这种"充裕"的资源投入确实带来了质的飞跃。如果编辑器AI也能获得类似的Token预算，效果未必会有本质差异。
-
-但现实是，至少在当下，想要体验真正的Vibe Coding，Claude Code可能是最佳选择。
+客观来说，两者的差异更多源于使用方式和模型质量，而非架构本身。Claude Code背靠Anthropic，模型质量有保障；更关键的是，它在Token使用上相对宽松，这种"充裕"的资源投入确实带来了质的飞跃。
 
 ### 提升Context Coding效果的实践方法
 
@@ -324,11 +211,7 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 
 我们不只可以粘代码、图片进去，还可以让模型参考网页、Git历史、当前打开的文件等，这些 IDE 类的工具支持的比较好，因为是在IDE环境里面，而CLI在终端中，限制就要多一些（但更灵活）。
 
-![多元化上下文信息示例](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJY7aFMZu9GcpoAfkDyu5pBm4CWodcopXDib3J7RsYdppK4abPia2ickPfQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-![上下文信息类型](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJHduo2WKjzUSbQSd0RZgAbJJqCRJKUU7RvTx2uI7icxAQK9ZblsJxRwQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
-
-#### 项目基础信息和编程规范
+#### 给LLM提供一次性的项目基础信息和编程规范
 
 假如你需要进入一个新的项目组，你只有这个项目需要的技术和框架基础知识(LLM 也只有技术和框架基础)。
 
