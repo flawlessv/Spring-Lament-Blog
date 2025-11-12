@@ -44,9 +44,21 @@ Vibe Coding (中文翻译为氛围编程)这个名字是从 Andrej Karpathy（�
 
 ## Context Coding
 
-// TODO：可以补充一个图
-
 原因是我个人认为 AI 编程的进步，除了最重要的大模型的编程能力变强之外（例如模型从 GPT 升级到 Claude）还有一个重大的提升，不同 AI 编程工具的上下文工程（Context Engineering）能力更强了。
+
+```mermaid
+graph LR
+    A[开发者] -->|提问| B[AI编程工具]
+    B -->|获取上下文| C[代码库]
+    B -->|获取上下文| D[Rules]
+    B -->|获取上下文| E[对话历史]
+    B -->|获取上下文| F[工具调用结果]
+    C -->|RAG/Grep| B
+    D -->|规则文件| B
+    E -->|历史记录| B
+    F -->|工具执行| B
+    B -->|生成代码| A
+```
 
 被大家广泛讨论的最强 AI 编程工具，基本上是从 GitHub Copilot 到 Cursor，再到 Claude Code，我认为这些产品成功的原因是上下文工程（Context Engineering）更加科学了。
 
@@ -87,13 +99,131 @@ Cursor相对于GitHub Copilot在方方面面都提升很多，例如可以直接
 Cursor 在上下文工程的第一个关键突破就是使用 RAG(Retrieval Augmented Generation) 将项目整个 codebase 进行索引，并以语义(向量)搜索的方式给 LLM 提供整个项目的上下文。
 
 如果你注意过的话，就会发现使用 Cursor 打开一个新的项目，在 Cursor Settings 的 Indexing 的设置中，Cursor 会开始索引你的整个项目，并且你可以看到目前索引了多少文件。
-// TODO：可以补充一个图
-// TODO: 可以改变一下这里的措辞
-这背后的原理，我们简单的介绍一下，Cursor 会在你新打开项目的时候，将整个代码库在本地拆分为多个小块内容，然后再上传到 Cursor 云服务器中，使用 embedding 模型来 embeds 代码，并存储到云向量数据库中。
 
-接着你在 Chat/Agent 中提问时，Cursor 会在推理时对 prompt 进行嵌入，让 Turbopuffer 进行最近邻搜索，将混淆后的文件路径和行范围发送回 Cursor 客户端，并在客户端本地读取这些文件代码块。
+![Cursor Indexing 设置界面](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJKIZ5Lic5YuShk4p0eXm52oREYumtHoAFB6iciabsYC8qTehZqECI1slBA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+这背后的原理，我们详细的介绍一下。Cursor 的代码库检索是通过 Codebase Indexing 流程实现的，它其实就是在对整个代码仓库做 RAG，即将你的代码转换为可搜索的向量。
+
+### Cursor RAG 的工作原理
+
+在用户导入项目时，Cursor 会启动一个 Codebase Indexing 流程，这一步主要有 7 个步骤：
+
+1. 你的工作区文件会与 Cursor 的服务器安全同步，确保索引始终最新。
+2. 文件被拆分为有意义的片段，聚焦函数、类和逻辑代码块，而非任意文本段。
+3. 每个片段使用 AI 模型转为向量表示，生成能捕捉语义的数学"指纹"。
+4. 这些向量嵌入存储在专用的向量数据库中，支持在数百万代码片段中进行高速相似度搜索。
+5. 当你搜索时，查询会用与处理代码相同的 AI 模型转为向量。
+6. 系统将你的查询向量与已存储的嵌入向量进行比对，找到最相似的代码片段。
+7. 你会获得包含文件位置和上下文的相关代码片段，并按与查询的语义相似度排序。
+
+### 索引构建的详细流程
+
+**项目初始化阶段：**
+
+- 扫描项目文件夹，建立文件清单
+- 计算Merkle树哈希值，用于后续变更检测
+- 根据.gitignore和.cursorignore规则过滤文件
+- 执行初始Merkle树同步到服务器
+
+**增量同步机制：**
+
+- 系统每10分钟执行一次变更检测
+- 通过哈希值比较识别文件变更
+- 仅上传发生变更的文件，实现增量同步
+
+**服务器端处理：**
+
+- 对同步的文件进行分块处理
+- 计算文件内容的向量表示
+- 并行存储到Turbopuffer数据库和AWS缓存
+
+![索引构建流程图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJLeCrr4mqxQfpt4PhFX2hkkxkx9T7cF1ByfNibEkib3o4ia7cq0BywDB1w/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+### 用户查询流程
+
+**查询向量化：**
+
+- 用户提交自然语言查询
+- 本地计算查询的向量表示，捕获语义信息
+
+**相似度搜索：**
+
+- 使用Turbopuffer数据库进行最近邻搜索
+- 基于向量相似度找到最相关的代码片段
+- 返回混淆的文件路径和行号信息
+
+**代码片段获取：**
+
+- 客户端根据返回的路径和行号本地读取代码片段
+- 确保获取的是用户环境中的实际代码内容
+
+**AI答案生成：**
+
+- 将代码片段上传到服务器
+- AI模型结合用户查询和代码上下文生成最终答案
+
+![用户查询流程图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJV0LXibfromrOjbA3ibjMrC8sCaOLcWAic9RSEN8Erf95j0aZCUU5G9xRQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
 
 Turbopuffer 是基于对象存储从头构建的无服务器向量和全文搜索，如果你不太清楚向量搜索，你可以简单理解为语义搜索，可以搜索出意思相近的词。
+
+### Merkle Tree 增量块验证
+
+Cursor 的代码库检索是使用RAG实现的，在召回信息完整的同时做到了极致的检索速度，体验下来要比Claude Code 快很多。为了保证这一性能优势，需要在检索的每一个步骤都保持高速。
+
+- **导入**：Indexing是离线的，核心是 Chunking & Embedding，一般在10分钟左右完成，与仓库总代码量有关。不过一次导入终生享受，这个时间成本并不影响体验；在indexing建立好之前，Cursor 会通过基础工具（比如grep）来进行代码检索，保证可用性。
+- **查询**：query 的 embedding 和向量检索都是在线的，可以做到秒级。
+- **增量导入**：因为我们的修改是实时的，且可能发生在任何阶段，所以需要一种能够快速判断"哪些代码是新增的 / 被更新了"的方法。
+
+对于"增量导入"的部分，Cursor 实际使用了一种数据结构——Merkle Tree。实际上我们常用的版本控制工具Git的底层用的也是这种数据结构。
+
+**什么是Merkle Tree：**
+
+默克尔树（Merkle Tree）也叫哈希树，是一种树形数据结构：
+
+- 叶子节点（Leaf Node）：每个叶子节点存储的是某个数据块的加密哈希值。
+- 非叶子节点（Branch/Inner Node）：每个非叶子节点存储的是其所有子节点哈希值拼接后的哈希。
+
+![Merkle Tree 结构示意图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJsZqXzB207RSnd0S0OiazRBbs6aqKegmIx0XAqqoFvkqj2icSTEPlncIw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+下面是一个 Merkle Tree 的简化示例：
+
+```mermaid
+graph TD
+    Root[Root Hash<br/>H1234] --> L1[Hash H12]
+    Root --> R1[Hash H34]
+    L1 --> L2[Hash H1]
+    L1 --> R2[Hash H2]
+    R1 --> L3[Hash H3]
+    R1 --> R3[Hash H4]
+    L2 --> D1[Data Block 1]
+    R2 --> D2[Data Block 2]
+    L3 --> D3[Data Block 3]
+    R3 --> D4[Data Block 4]
+
+    style Root fill:#e1f5ff
+    style L1 fill:#fff4e1
+    style R1 fill:#fff4e1
+    style D1 fill:#e8f5e9
+    style D2 fill:#e8f5e9
+    style D3 fill:#e8f5e9
+    style D4 fill:#e8f5e9
+```
+
+**Merkle Tree 的作用：**
+
+1. **高效验证**：要证明某个数据块属于这棵树，只需要提供从该叶子节点到根节点路径上的"兄弟节点"哈希值。验证复杂度为O(log n)，而不是O(n)。
+
+2. **数据完整性保证**：只要根哈希（Merkle Root）保持不变，就能确保整个数据集未被篡改。任何底层数据的修改都会导致根哈希发生变化。
+
+3. **增量同步**：通过比较不同版本的Merkle Tree，可以快速定位发生变化的数据块，实现高效的增量同步。
+
+![Merkle Tree 功能示意图](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJREVwaPy6BAXcfSJVwZDjSsRppmh5nb28nGLkKLS4vSCZH5xqUIdibEA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+**Merkle Tree功能总结：**
+
+- **高效完整性校验，防篡改**：每个对象都用哈希值唯一标识，任何内容变动都会导致哈希变化。只要根哈希（commit 哈希）没变，说明整个项目历史、内容都没被篡改。
+- **高效对比和查找变更**：只需对比 tree 或 commit 的哈希，就能快速判断两次提交是否完全一致。递归对比 tree 结构，可以高效定位到具体变动的文件和内容。
+- **高效存储与去重**：相同内容的文件或目录结构只存一份，极大节省空间。没有变动的部分直接复用历史对象，无需重复存储。
 
 如果你想要对 embedding 和向量数据库有更多了解。可以查看我 2023 年的博客 [GPT 应用开发和思考](https://guangzhengli.com/blog/zh/gpt-embeddings) 和 [向量数据库](https://guangzhengli.com/blog/zh/vector-database)。
 
@@ -133,8 +263,43 @@ Claude Code 选择了一套和 Cursor 完全不同的检索代码上下文的方
 
 Claude Code 选择的就是这种上下文工程模式，在你提问之后，基于你的提问进行关键词不断检索，直到找到项目中所有需要的上下文代码，然后再开始编程，亦或者是一轮一轮的对话、编程和检索，一直重复这个过程，直到 LLM 认为找全了上下文。
 
+### Claude Code 的模型调用机制
+
+与 Cursor 类似，Claude Code 也有自己的一套模型调用提示词，准确来说，这是一套完整的上下文工程。这里面有用户环境、用户问题、系统提示词、工作过程管理（自动生成并按顺序执行TODO）等部分。
+
+Claude Code 的系统提示词大致如下：
+
+```
+You are Claude Code, Anthropic's official CLI for Claude. You are an interactive CLI tool that helps users with software engineering tasks. Use the instructions below and the tools available to you to assist the user.
+```
+
+这套提示词设计体现了 Anthropic 对模型和用户体验的深度洞察，很多常见的痛点（比如生成太多单测、非最小范围修改）问题，已经被写进了 Claude Code 的系统提示词中。
+
 Claude Code 选择这个和 Curosr RAG 不同的方案后，社区中有大量的争议出现。
-// 这里可以补充一个生动的对比图
+
+```mermaid
+graph TB
+    subgraph RAG["RAG 方案 (Cursor)"]
+        A1[代码库] -->|分块+向量化| A2[向量数据库]
+        A3[用户查询] -->|向量化| A4[相似度搜索]
+        A2 --> A4
+        A4 --> A5[返回相关代码片段]
+    end
+
+    subgraph Grep["Grep 方案 (Claude Code)"]
+        B1[代码库] -->|保持原始状态| B2[文件系统]
+        B3[用户查询] -->|关键词提取| B4[grep/find/git]
+        B2 --> B4
+        B4 --> B5[返回匹配文件]
+        B5 -->|多轮检索| B4
+    end
+
+    style A2 fill:#e1f5ff
+    style A4 fill:#e1f5ff
+    style B4 fill:#fff4e1
+    style B5 fill:#fff4e1
+```
+
 RAG 一派认为 grep 方案的召回率低，检索出大量不相关的内容，不仅费 token，并且效率慢，因为 LLM 需要不断对话和不断检索新的上下文。
 
 grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的方案在代码检索的精度上，表现的并不佳，毕竟代码的语义相似度不等于代码关联的上下文，更不等于业务上下文。
@@ -150,7 +315,42 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 ### 如何更好的 Context Coding
 
 既然我们已经简单的了解了不同 AI 产品的原理，那么应该如何更好的去进行AI辅助编程呢
-既然 AI 辅助 Coding 的关键在于给 LLM(大语言模型) 传递更合适的上下文，那么有时候借鉴我们自己日常的开发思路其实能够更好的帮助我们理解：如何给 LLM 传递更好的上下文(加粗)。
+
+既然 AI 辅助 Coding 的关键在于给 LLM(大语言模型) 传递更合适的上下文，那么有时候借鉴我们自己日常的开发思路其实能够更好的帮助我们理解：如何给 LLM 传递更好的上下文。
+
+### 合理利用上下文窗口
+
+由于AI模型的上下文窗口存在容量限制，我们需要在有限空间内最大化信息价值。以下是一些实用的技巧：
+
+**Action 1：进行清晰的问题描述**
+
+在上面的原理部分，我们介绍了模型是如何进行代码库理解的（向量匹配、意图拆解后进行模糊搜索、调用链溯源等）。因此，在描述问题时，我们最好能给出具体的功能、文件名、方法名、代码块，让模型能够通过语义检索等方式，用较短的路径找到代码，避免在检索这部分混杂太多弱相关内容，干扰上下文。
+
+**Action 2：把控上下文长度**
+
+现在不少工具都支持上下文占用量展示，比如显示之前的对话占用的上下文窗口比例。超出这个比例之后，工具会对历史内容进行压缩，保证对话的正常进行。
+
+![上下文占用量展示](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJxO3tKqGv8SX7ScFKBhaiaV20cBx8xLducZN2AqlWIp0cVSf8ZBGb0sw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+但被压缩后的信息会缺失细节，所以建议大家在处理复杂问题时，采用上下文窗口大的模型/模式，尽量避免压缩。
+
+**Action 3：尽可能地使用Revert和新开对话**
+
+省上下文是一方面，维持上下文的简洁对模型回答质量提升也是有帮助的。因此，如果你的新问题跟历史对话关系不大，就最好新开一个对话。
+
+在多轮对话中，如果有一个步骤出错，最好的方式也是回退到之前出错的版本，基于现状重新调整 prompt 和更新上下文；而不是通过对话继续修改。否则可能导致上下文中存在过多无效内容。
+
+这里回滚在IDE类型的工具里操作很方便，点一下"Revert"按钮即可。不过如果使用的是 Claude Code 等 CLI 类型的工具，回滚起来就没有这么方便，可以考虑在中间步骤多进行commit。
+
+**Action 4：给出多元化的信息**
+
+我们不只可以粘代码、图片进去，还可以让模型参考网页、Git历史、当前打开的文件等，这些 IDE 类的工具支持的比较好，因为是在IDE环境里面，而CLI在终端中，限制就要多一些（但更灵活）。
+
+![多元化上下文信息示例](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJY7aFMZu9GcpoAfkDyu5pBm4CWodcopXDib3J7RsYdppK4abPia2ickPfQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+![上下文信息类型](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJHduo2WKjzUSbQSd0RZgAbJJqCRJKUU7RvTx2uI7icxAQK9ZblsJxRwQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+
+### 项目基础信息和编程规范
 
 假如你需要进入一个新的项目组，你只有这个项目需要的技术和框架基础知识(LLM 也只有技术和框架基础)。
 
@@ -207,6 +407,58 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 LLM 的提升和上下文工程之间的关系，就像之前内存硬件的提升和软件的内存控制管理不冲突一样，在 LLM 大模型和上下文容量都不容易提升的时候，谁提供的上下文更好，谁的上下文工程做的更好，更容易脱颖而出。这与 AI 编程无关，任何 AI 产品都如此。
 
 ## AI Coding个人技巧
+
+### Token计算机制
+
+了解 Token 计算机制有助于我们更好地理解 AI 编程工具的工作原理，以及如何优化我们的使用方式。
+
+我们知道不同 model 都有不同大小的上下文，上下文越大的模型自然能接受更大的提问信息。在 AI 编程工具中，我们的任意一次聊天，大致会产生如下的 token 计算：
+
+**初始 Token 组成：**
+
+初始输入 = SystemPrompt + 用户问题 + Rules + 对话历史
+
+其中：
+
+- **用户问题**：我们输入的文字 + 主动添加的上下文（图片、项目目录、文件）
+- **Rules**：project rule + user rule + memories
+
+**工具调用后的 Token 累积：**
+
+AI 编程工具接收用户信息后开始调用 tools 获取更为详细的信息，并为问题回答做准备：
+
+总 Token = 初始输入 + 所有工具调用结果
+
+**举个例子：**
+
+假设用户粘贴了一段代码，以及一张相关图片，询问"这个函数有什么问题？"，然后 AI 需要调用工具来分析代码。
+
+**初始Token组成：**
+
+- SystemPrompt：约500 tokens（例如："你是一个专业的代码审查助手，能够分析代码问题并提供改进建议..."）
+- 用户问题：约200 tokens（用户输入文字 + 代码 + 图片）
+- Rules：约800 tokens（项目规则、用户规则等）
+- 对话历史：约300 tokens
+
+初始输入 = 500 + 200 + 800 + 300 = 1800 tokens
+
+**工具调用后的Token累积：**
+
+- 工具调用1：读取文件内容，约2000 tokens
+- 工具调用2：代码搜索，约1500 tokens
+- 工具调用3：语法检查，约300 tokens
+
+工具调用结果 = 2000 + 1500 + 300 = 3800 tokens
+
+**最终Token计算：**
+
+总Token = 1800 + 3800 = 5600 tokens
+
+这就是多轮对话后，LLM看到的实际上下文内容。理解这个机制有助于我们：
+
+- 了解为什么某些操作会消耗更多 tokens
+- 优化我们的提问方式，减少不必要的 token 消耗
+- 理解上下文窗口限制的原因
 
 ## 提示词工程
 
