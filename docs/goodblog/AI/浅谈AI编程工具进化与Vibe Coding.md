@@ -13,13 +13,13 @@ tags:
 
 本来是想顺应部门的节奏分享一篇关于全栈基础知识的博客，但是最近涌现了很多五花八门不同形式的AI辅助编程工具（包括但不限于CodeX、Claude Code等），公司的MiCode也开始大范围推广并且取得了不错的效果，而且最近好像又开始鼓励AI方面的分享，想了想还是写一篇博客来表达我对各种AI工具的理解以及日常Vibe Coding的一些技巧。
 
-在我看来，这些所有的AI工具大概可以归为三类，第一类是以GitHub Copilot为代表，第二是 Cursor（包含Trace、Windsurf等），第三是 Claude Code（Gemini CLI）。
+从发展历程来看，当前的AI编程工具可以大致分为三代：第一代以GitHub Copilot为代表，第二代以Cursor（包括Trace、Windsurf等）为代表，第三代则是Claude Code（Gemini CLI）等命令行工具。
 
 虽然没有时间去体验市面上所有的 AI IDE，但我想这三个产品对于 AI 辅助编程而言还是有里程碑式意义的，也可以说我是积累了一些经验来谈一谈 Vibe Coding 的。
 
 ## 到底什么是Vibe Coding
 
-Vibe Coding (中文翻译为氛围编程)这个名字是从 Andrej Karpathy（前特斯拉人工智能总监，OpenAI 的创始成员之一）的这条推特开始的。
+Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉AI总监，OpenAI创始成员之一）在一条推特上提出。
 
 ![Vibe Coding](https://storage.guangzhengli.com/images/vibe-coding.jpg)
 
@@ -27,24 +27,21 @@ Vibe Coding (中文翻译为氛围编程)这个名字是从 Andrej Karpathy（�
 
 > There's a new kind of coding I call "vibe coding", where you fully give in to the vibes, embrace exponentials, and forget that the code even exists. It's possible because the LLMs (e.g. Cursor Composer w Sonnet) are getting too good. Also I just talk to Composer with SuperWhisper so I barely even touch the keyboard. I ask for the dumbest things like "decrease the padding on the sidebar by half" because I'm too lazy to find it. I "Accept All" always, I don't read the diffs anymore. When I get error messages I just copy paste them in with no comment, usually that fixes it. The code grows beyond my usual comprehension, I'd have to really read through it for a while. Sometimes the LLMs can't fix a bug so I just work around it or ask for random changes until it goes away. It's not too bad for throwaway weekend projects, but still quite amusing. I'm building a project or webapp, but it's not really coding - I just see stuff, say stuff, run stuff, and copy paste stuff, and it mostly works.
 
-基于原文的内容，我认为 Andrej Karpathy 对于 vibe coding 的定义有几个关键点：
+基于原文的内容，我们可以提炼出Vibe Coding的几个核心特征：
 
-1. forget the code even exists -> 忘记有代码的存在。
-2. 几乎不手动参与编程，再小的错误也通过 AI 来修复而不是手动更改。
-3. AI 写的代码不再 review，只看结果，不满意的话继续对话。
-4. 对于一次性的项目来说，并不糟糕，并且相当有趣。
+1. **忘记代码的存在**：完全沉浸在与AI的对话中，不再关注具体的代码实现
+2. **完全不手动干预**：即使是小bug也交由AI修复，而非手动修改
+3. **跳过代码审查**：不再详细review AI生成的代码，只关注最终效果
 
-所以我理解 vibe coding 的意思从最开始是谈论一个新的编程方式，是一种完全基于 LLM 对话来编程的方式。
+因此，Vibe Coding本质上描述的是一种全新的编程范式——完全基于与LLM的对话来进行程序开发。
 
-可能是因为 vibe coding 不好翻译或者没有明确意义的原因，感觉目前大家只要是通过 AI 工具来辅助编程，或者是通过 AI 来编写代码的方式，都统一称为 Vibe Coding 了。
-
-但其实我个人认为目前AI并没有达到完全Vibe Coding的阶段（也就是不需要写任何代码并且不需要review）。我理解现在使用AI来进行代码撰写只能称为AI辅助编程或者Context Coding，也就是基于上下文编程。
-
-当前这两种编程方式是有本质区别的，但是我还是想在谈论 vibe coding 之前，先来谈论一下基础的 AI 辅助编程方式。
+由于"Vibe Coding"这一术语缺乏明确的中文对应概念，目前业界普遍将所有AI辅助编程行为都统称为Vibe Coding。但严格来说，当前的AI技术尚未达到真正意义上的Vibe Coding水平（即完全无需编写代码且无需代码审查）。
+所以对于目前大家用AI写代码更准确的说法应该是"AI辅助编程"，亦或者说应该"Context Coding"（基于上下文的编程）。
 
 ## Context Coding
 
-原因是我个人认为 AI 编程的进步，除了最重要的大模型的编程能力变强之外（例如模型从 GPT 升级到 Claude）还有一个重大的提升，不同 AI 编程工具的上下文工程（Context Engineering）能力更强了。
+为什么说当前阶段应该叫Context Coding而不是Vibe Coding更合适呢?
+因为我个人认为从GitHub Copilot 到Cursor 再到Claude Code 等工具AI编程能力的不断提升，除了大模型本身编程能力的增强（如从GPT升级到Claude）之外，另一个关键因素是上下文工程（Context Engineering）能力的显著提升。
 
 ```mermaid
 graph LR
@@ -60,49 +57,37 @@ graph LR
     B -->|生成代码| A
 ```
 
-被大家广泛讨论的最强 AI 编程工具，基本上是从 GitHub Copilot 到 Cursor，再到 Claude Code，我认为这些产品成功的原因是上下文工程（Context Engineering）更加科学了。
+在大模型能力不变的前提下，AI辅助编程的所有提升都源于向LLM传递更合适的上下文信息。无论是Chat、RAG、Rules、MCP，还是Claude Code最新推出的Skills功能，以及未来可能出现的各种新技术，其本质都是围绕上下文优化展开的。
 
-在大模型不变的情况下，AI 辅助编程的所有提升都是基于给 LLM(大语言模型) 传递更合适的上下文这个基本原理展开的，无论是 Chat, RAG, Rules, MCP亦或是Claude code最近出的skills 还是未来更酷的一些其它技术。
-
-所以我们以给 LLM 提供合适的上下文这个视角出发，先来剖析一下这些产品的特性，从中学习如何更好的使用 AI 来辅助编程。
+因此，下面我将简单介绍一下这三类AI编程工具分别是如何传递上下文给大模型的，只有简单了解原理之后，我们才能知道如何做才能更好的使用AI进行辅助编程。
 
 ### GitHub Copilot
 
-相信大部分人最开始接触的 AI 辅助编程工具都是从 GitHub Copilot 开始的，除了集成 AI 对话功能外，给我印象最深刻的莫过于代码补全功能。
+GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除了AI对话功能外，最令人印象深刻的是其代码补全能力。
 
-GitHub Copilot 最开始的成功在于，它是第一个将代码上下文共享给 LLM 的集大成者，主要体现在两个能力上：
+第二，Copilot能够根据当前代码文件的上下文进行智能补全。它会将光标位置的代码上下文提供给LLM，据此生成代码建议。
 
-第一个是可以将当前 IDE 打开窗口的代码提供给 LLM，并且可以针对当前窗口的代码进行提问并给出建议。
+基于这一特性，开发者可以采用"注释驱动开发"的模式：先编写函数注释，让Copilot基于注释生成函数实现，再进行细节调整。这种模式显著提升了编码效率。
 
-这在当时(2023年)是一个非常大的惊喜，因为当时大多数人都是将代码复制到 ChatGPT 中，然后从 ChatGPT 中复制代码到 IDE 中。
+但是有一个关键的问题是，Copilot只能将当前打开窗口的代码文件作为上下文，无法利用其他文件或整个项目的上下文信息。这导致LLM无法提供跨文件的代码建议——当开发者在A文件中实现了某个方法，切换到B文件时，LLM缺少A文件的上下文，无法生成基于该方法的调用代码。对于需要跨多个文件协同修改的编程任务，在当时几乎无法实现。
 
-第二个是可以根据当前代码文件的上下文进行补全操作，Copilot 将光标所在位置的代码上下文提供给了 LLM，LLM 据此给出了建议。
-
-基于这个Copilot的源流，我们写代码的时候就可以使用一个技巧：先写函数注释，让 Copilot 基于注释生成对应的函数，然后我再去修改方法的一些细节，这个模式大大加快了一些编码的速度。
-
-但是在当时 Copilot 的缺点也非常明显，首先是模型能力不够，GPT 3.5在编程方面幻觉问题太严重，并且能够接受的上下文非常有限，所以在当时，实际全量接受 LLM 给出的建议和代码补全的概率非常有限。并且当时 Copilot+ GPT 3.5 还没有能够直接编辑代码的能力，需要手动从 LLM 给出的建议中复制代码。
-
-还有一个是当时 Copilot 只能把当前打开的窗口的代码文件的上下文给到 LLM，所以 LLM 无法根据其它文件或者整个项目的上下文给出建议，这也是为什么GitHub Copilot没办法像Cursor那样，即使你跨越了不同的文件，也能提供精准的代码提示。
-
-导致有时候你在一个代码文件中实现了一个方法，切换到另一个文件时，LLM 并没有那个方法文件的上下文，无法给出基于那个方法的调用补全。更别说如果一个编程任务要跨越几个文件进行共同检索和修改的话，在当时是无法想象的。
-
-所以在这种情况下，提供更好上下文的 Cursor 就脱颖而出了。
+正是在这样的背景下，提供更强大上下文能力的Cursor应运而生。
 
 ### Cursor
 
-在 Copilot 出现后，市场上出现了大量的 IDE 插件形式 AI 辅助工具，区别只是在 prompt 和 LLM 上优化而已。直到 Cursor 这种以完整 AI IDE 形式的工具出现，AI 插件辅助编程的竞争才告一段落。
+Copilot推出后，市场上涌现出大量IDE插件形式的AI辅助工具，它们主要在prompt工程和LLM选择上进行优化。直到Cursor以完整AI IDE的形态出现，这一领域的竞争格局才基本确立。
 
-> 这里闲聊一下和上下文工程无关的技术提升，第一是 Cursor 针对 Tab 自动补全能力设计了专有模型，给我最深的印象是速度非常快，并且非常精准，接受代码补全的概率相当高，当时有戏称程序员从 Copy 工程师变为了 Tab 工程师。第二是当时 Claude 3.5 Sonnet 模型的出现，比 GPT 模型拥有更强大的编程能力，加上上下文长度增加和直接编辑文件能力。可以说当时 Cursor Tab 模型加上 Claude 3.5 Sonnet 模型两个能力的叠加，从此让 AI 辅助编程从"代码补全工具"进化为了"编程智能体"。
+> 这里补充两点与上下文工程无关的技术进步：其一，Cursor为Tab自动补全设计了专用模型，其响应速度和精准度令人印象深刻，代码建议的接受率显著提升，业界戏称程序员从"Copy工程师"进化为"Tab工程师"。其二，Claude 3.5 Sonnet模型的发布带来了比GPT更强的编程能力，配合更长的上下文窗口和直接文件编辑功能。Cursor的专用Tab模型与Claude 3.5 Sonnet的结合，标志着AI辅助编程从"代码补全工具"向"编程智能体"的跨越。
 
-Cursor相对于GitHub Copilot在方方面面都提升很多，例如可以直接让大模型编辑代码（也就是最初的Agent功能），但是我今天主要想讲的是Cursor 的上下文工程。
+Cursor相比GitHub Copilot在多个维度都有显著提升，比如支持让大模型直接编辑代码（即早期的Agent功能）。但本文重点要探讨的是Cursor的上下文工程创新。
 
-Cursor 在上下文工程的第一个关键突破就是使用 RAG(Retrieval Augmented Generation) 将项目整个 codebase 进行索引，并以语义(向量)搜索的方式给 LLM 提供整个项目的上下文。
+Cursor在上下文工程方面的第一个关键突破，是采用RAG（Retrieval Augmented Generation，检索增强生成）技术对整个代码库进行索引，并通过语义（向量）搜索为LLM提供项目级别的上下文。
 
-如果你注意过的话，就会发现使用 Cursor 打开一个新的项目，在 Cursor Settings 的 Indexing 的设置中，Cursor 会开始索引你的整个项目，并且你可以看到目前索引了多少文件。
+当使用Cursor打开一个新项目时，在Cursor Settings的Indexing设置中，可以看到Cursor正在索引整个项目，并实时显示已索引的文件数量。
 
 ![Cursor Indexing 设置界面](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJKIZ5Lic5YuShk4p0eXm52oREYumtHoAFB6iciabsYC8qTehZqECI1slBA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
 
-我们详细介绍一下这背后的原理。Cursor 的代码库检索是通过 Codebase Indexing 流程实现的，它其实就是在对整个代码仓库做 RAG，即将你的代码转换为可搜索的向量。
+下面深入探讨其技术原理。Cursor的代码库检索通过Codebase Indexing流程实现，本质上是对整个代码仓库进行RAG处理，将代码转换为可搜索的向量表示。
 
 #### Cursor RAG 的工作原理
 
@@ -307,29 +292,31 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 
 并且像 Cursor 这种基于文件哈希值的 Merkle 树的索引更新同步的方案，在大量重构代码时，或者是索引服务器负载时，检索出来的是过时的代码，提供过时的上下文。
 
-这两派的说法其实都是有道理的，Claude Code 在速度和 tokens 消耗上不如 RAG 方案，Cursor 在复杂任务下表现不如 Claude Code，体验下来我觉得也是事实。
+这两种观点各有道理。Claude Code在速度和Token消耗上确实不如RAG方案，而Cursor在处理复杂任务时的表现也确实不如Claude Code——这是实际使用中能明显感受到的差异。
 
-但结合来看我觉得在大语言模型能力没有溢出的时代，可以先不考虑速度和 token 消耗的事情，毕竟最终能否解决某个工程问题才是当前最重要的事情，也是所有 AI 编程工具的第一目标。从这一方面来看，Claude Code 更符合选择。
+但从实用角度来看，在大语言模型能力尚未完全成熟的当下，速度和Token消耗可以暂时让位于问题解决能力——毕竟，能否最终解决工程问题才是AI编程工具的首要目标。从这个角度看，Claude Code的方案更值得采用。
 
-当然，并不是说我完全同意 grep 的方案，我觉得在未来一段时间内，完整的 AI IDE 一定会提供 RAG + Grep 两种能力，在不同的情况下选择性使用，像 Cursor 一定会在 grep 方案上发力，而不是全依靠 RAG 的方案。
+当然，这并不意味着Grep方案就是终极答案。可以预见，在不久的将来，成熟的AI IDE会同时提供RAG和Grep两种能力，根据具体场景选择性使用。Cursor必然会加强Grep方案的支持，而不会完全依赖RAG。
 
-#### 从传统 Editor AI 的转换
+#### 从传统Editor AI的转变
 
-我想，这类编辑器工具最大的问题可能是**缺少全局感**。想象一下你使用这些编辑器 AI 时的经典场景：打开一个文件，选中几行代码，然后让 AI 帮你改改。这种交互模式天然就把开发者的思维框在了**当前文件**甚至**当前这几行**的范围内。这种模式对于刚从传统编程过渡到 AI 辅助编程的开发者来说，确实是个不错的起点。毕竟，你还保留着对代码的掌控感：AI 写得不好？没关系，我随时准备自己上。但问题是，如果你真的想进入深度的 vibe coding 状态，让 AI 发挥最大潜力，这种随时准备接管的心态反而会成为阻碍。人类开发者的干预时机和直接下场写代码的时候越少，最终呈现出的效率和效果反而越好。
+传统编辑器AI工具的核心问题在于**缺乏全局视角**。典型的使用场景是：打开一个文件，选中几行代码，然后让AI进行修改。这种交互模式天然地将开发者的思维局限在**当前文件**甚至**当前几行代码**的范围内。
 
-另外更致命的是同步问题：AI 在上下文中认为文件是 A 状态，实际文件已经被开发者插手改成 B 状态了，然后你让 AI 基于它的认知继续修改，结果可想而知：要么产生混乱，要么 AI 需要再读一遍所有内容。有时候光是解决这种不同步带来的问题，花的时间就比写代码还多。
+对于刚从传统编程转向AI辅助编程的开发者来说，这种模式确实提供了良好的过渡——开发者仍然保留着对代码的掌控感：AI写得不满意？随时可以自己接手。但如果想要进入深度的Vibe Coding状态，充分发挥AI的潜力，这种"随时准备接管"的心态反而会成为障碍。实践表明，减少人工干预的频次和时机，往往能获得更好的效率和效果。
 
-而命令行工具从理念上就不同：没有华丽的界面，没有实时的代码提示，开发者在过程中难以直接插手“微调”。但恰恰是这种简陋，反而让它能够更深入地理解和操作整个项目。它不会被某个文件或某几行代码限制视野，而是从项目的根目录开始，建立起对整个代码库的认知。没有了编辑器这个中间层，开发者想直接修改代码变难了，这在某种程度上“强迫”你更多地依赖和使用 AI，给它更多信息和反馈，这反而能发挥出更大的效能。
+更严重的问题是状态同步：AI基于上下文认为文件处于A状态，但开发者已经手动将其修改为B状态，此时继续让AI基于其认知进行修改，结果往往是要么产生混乱，要么AI需要重新读取所有内容。解决这类同步问题消耗的时间，有时甚至超过直接编写代码。
 
-当然，我不是说编辑器 AI 就一无是处。本质上，当前两者的差异更多来自于使用方式和模型质量，而非架构设计。CC 背靠 Anthropic 这棵大树，模型质量自然没得说。更关键的是，它可以肆无忌惮地使用 token（虽然最近加了 weekly 限制），这种量大管饱的豪横，确实在末端引起了质变，让最终效果好了不止一个档次。如果让编辑器 AI 也能随便烧 token，可能效果未必会差到哪里去。
+命令行工具从设计理念上就有所不同：没有图形界面，没有实时代码提示，开发者在过程中难以直接进行"微调"。但正是这种"简陋"，让它能够更深入地理解和操作整个项目。它不会被某个文件或某几行代码限制视野，而是从项目根目录开始，建立对整个代码库的全局认知。去除编辑器这个中间层后，开发者难以直接修改代码，这在一定程度上"促使"开发者更充分地使用AI，提供更多信息和反馈，反而能发挥更大效能。
 
-但现实就是现实，至少在当下，如果你想体验真正的 vibe coding，CC 可能是唯一选择。
+当然，编辑器AI并非毫无价值。客观来说，两者的差异更多源于使用方式和模型质量，而非架构本身。Claude Code背靠Anthropic，模型质量有保障；更关键的是，它在Token使用上相对宽松（虽然最近增加了weekly限制），这种"充裕"的资源投入确实带来了质的飞跃。如果编辑器AI也能获得类似的Token预算，效果未必会有本质差异。
 
-### 如何更好的 Context Coding
+但现实是，至少在当下，想要体验真正的Vibe Coding，Claude Code可能是最佳选择。
 
-既然我们已经简单了解了不同 AI 产品的原理，那么应该如何更好地进行AI辅助编程呢？
+### 提升Context Coding效果的实践方法
 
-既然 AI 辅助 Coding 的关键在于给 LLM(大语言模型) 传递更合适的上下文，那么有时候借鉴我们自己日常的开发思路其实能够更好地帮助我们理解：如何给 LLM 传递更好的上下文。
+了解了不同AI产品的技术原理后，如何更好地进行AI辅助编程？
+
+既然AI辅助编程的核心在于向LLM传递合适的上下文，那么借鉴日常开发的思维模式，往往能帮助我们更好地理解如何构建有效的上下文。
 
 #### 合理利用上下文窗口
 
@@ -626,35 +613,22 @@ Command 相比 subagent 有个巨大的优势：它拥有完整的当前会话�
 #### MCP
 
 通过 [MCP](https://onevcat.com/2025/02/mcp/) 补充模型不知道的知识。我最常用的几个场景：
-
-**1\. 最新的 Apple 文档**
-
-Apple 的文档页面大量使用 JavaScript 渲染，因此 CC 的 WebFetch 抓不到内容。但通过 [apple-docs-mcp](https://github.com/kimsungwhee/apple-docs-mcp)，我可以获取最新最准确的 API 文档。这对 iOS 开发来说简直是救命稻草。
-
-**2\. 项目管理集成**
-
-通过 [mcp-atlassian](https://github.com/sooperset/mcp-atlassian) 连接 JIRA，可以让 CC 直接读取和更新任务状态，或者自动将分析的情况和实现进行回复，保持沟通畅通。
-
-**3\. LSP 支持**
-
-CC 暂时还原生支持 LSP，但通过 [mcp-language-server](https://github.com/isaacphi/mcp-language-server)，可以获得准确的代码补全和类型信息。特别是对于那些 CC 不太熟悉的语言，这个功能价值巨大。
-
-配置 MCP 可能需要一点时间，但绝对物有所值。它让 CC 从一个通用的工具变成了为你量身定制的助手。
+TODO:简单补充内容
 
 #### Skills
 
 TODO:简单补充内容
 
-#### Code 之外，大有可为
+#### 超越代码编写的应用场景
 
-别把 CC 只当成写代码的工具，它的能力远不止于此。
+Claude Code的能力远不止代码编写，可以应用于开发流程的多个环节：
 
-我现在的日常使用场景：
+- **代码提交和PR管理**：完成代码后，让Claude Code分析变更、生成commit message、推送代码、创建Pull Request。其生成的PR描述往往比手工编写更加清晰规范。
+- **技术文档编写**：让Claude Code分析代码生成API文档、更新README、编写使用示例。生成的文档通常更加规范完整，且避免了语法错误。
+- **任务管理更新**：完成任务后，让Claude Code更新ticket状态、添加评论、创建子任务，减少在Web界面上的重复操作。
+- **数据处理任务**：需要批量处理文件、格式转换、数据清洗时，直接描述需求即可，无需维护大量一次性脚本。
 
-- 代码提交和 PR：写完代码后，直接让 CC 分析改动、生成 commit message、推送代码、创建 PR。它生成的 PR 描述往往比我自己写的还要清晰。
-- 撰写技术文档和 wiki: 让 CC 分析代码生成 API 文档、更新 README、编写使用示例。它的文档往往更加规范和完整，甚至不会出现语法错误。
-- JIRA 更新：完成任务后，让 CC 更新 ticket 状态、添加评论回复用户、甚至创建新的子任务。再也不用在网页上点来点去了。
-- 数据处理：需要批量处理文件、转换格式、清洗数据？以前我会写脚本，现在直接描述需求让 CC 来做。而且每次需求不同时，不用维护一堆一次性脚本了。
+此外，Claude Code还解锁了远程办公的新可能性。通过[VibeTunnel](https://vibetunnel.sh/)或手机SSH客户端，配合Tailscale，可以在任何地点连接工作机器，使用Claude Code处理简单任务——虽然不适合复杂的规划和交互，但执行脚本、修复小bug、更新文档等操作完全可行。
 
 更有意思的是 CC 解锁了随时随地工作的可能性。通过像是 [VibeTunnel](https://vibetunnel.sh/) 或者任意手机 SSH 客户端，配合 Tailscale，我可以在任何地方连接到家里的工作机器，用手机指挥 CC 干活。虽然不适合与 CC 进行复杂的计划和交互，但处理一些简单的需求，比如跑个脚本、修个小 bug，更新下文档什么的，是完全没问题的。出门在外突然想到什么，立刻就能实现，这种感觉很奇妙。
 
