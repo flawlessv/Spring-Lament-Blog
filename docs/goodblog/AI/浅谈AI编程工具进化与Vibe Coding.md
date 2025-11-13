@@ -412,14 +412,21 @@ Command 相比 subagent 有个巨大的优势：它拥有完整的当前会话�
 
 #### Hooks
 
+TODO: 补充链接https://code.claude.com/docs/zh-CN/hooks
+例如我们每次开发完都需要在测试环境部署自己的代码交给侧首同学来进行验证，每次都要执行git push、git checkout test、git pull、git merge feature/feat1-xxx，git push、npm run tag
+这一系列命令鸡繁琐又重复，所以我们就可以写一个bash脚本，并且把这个脚本配置在cc对话结束的hook里，这样每次开发完代码关闭对话的时候cc都会执行这一串命令
+
 #### MCP
 
 通过 [MCP](https://onevcat.com/2025/02/mcp/) 补充模型不知道的知识。我最常用的几个场景：
-TODO:简单补充内容
+TODO:简单补充内容，使用的什么协议以及MCP Client和MCP Server的简介
+MCP（Model Context Protocol，模型上下文协议） 是由 Anthropic 推出的一种开放标准，旨在统一大型语言模型（LLM）与外部数据源和工具之间的通信协议。MCP 的主要目的在于解决当前 AI 模型因数据孤岛限制而无法充分发挥潜力的难题，MCP 使得 AI 应用能够安全地访问和操作本地及远程数据，为 AI 应用提供了连接万物的接口。
 
 #### Skills
 
-TODO:简单补充内容
+https://code.claude.com/docs/zh-CN/skills#agent-skills
+
+TODO:简单补充skill的内容以及和mcp的区别
 
 #### 超越代码编写的应用场景
 
