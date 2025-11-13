@@ -19,7 +19,7 @@ tags:
 
 下面将简单介绍下这三种AI编程工具的发展历程以及它们关于上下文的不同处理方式，然后再结合这些原理简单聊下如何更好的进行 “Vibe Coding”
 
-TODO:这里可以补充一个图,带上时间
+![AI工具发展历程](https://youke1.picui.cn/s1/2025/11/13/6915411b01c29.png)
 
 ## 到底什么是Vibe Coding
 
@@ -81,7 +81,9 @@ Cursor在上下文工程方面的第一个关键突破，是采用RAG（Retrieva
 > 如果你不理解下面的描述，可以简单理解为我们用cursor打开一个项目的时候，它就把项目所有的代码都存到了一个数据库里，然后每次我们问问题的时候会在数据库里查询跟我们的问题最相似的代码，然后一同把查到的代码+问题丢给大模型处理
 
 在我们用cursor打开一个项目时，Cursor 会启动一个 Codebase Indexing 流程，这一步主要有 7 个步骤：
-TODO:更多细节可以看这篇文章：
+
+> 不懂什么是向量数据库的可以看这篇文章：https://guangzhengli.com/blog/zh/vector-database
+> 更多cursor Rag方案的细节可以看这篇文章：todo
 
 1. 你的工作区文件会与 Cursor 的服务器安全同步，确保索引始终最新。
 2. 遍历项目目录，读取并预处理所有代码文件，文件被拆分为有意义的片段，聚焦函数、类和逻辑代码块，而非任意文本段。
@@ -108,9 +110,11 @@ TODO:更多细节可以看这篇文章：
 ### Claude Code
 
 在 Cursor 以各种优化上下文工程保持领先状态时，Claude Code 以一种完全意想不到的方式杀入了比赛。
-// TODO:补充一个AI的图
-由于Cursor能解决我开发中的大部分问题，所以Claude Code问世后很长时间我都没有使用过，直到有一天有一个问题在Cursor上纠缠了很久还是没解决，于是想要尝试一下Claude Code。
-但是实际使用下来非常容易上手，并且编程效果不输给 Cursor，甚至部分情况下实际效果还要超越 Cursor。
+
+> 还不懂claude code怎么用的可以看下这篇文章 [Claude Code 核心：深度介绍 MCP+Agent+斜杆命令+Hook 一文通](https://mp.weixin.qq.com/s/7g5DugzATAIX1by4yAYtTg)
+> ![fuckwork](https://youke1.picui.cn/s1/2025/11/13/691542fc42c67.png)
+> 由于Cursor能解决我开发中的大部分问题，所以Claude Code问世后很长时间我都没有使用过，直到有一天有一个问题在Cursor上纠缠了很久还是没解决，于是想要尝试一下Claude Code。
+> 但是实际使用下来非常容易上手，并且编程效果不输给 Cursor，甚至部分情况下实际效果还要超越 Cursor。
 
 在使用两周后，个人感觉在中小型编程任务中，Claude Code 的效果和 Cursor 差不多（两个工具都是使用 Claude 4 sonnet），Cursor 在实际编程体验上还是要更便捷一点，因为还是会使用 command + K 或者 Tab 补全。
 
@@ -124,9 +128,7 @@ Claude Code 选择了一套和 Cursor 完全不同的检索代码上下文的方
 
 Claude Code 选择的就是这种上下文工程模式，在你提问之后，基于你的提问进行关键词不断检索，直到找到项目中所有需要的上下文代码，然后再开始编程，亦或者是一轮一轮的对话、编程和检索，一直重复这个过程，直到 LLM 认为找全了上下文。
 
-TODO:贴个图
-
-#### Claude Code 的模型调用机制
+#### RAG跟grep到底哪个好
 
 ```mermaid
 graph TB
@@ -150,8 +152,6 @@ graph TB
     style B4 fill:#fff4e1
     style B5 fill:#fff4e1
 ```
-
-#### RAG跟grep到底哪个好
 
 RAG 一派认为 grep 方案的召回率低，检索出大量不相关的内容，不仅费 token，并且效率慢，因为 LLM 需要不断对话和不断检索新的上下文。
 
@@ -273,13 +273,10 @@ AI 编程工具里通用的 Token 计算大致如下：
 AI 发展至今，我个人感觉提示词工程的效果**逐渐弱化**，AI IDE 和插件本身就自带好几千字甚至上万字的系统提示词，有时候自己附加提示词他甚至会无视（例如你很难让 AI 不要写测试、文档，他总会自动写）。
 
 角色扮演和思维链之类的提示词效果已经不明显，进入玄学的提升范畴。在 IDE 里现在比较好用的提示词应该基本只剩单样本和少样本提示词 (One-Shot & Few-Shot)。
-TODO:具体的提示词技巧可以参考这篇文章：
-还有一个流派是给 IDE 设定一堆 [Rule 提示词](https://github.com/steipete/agent-rules)：
-TODO: 例如我之前写的AI单测Prompt、实际上就是一大堆Rule：补充文章
-亦或是开源的一些Rule Prompt
 
-- [commit.mdc](https://github.com/steipete/agent-rules/blob/main/project-rules/commit.mdc)
-- [check.mdc](https://github.com/steipete/agent-rules/blob/main/project-rules/check.mdc)
+> 具体的提示词技巧可以参考这篇文章：[prompt提示词](https://mi.feishu.cn/docx/TnuAdxYnqo8YGnxXv1DcGYLLn5e)
+> 还有一个流派是给 IDE 设定一堆 [Rule 提示词](https://github.com/steipete/agent-rules)：
+> 例如我之前写的AI单测Prompt、实际上就是一大堆Rule：[AI单测Prompt调优版](https://mi.feishu.cn/docx/BrBwdHamCodyQDx0TOmceniBn4e)
 
 总结下来，就是**提示词优先提供信息型的内容，而不是指令型的内容**。
 
@@ -398,35 +395,86 @@ AI 最近推出的 Subagent 功能在一定程度上缓解了这个问题。在�
 
 ### 善用命令和周边工具
 
-#### Command 和
+#### Command
 
-我有个暴论：**凡是重复了两次以上的类似 prompt 都应该用命令来表述！**
+我个人有个观点：**凡是重复了两次以上的类似prompt都应该用命令（Command）来表述！**
 
-每次都输入类似的 prompt 真的非常无趣：就比如说写单测的时候，每次都会输入相同的Prompt：“执行npm run test运行测试并修复失败的用例”、如果你发现自己在重复类似的请求，立刻停下来，花一分钟配置一个 command。
+比如每次写完业务代码之后，开始写单测时每次都要输入："执行npm run test运行测试并修复失败的用例"。如果发现自己在重复类似的请求，立刻停下来，花一分钟配置一个command。
 
-Command 相比 subagent 有个巨大的优势：它拥有完整的当前会话上下文。如果你的任务和当前正在进行的工作高度相关，那么 command 的效率会更高。比如我常用的几个：
+Command相比subagent有个优势：它拥有完整的当前会话上下文。如果你的任务和当前正在进行的工作高度相关，那么command的效率会更高。比如我常用的几个：
 
 - `/test-and-fix`：运行测试，如果有失败自动尝试修复
-- `/review`：对当前新增的代码进行代码审查，删除你添加的无用注释以及try catch以及useMemo等
-- `/commit-smart`：分析改动，生成合适的 commit message 并提交
+- `/review`：对当前新增的代码进行代码审查，删除无用注释、try catch、useMemo等
+- `/commit-smart`：分析改动，生成合适的commit message并提交
 
 #### Hooks
 
-TODO: 补充链接https://code.claude.com/docs/zh-CN/hooks
-例如我们每次开发完都需要在测试环境部署自己的代码交给侧首同学来进行验证，每次都要执行git push、git checkout test、git pull、git merge feature/feat1-xxx，git push、npm run tag
+[Hooks](https://code.claude.com/docs/zh-CN/hooks)功能更强大，可以在特定事件触发时自动执行命令或LLM评估，实现复杂的自动化工作流。
+
+**核心机制**：
+
+- **事件触发**：、用户提交prompt后（UserPromptSubmit）、会话开始结束后（SessionStart/SessionEnd）、支持工具使用前后（PreToolUse/PostToolUse）等多种时机
+- **执行类型**：支持bash命令（`type: "command"`）和基于LLM的智能评估（`type: "prompt"`）
+
+这里举一个我个人常用的实际场景，例如我们每次开发完都需要在测试环境部署自己的代码交给侧首同学来进行验证，每次都要在开发分支执行git push、然后git checkout test切换到测试分支、再在测试分支执行git pull、git merge feature/feat1-xxx（合并开发分支的代码），git push、npm run tag
 这一系列命令鸡繁琐又重复，所以我们就可以写一个bash脚本，并且把这个脚本配置在cc对话结束的hook里，这样每次开发完代码关闭对话的时候cc都会执行这一串命令
+
+**配置示例**：
+
+```json
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/scripts/auto-deploy.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Hooks的价值在于将重复性工作自动化，减少手动操作，提升开发效率。
 
 #### MCP
 
-通过 [MCP](https://onevcat.com/2025/02/mcp/) 补充模型不知道的知识。我最常用的几个场景：
-TODO:简单补充内容，使用的什么协议以及MCP Client和MCP Server的简介
-MCP（Model Context Protocol，模型上下文协议） 是由 Anthropic 推出的一种开放标准，旨在统一大型语言模型（LLM）与外部数据源和工具之间的通信协议。MCP 的主要目的在于解决当前 AI 模型因数据孤岛限制而无法充分发挥潜力的难题，MCP 使得 AI 应用能够安全地访问和操作本地及远程数据，为 AI 应用提供了连接万物的接口。
+[MCP（Model Context Protocol，模型上下文协议）](https://onevcat.com/2025/02/mcp/)是由Anthropic推出的开放标准，旨在统一大语言模型与外部数据源和工具之间的通信协议。MCP采用Client-Server架构，通过标准化接口让AI模型能够安全访问本地及远程数据。
+
+**核心架构**：
+
+- **MCP Client**：集成在Claude Code等AI应用中，负责与MCP Server通信
+- **MCP Server**：提供具体功能的服务端，如文件系统访问、API调用、数据库查询等
+- **传输层**：支持stdio、SSE（基于HTTP）等多种通信方式
+
+例如可以通过专门的MCP Server获取实时API文档，解决训练数据过时的问题。比如Apple文档大量使用JavaScript渲染，WebFetch抓不到内容，但通过apple-docs-mcp可以获取最新准确的API文档。
+
+MCP的价值在于将AI编程工具从通用工具转变为针对性更强的开发助手，通过标准化协议实现了AI模型与各种外部系统的无缝集成。
 
 #### Skills
 
-https://code.claude.com/docs/zh-CN/skills#agent-skills
+[Agent Skills](https://code.claude.com/docs/zh-CN/skills#agent-skills)是Claude Code中的模块化功能扩展机制，通过包含说明、脚本和资源的组织化文件夹来增强Claude的专业能力。
 
-TODO:简单补充skill的内容以及和mcp的区别
+> 简单来说，skills就像是给大模型安装了一个“插件”，表现形式就是新建一个.claude/skills/xxx-skills,其中每个skills又包含插件的使用文档，执行命令，资源等等，每次出发关键词的时候大模型都会去调用这个插件执行任务。
+> **核心特点**：
+
+- **模型调用**：Skills由Claude根据请求和描述自主决定何时使用，无需用户显式调用
+- **模块化设计**：每个Skill包含`SKILL.md`文件和可选的支持文件（脚本、模板等）
+- **分层存储**：支持个人Skills（`~/.claude/skills/`）、项目Skills（`.claude/skills/`）和插件Skills
+
+**与MCP的区别**：
+
+- **Skills**：专注于打包特定领域的专业知识和工作流，通过Markdown文档向Claude提供指导
+- **MCP**：提供外部系统集成的标准协议，主要解决数据访问和工具调用问题
+
+**实际应用**：
+
+- **PDF处理Skills**：集成PDF文本提取、表单填充、文档合并等功能
+
+Skills通过将专业知识打包成可发现的功能，让Claude能够在适当的上下文中自动应用相关专业技能，显著提升了AI在特定领域的表现。
 
 #### 超越代码编写的应用场景
 
