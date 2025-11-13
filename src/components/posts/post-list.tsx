@@ -35,7 +35,7 @@ const BackgroundImage = dynamic(
     ),
   {
     loading: () => <div className="w-full h-full bg-gray-200 animate-pulse" />,
-    ssr: false,
+    ssr: true, // 改为 true 以支持服务端渲染
   }
 );
 
