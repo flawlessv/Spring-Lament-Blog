@@ -25,7 +25,7 @@ tags:
 
 Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉AI总监，OpenAI创始成员之一）在一条推特上提出。
 
-![Vibe Coding](https://storage.guangzhengli.com/images/vibe-coding.jpg)
+![Vibe Coding](https://youke1.picui.cn/s1/2025/11/13/6915470574d58.png)
 
 基于原文的内容，我们可以提炼出Vibe Coding的几个核心特征：
 
@@ -72,7 +72,7 @@ Cursor在上下文工程方面的第一个关键突破，是采用RAG（Retrieva
 
 当使用Cursor打开一个新项目时，在Cursor Settings的Indexing设置中，可以看到Cursor正在索引整个项目，并实时显示已索引的文件数量。
 
-![Cursor Indexing 设置界面](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJKIZ5Lic5YuShk4p0eXm52oREYumtHoAFB6iciabsYC8qTehZqECI1slBA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+![Cursor Indexing 设置界面](https://youke1.picui.cn/s1/2025/11/13/69154705370ba.png)
 
 下面深入探讨其技术原理。Cursor的代码库检索通过Codebase Indexing流程实现，本质上是对整个代码仓库进行RAG处理，将代码转换为可搜索的向量表示。
 
@@ -205,7 +205,7 @@ grep 一派则认为复杂的编程任务需要精准的上下文，而 RAG 的�
 
 像 Claude Code 这类的行业巨头，最近就内置了 `/context` 命令，可以非常直观的看到已经使用的上下文里面，不同类型工具的占比，包括还有多少剩余的上下文。
 
-![Claude Code Context](https://storage.guangzhengli.com/images/claude-code-context.png)
+![Claude Code Context](https://youke1.picui.cn/s1/2025/11/13/691547051d4b6.png)
 
 其实从这也能看出 Claude 团队对 Context Engineering 有深刻的理解，站在开发的角度来思考编程时应该如何管理上下文。
 
@@ -237,7 +237,7 @@ LLM 的提升和上下文工程之间的关系，就像之前内存硬件的提�
 
 现在不少工具都支持上下文占用量展示，比如显示之前的对话占用的上下文窗口比例。超出这个比例之后，工具会对历史内容进行压缩，保证对话的正常进行。
 
-![上下文占用量展示](https://mmbiz.qpic.cn/mmbiz_png/33P2FdAnjuica9ckWT6Y4yaga23OsKOIJxO3tKqGv8SX7ScFKBhaiaV20cBx8xLducZN2AqlWIp0cVSf8ZBGb0sw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1)
+![上下文占用量展示](https://youke1.picui.cn/s1/2025/11/13/6915470434de7.png)
 
 但被压缩后的信息会缺失细节，所以建议大家在处理复杂问题时，采用上下文窗口大的模型/模式，尽量避免压缩。
 
