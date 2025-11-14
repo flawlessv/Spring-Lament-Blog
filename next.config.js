@@ -8,6 +8,7 @@
  *
  * 文档：https://nextjs.org/docs/app/api-reference/next-config-js
  */
+const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
   // 实验性功能配置
   experimental: {
@@ -24,41 +25,15 @@ const nextConfig = {
      */
     typedRoutes: true,
   },
-
-  // 图片优化配置
-  images: {
-    unoptimized: false,
-    // 允许的图片域名（用于外部图片优化）
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-      {
-        protocol: "http",
-        hostname: "**",
-      },
-    ],
-    // 图片格式优化
-    formats: ["image/webp", "image/avif"],
-    // 设备尺寸断点
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    // 图片尺寸断点
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // 图片质量
-    minimumCacheTTL: 60,
-  },
-
-  // 编译输出配置
-  // output: 'standalone', // 使用 standalone 模式用于 Docker 部署
-
+  basePath: isProd ? "http://powder.icu/" : "",
+  output: "export",
   /**
    * 其他常用配置项（当前未启用）：
    *
-   * // 自定义域名和路径（仅用于子路径部署）
-   * basePath: '/blog',
+   * // 自定义域名和路径
+   * basePath: '/my-app',
    *
-   * // 静态文件导出（不支持 API 路由和 SSR）
+   * // 静态文件导出
    * output: 'export',
    *
    * // 图片优化配置
