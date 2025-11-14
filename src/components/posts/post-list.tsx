@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import dynamic from "next/dynamic";
+import { BackgroundImage } from "@/components/optimized/image-with-fallback";
 
 // 类型定义
 interface PostListProps {
@@ -26,18 +26,6 @@ interface Post {
     name: string;
   }>;
 }
-
-// 动态导入优化的图片组件，减少初始包大小
-const BackgroundImage = dynamic(
-  () =>
-    import("@/components/optimized/image-with-fallback").then(
-      (mod) => mod.BackgroundImage
-    ),
-  {
-    loading: () => <div className="w-full h-full bg-gray-200 animate-pulse" />,
-    ssr: true, // 改为 true 以支持服务端渲染
-  }
-);
 
 export default function PostList({
   className = "",

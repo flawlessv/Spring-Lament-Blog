@@ -4,18 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { X, Send, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import dynamic from "next/dynamic";
+import MDEditor from "@uiw/react-md-editor";
 import PublishDialog from "./publish-dialog";
-
-// 动态导入MDEditor以避免SSR问题
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-full flex items-center justify-center">
-      <div className="text-muted-foreground">正在加载编辑器...</div>
-    </div>
-  ),
-});
 
 interface FullscreenEditorProps {
   title: string;
