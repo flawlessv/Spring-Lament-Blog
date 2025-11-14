@@ -25,7 +25,7 @@ const nextConfig = {
      */
     typedRoutes: true,
   },
-  basePath: isProd ? "http://powder.icu/" : "",
+  basePath: "",
   output: "export",
   /**
    * 其他常用配置项（当前未启用）：
