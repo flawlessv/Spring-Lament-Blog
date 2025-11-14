@@ -70,9 +70,25 @@ npm run build
 echo "✅ 项目构建完成"
 echo ""
 
-# 重启应用
-echo "🔄 重启应用..."
-pm2 restart spring-lament-blog
+# 完全重启应用（确保使用新构建）
+echo "🔄 完全重启应用..."
+pm2 stop spring-lament-blog || true
+sleep 2
+pm2 delete spring-lament-blog || true
+pm2 start ecosystem.config.js --env production --update-env
+
+# 等待应用启动
+echo "⏳ 等待应用启动..."
+sleep 10
+
+# 验证应用状态
+if pm2 list | grep -q "spring-lament-blog.*online"; then
+    echo "✅ 应用启动成功"
+else
+    echo "❌ 应用启动失败，请查看日志："
+    pm2 logs spring-lament-blog --lines 50
+    exit 1
+fi
 
 # 保存 PM2 配置
 pm2 save
