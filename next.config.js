@@ -26,6 +26,29 @@ const nextConfig = {
     typedRoutes: true,
   },
   basePath: "",
+  // 图片优化配置
+  images: {
+    // 允许的外部图片域名
+    remotePatterns: [
+      // 允许所有 HTTPS 域名（更灵活的配置，适用于动态内容）
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+    // 图片格式优化
+    formats: ["image/webp", "image/avif"],
+    // 设备尺寸
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // 图片尺寸
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // 最小缓存时间（秒）
+    minimumCacheTTL: 60,
+  },
   /**
    * 其他常用配置项（当前未启用）：
    *
@@ -34,12 +57,6 @@ const nextConfig = {
    *
    * // 静态文件导出
    * output: 'export',
-   *
-   * // 图片优化配置
-   * images: {
-   *   domains: ['example.com'],
-   *   unoptimized: false
-   * },
    *
    * // 重定向配置
    * redirects: async () => [...],
