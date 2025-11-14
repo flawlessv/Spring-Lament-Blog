@@ -9,6 +9,7 @@
  * 文档：https://nextjs.org/docs/app/api-reference/next-config-js
  */
 const isProd = process.env.NODE_ENV === "production";
+
 const nextConfig = {
   // 实验性功能配置
   experimental: {
@@ -22,8 +23,10 @@ const nextConfig = {
      * - 防止路由拼写错误
      * - 提供更好的 IDE 支持
      * - 重构时自动更新路由引用
+     *
+     * 注意：在生产环境构建时可能消耗较多资源，如果构建卡住可以临时禁用
      */
-    typedRoutes: true,
+    typedRoutes: !isProd, // 生产环境禁用以加快构建速度
   },
   basePath: "",
   // 图片优化配置
@@ -42,10 +45,10 @@ const nextConfig = {
     ],
     // 图片格式优化
     formats: ["image/webp", "image/avif"],
-    // 设备尺寸
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    // 图片尺寸
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // 设备尺寸（减少尺寸数量以加快构建）
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    // 图片尺寸（减少尺寸数量以加快构建）
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
     // 最小缓存时间（秒）
     minimumCacheTTL: 60,
   },
