@@ -105,9 +105,9 @@ else
 fi
 echo ""
 
-# 安装依赖
+# 安装依赖（包含 devDependencies，Next.js 构建需要）
 echo "📦 安装项目依赖..."
-npm ci --production
+npm ci
 echo "✅ 依赖安装完成"
 echo ""
 
