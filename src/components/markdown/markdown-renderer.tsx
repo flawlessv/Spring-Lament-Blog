@@ -54,57 +54,62 @@ export default function MarkdownRenderer({
   const [desktopTocCollapsed, setDesktopTocCollapsed] = useState(false); // 桌面端目录是否折叠
   const [readingProgress, setReadingProgress] = useState(0); // 阅读进度
 
-  // 简单的 ID 生成器 - 使用时间戳和随机数确保唯一性
-  const generateUniqueId = (text: string) => {
+  // 生成稳定的唯一 ID - 基于内容哈希，确保服务端和客户端一致
+  const generateStableUniqueId = (text: string, index: number) => {
     const baseId = text
       .toLowerCase()
       .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
       .replace(/\s+/g, "-");
-    const uniqueSuffix =
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
-    return `${baseId}-${uniqueSuffix}`;
+
+    // 使用内容哈希 + 索引确保唯一性和稳定性
+    const hash = text.split("").reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    return `${baseId}-${Math.abs(hash).toString(36)}-${index}`;
   };
 
-  // 使用 useMemo 优化性能，只在 content 变化时重新计算目录
-  const toc = useMemo(() => {
+  // 预生成所有标题及其稳定 ID，确保目录和标题渲染使用一致的 ID
+  const { toc, headingIdMap } = useMemo(() => {
     // 首先移除代码块内容，避免将代码中的#号误解析为标题
-    // 匹配 ``` 包裹的代码块（包括有语言标识的和无语言标识的）
     const codeBlockRegex = /```[\s\S]*?```/g;
     let contentWithoutCodeBlocks = safeContent.replace(codeBlockRegex, "");
 
-    // 同时移除行内代码，避免行内代码中的#号被解析为标题
-    // 匹配 ` 包裹的行内代码
     const inlineCodeRegex = /`[^`]*`/g;
     contentWithoutCodeBlocks = contentWithoutCodeBlocks.replace(
       inlineCodeRegex,
       ""
     );
 
-    // 正则表达式：匹配 Markdown 标题（# ## ### 等）
-    // ^(#{1,6}) 匹配行首的1-6个#号
-    // \s+ 匹配空格
-    // (.+)$ 匹配标题文本直到行尾
-    // gm 标志：g=全局匹配，m=多行模式
     const headingRegex = /^(#{1,6})\s+(.+)$/gm;
     const headings: TocItem[] = [];
+    const idMap = new Map<string, string>();
+    const textCounters = new Map<string, number>(); // 跟踪每个文本的出现次数
     let match;
+    let globalCounter = 0;
 
     // 循环匹配所有标题
     while ((match = headingRegex.exec(contentWithoutCodeBlocks)) !== null) {
-      const level = match[1].length; // #号的数量就是标题级别
-      const text = match[2].trim(); // 标题文本，去除首尾空格
+      const level = match[1].length;
+      const text = match[2].trim();
 
-      // 生成 URL 友好的 ID（与目录生成逻辑保持一致）
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 保留字母、数字、中文、空格、连字符
-        .replace(/\s+/g, "-"); // 空格转连字符
+      // 生成稳定的唯一 ID
+      const id = generateStableUniqueId(text, globalCounter);
+
+      // 为重复的文本创建唯一的键
+      const currentCount = textCounters.get(text) || 0;
+      const uniqueKey = currentCount === 0 ? text : `${text}___${currentCount}`;
+      textCounters.set(text, currentCount + 1);
 
       headings.push({ id, text, level });
+      idMap.set(uniqueKey, id); // 使用唯一键建立映射
+
+      globalCounter++;
     }
 
-    return headings;
-  }, [safeContent]); // 依赖数组：只有 content 变化时才重新计算
+    return { toc: headings, headingIdMap: idMap };
+  }, [safeContent]);
 
   // 使用 useEffect 监听滚动事件，实现目录高亮功能和阅读进度
   useEffect(() => {
@@ -143,6 +148,14 @@ export default function MarkdownRenderer({
     // 清理函数：组件卸载时移除事件监听器，防止内存泄漏
     return () => window.removeEventListener("scroll", handleScroll);
   }, []); // 空依赖数组：只在组件挂载和卸载时执行
+
+  // 重置标题计数器
+  useEffect(() => {
+    // 清理全局计数器
+    if (typeof window !== "undefined") {
+      (window as any).__headingCounters = {};
+    }
+  }, [safeContent]); // 当内容变化时重置
 
   // 跳转到指定章节的函数
   const scrollToHeading = (id: string) => {
@@ -246,8 +259,22 @@ export default function MarkdownRenderer({
                 // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
                 h1: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  // 简单直接：每次都生成新的唯一 ID
-                  const id = generateUniqueId(text);
+                  // 创建或获取当前标题的计数器
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  // 更新计数器
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  // 获取预生成的 ID
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h1 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -257,7 +284,19 @@ export default function MarkdownRenderer({
                 // h2-h6 标题渲染
                 h2: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = generateUniqueId(text);
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h2 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -266,7 +305,19 @@ export default function MarkdownRenderer({
                 },
                 h3: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = generateUniqueId(text);
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h3 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -275,7 +326,19 @@ export default function MarkdownRenderer({
                 },
                 h4: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = generateUniqueId(text);
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h4 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -284,7 +347,19 @@ export default function MarkdownRenderer({
                 },
                 h5: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = generateUniqueId(text);
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h5 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -293,7 +368,19 @@ export default function MarkdownRenderer({
                 },
                 h6: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = generateUniqueId(text);
+                  const currentCount =
+                    (window as any).__headingCounters?.[text] || 0;
+                  const uniqueKey =
+                    currentCount === 0 ? text : `${text}___${currentCount}`;
+
+                  if (!(window as any).__headingCounters) {
+                    (window as any).__headingCounters = {};
+                  }
+                  (window as any).__headingCounters[text] = currentCount + 1;
+
+                  const id =
+                    headingIdMap.get(uniqueKey) ||
+                    generateStableUniqueId(text, currentCount);
                   return (
                     <h6 id={id} className="scroll-mt-20" {...props}>
                       {children}
