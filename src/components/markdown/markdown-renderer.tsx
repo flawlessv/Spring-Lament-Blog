@@ -47,11 +47,23 @@ export default function MarkdownRenderer({
 }: MarkdownRendererProps) {
   // 确保 content 不为空，提供默认值
   const safeContent = content || "";
+
   // 状态管理
   const [activeHeading, setActiveHeading] = useState<string>(""); // 当前激活的标题 ID
   const [tocOpen, setTocOpen] = useState(false); // 移动端目录是否展开
   const [desktopTocCollapsed, setDesktopTocCollapsed] = useState(false); // 桌面端目录是否折叠
   const [readingProgress, setReadingProgress] = useState(0); // 阅读进度
+
+  // 简单的 ID 生成器 - 使用时间戳和随机数确保唯一性
+  const generateUniqueId = (text: string) => {
+    const baseId = text
+      .toLowerCase()
+      .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+      .replace(/\s+/g, "-");
+    const uniqueSuffix =
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
+    return `${baseId}-${uniqueSuffix}`;
+  };
 
   // 使用 useMemo 优化性能，只在 content 变化时重新计算目录
   const toc = useMemo(() => {
@@ -82,14 +94,11 @@ export default function MarkdownRenderer({
       const level = match[1].length; // #号的数量就是标题级别
       const text = match[2].trim(); // 标题文本，去除首尾空格
 
-      // 生成 URL 友好的 ID：
-      // 1. 转为小写
-      // 2. 保留字母、数字、中文、空格和连字符
-      // 3. 将空格替换为连字符
+      // 生成 URL 友好的 ID（与目录生成逻辑保持一致）
       const id = text
         .toLowerCase()
-        .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 移除特殊字符，保留中文
-        .replace(/\s+/g, "-"); // 空格替换为连字符
+        .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 保留字母、数字、中文、空格、连字符
+        .replace(/\s+/g, "-"); // 空格转连字符
 
       headings.push({ id, text, level });
     }
@@ -236,30 +245,19 @@ export default function MarkdownRenderer({
               components={{
                 // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
                 h1: ({ children, ...props }) => {
-                  // 提取标题文本内容
                   const text = children?.toString() || "";
-                  // 生成 URL 友好的 ID（与目录生成逻辑保持一致）
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "") // 保留字母、数字、中文、空格、连字符
-                    .replace(/\s+/g, "-"); // 空格转连字符
+                  // 简单直接：每次都生成新的唯一 ID
+                  const id = generateUniqueId(text);
                   return (
-                    <h1
-                      id={id} // 设置 ID 用于锚点跳转
-                      className="scroll-mt-20" // 滚动时顶部留出20的空间，避免被固定导航遮挡
-                      {...props}
-                    >
+                    <h1 id={id} className="scroll-mt-20" {...props}>
                       {children}
                     </h1>
                   );
                 },
-                // h2-h6 标题渲染（逻辑与 h1 相同，为了避免重复，这里简化注释）
+                // h2-h6 标题渲染
                 h2: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                    .replace(/\s+/g, "-");
+                  const id = generateUniqueId(text);
                   return (
                     <h2 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -268,10 +266,7 @@ export default function MarkdownRenderer({
                 },
                 h3: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                    .replace(/\s+/g, "-");
+                  const id = generateUniqueId(text);
                   return (
                     <h3 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -280,10 +275,7 @@ export default function MarkdownRenderer({
                 },
                 h4: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                    .replace(/\s+/g, "-");
+                  const id = generateUniqueId(text);
                   return (
                     <h4 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -292,10 +284,7 @@ export default function MarkdownRenderer({
                 },
                 h5: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                    .replace(/\s+/g, "-");
+                  const id = generateUniqueId(text);
                   return (
                     <h5 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -304,10 +293,7 @@ export default function MarkdownRenderer({
                 },
                 h6: ({ children, ...props }) => {
                   const text = children?.toString() || "";
-                  const id = text
-                    .toLowerCase()
-                    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-                    .replace(/\s+/g, "-");
+                  const id = generateUniqueId(text);
                   return (
                     <h6 id={id} className="scroll-mt-20" {...props}>
                       {children}
@@ -345,12 +331,20 @@ export default function MarkdownRenderer({
 
                   // Mermaid 图表
                   if (language === "mermaid") {
-                    return (
-                      <Mermaid
-                        chart={code}
-                        id={Math.random().toString(36).substr(2, 9)}
-                      />
-                    );
+                    // 使用内容的哈希值生成稳定的 ID
+                    const hashCode = (str: string) => {
+                      let hash = 0;
+                      for (let i = 0; i < str.length; i++) {
+                        const char = str.charCodeAt(i);
+                        hash = (hash << 5) - hash + char;
+                        hash = hash & hash; // Convert to 32bit integer
+                      }
+                      return Math.abs(hash).toString(36);
+                    };
+
+                    const stableId = `mermaid-${hashCode(code)}`;
+
+                    return <Mermaid chart={code} id={stableId} />;
                   }
 
                   // 代码块（包括没有指定语言的代码块）

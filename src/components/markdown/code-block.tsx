@@ -210,7 +210,7 @@ export default function CodeBlock({ children, className }: CodeBlockProps) {
           {lineCount > 3 && (
             <div className="absolute left-0 top-0 bottom-0 flex flex-col text-xs text-gray-500 bg-gray-800/30 border-r border-gray-700 px-3 py-4 select-none min-w-[3rem] text-right">
               {Array.from({ length: lineCount }, (_, i) => (
-                <span key={i + 1} className="leading-6 font-mono">
+                <span key={`line-number-${i}`} className="leading-6 font-mono">
                   {i + 1}
                 </span>
               ))}
