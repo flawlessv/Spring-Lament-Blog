@@ -249,253 +249,267 @@ export default function MarkdownRenderer({
           [&_iframe]:max-w-full [&_iframe]:w-full
         "
           >
-            <ReactMarkdown
-              // remark 插件：处理 Markdown 语法解析阶段
-              remarkPlugins={[remarkGfm]} // 支持 GitHub Flavored Markdown 扩展语法
-              // rehype 插件：处理 HTML 输出阶段
-              rehypePlugins={[rehypeRaw]} // 原始HTML支持
-              // 自定义组件：覆盖默认的 HTML 元素渲染
-              components={{
-                // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
-                h1: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  // 创建或获取当前标题的计数器
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+            {useMemo(
+              () => (
+                <ReactMarkdown
+                  // remark 插件：处理 Markdown 语法解析阶段
+                  remarkPlugins={[remarkGfm]} // 支持 GitHub Flavored Markdown 扩展语法
+                  // rehype 插件：处理 HTML 输出阶段
+                  rehypePlugins={[rehypeRaw]} // 原始HTML支持
+                  // 自定义组件：覆盖默认的 HTML 元素渲染
+                  components={{
+                    // 自定义 h1 标题渲染 - 为每个标题添加唯一 ID 以支持锚点跳转
+                    h1: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      // 创建或获取当前标题的计数器
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  // 更新计数器
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      // 更新计数器
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  // 获取预生成的 ID
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h1 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h1>
-                  );
-                },
-                // h2-h6 标题渲染
-                h2: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+                      // 获取预生成的 ID
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h1 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h1>
+                      );
+                    },
+                    // h2-h6 标题渲染
+                    h2: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h2 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h2>
-                  );
-                },
-                h3: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h2 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h2>
+                      );
+                    },
+                    h3: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h3 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h3>
-                  );
-                },
-                h4: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h3 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h3>
+                      );
+                    },
+                    h4: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h4 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h4>
-                  );
-                },
-                h5: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h4 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h4>
+                      );
+                    },
+                    h5: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h5 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h5>
-                  );
-                },
-                h6: ({ children, ...props }) => {
-                  const text = children?.toString() || "";
-                  const currentCount =
-                    (window as any).__headingCounters?.[text] || 0;
-                  const uniqueKey =
-                    currentCount === 0 ? text : `${text}___${currentCount}`;
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h5 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h5>
+                      );
+                    },
+                    h6: ({ children, ...props }) => {
+                      const text = children?.toString() || "";
+                      const currentCount =
+                        (window as any).__headingCounters?.[text] || 0;
+                      const uniqueKey =
+                        currentCount === 0 ? text : `${text}___${currentCount}`;
 
-                  if (!(window as any).__headingCounters) {
-                    (window as any).__headingCounters = {};
-                  }
-                  (window as any).__headingCounters[text] = currentCount + 1;
+                      if (!(window as any).__headingCounters) {
+                        (window as any).__headingCounters = {};
+                      }
+                      (window as any).__headingCounters[text] =
+                        currentCount + 1;
 
-                  const id =
-                    headingIdMap.get(uniqueKey) ||
-                    generateStableUniqueId(text, currentCount);
-                  return (
-                    <h6 id={id} className="scroll-mt-20" {...props}>
-                      {children}
-                    </h6>
-                  );
-                },
-                // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
-                code: ({ className, children, node, ...props }: any) => {
-                  const match = /language-(\w+)/.exec(className || "");
-                  const language = match ? match[1] : "text"; // 默认语言为 text
-                  const code = String(children).replace(/\n$/, "");
+                      const id =
+                        headingIdMap.get(uniqueKey) ||
+                        generateStableUniqueId(text, currentCount);
+                      return (
+                        <h6 id={id} className="scroll-mt-20" {...props}>
+                          {children}
+                        </h6>
+                      );
+                    },
+                    // 自定义代码渲染 - 支持代码块、行内代码和 Mermaid 图表
+                    code: ({ className, children, node, ...props }: any) => {
+                      const match = /language-(\w+)/.exec(className || "");
+                      const language = match ? match[1] : "text"; // 默认语言为 text
+                      const code = String(children).replace(/\n$/, "");
 
-                  // 判断是否为行内代码：
-                  // 1. 检查是否有 className（代码块通常有 language-xxx 类名）
-                  // 2. 检查代码是否包含换行符（行内代码通常不包含换行）
-                  // 3. 检查父节点
-                  const hasLanguageClass = /^language-/.test(className || "");
-                  const hasNewlines = code.includes("\n");
-                  const isCodeBlock =
-                    hasLanguageClass ||
-                    hasNewlines ||
-                    node?.parent?.tagName === "pre";
+                      // 判断是否为行内代码：
+                      // 1. 检查是否有 className（代码块通常有 language-xxx 类名）
+                      // 2. 检查代码是否包含换行符（行内代码通常不包含换行）
+                      // 3. 检查父节点
+                      const hasLanguageClass = /^language-/.test(
+                        className || ""
+                      );
+                      const hasNewlines = code.includes("\n");
+                      const isCodeBlock =
+                        hasLanguageClass ||
+                        hasNewlines ||
+                        node?.parent?.tagName === "pre";
 
-                  // 行内代码：如 `console.log()`
-                  if (!isCodeBlock) {
-                    return (
-                      <code
-                        className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono"
+                      // 行内代码：如 `console.log()`
+                      if (!isCodeBlock) {
+                        return (
+                          <code
+                            className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm font-mono"
+                            {...props}
+                          >
+                            {children}
+                          </code>
+                        );
+                      }
+
+                      // Mermaid 图表
+                      if (language === "mermaid") {
+                        // 使用内容的哈希值生成稳定的 ID
+                        const hashCode = (str: string) => {
+                          let hash = 0;
+                          for (let i = 0; i < str.length; i++) {
+                            const char = str.charCodeAt(i);
+                            hash = (hash << 5) - hash + char;
+                            hash = hash & hash; // Convert to 32bit integer
+                          }
+                          return Math.abs(hash).toString(36);
+                        };
+
+                        const stableId = `mermaid-${hashCode(code)}`;
+
+                        return <Mermaid chart={code} id={stableId} />;
+                      }
+
+                      // 代码块（包括没有指定语言的代码块）
+                      return (
+                        <CodeBlock className={className || "language-text"}>
+                          {code}
+                        </CodeBlock>
+                      );
+                    },
+                    // 自定义链接样式 - 外部链接在新窗口打开
+                    a: ({ children, ...props }) => (
+                      <a
+                        className="text-blue-600 hover:text-blue-700 underline"
+                        target="_blank" // 在新窗口打开链接
+                        rel="noopener noreferrer" // 安全属性：防止新窗口访问原窗口对象
                         {...props}
                       >
                         {children}
-                      </code>
-                    );
-                  }
-
-                  // Mermaid 图表
-                  if (language === "mermaid") {
-                    // 使用内容的哈希值生成稳定的 ID
-                    const hashCode = (str: string) => {
-                      let hash = 0;
-                      for (let i = 0; i < str.length; i++) {
-                        const char = str.charCodeAt(i);
-                        hash = (hash << 5) - hash + char;
-                        hash = hash & hash; // Convert to 32bit integer
-                      }
-                      return Math.abs(hash).toString(36);
-                    };
-
-                    const stableId = `mermaid-${hashCode(code)}`;
-
-                    return <Mermaid chart={code} id={stableId} />;
-                  }
-
-                  // 代码块（包括没有指定语言的代码块）
-                  return (
-                    <CodeBlock className={className || "language-text"}>
-                      {code}
-                    </CodeBlock>
-                  );
-                },
-                // 自定义链接样式 - 外部链接在新窗口打开
-                a: ({ children, ...props }) => (
-                  <a
-                    className="text-blue-600 hover:text-blue-700 underline"
-                    target="_blank" // 在新窗口打开链接
-                    rel="noopener noreferrer" // 安全属性：防止新窗口访问原窗口对象
-                    {...props}
-                  >
-                    {children}
-                  </a>
-                ),
-                // 自定义表格样式 - 响应式表格，支持水平滚动
-                table: ({ children, ...props }) => (
-                  <div className="overflow-x-auto">
-                    {" "}
-                    {/* 水平滚动容器，防止表格在小屏幕上溢出 */}
-                    <table
-                      className="min-w-full border border-gray-200"
-                      {...props}
-                    >
-                      {children}
-                    </table>
-                  </div>
-                ),
-                // 表格头部单元格样式
-                th: ({ children, ...props }) => (
-                  <th
-                    className="px-4 py-2 bg-gray-50 border-b border-gray-200 text-left font-medium text-gray-900"
-                    {...props}
-                  >
-                    {children}
-                  </th>
-                ),
-                // 表格数据单元格样式
-                td: ({ children, ...props }) => (
-                  <td
-                    className="px-4 py-2 border-b border-gray-200 text-gray-700"
-                    {...props}
-                  >
-                    {children}
-                  </td>
-                ),
-                // 自定义引用块样式 - 左侧蓝色边框，浅蓝背景
-                blockquote: ({ children, ...props }) => (
-                  <blockquote
-                    className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 text-gray-700 italic"
-                    {...props}
-                  >
-                    {children}
-                  </blockquote>
-                ),
-              }}
-            >
-              {content || ""}
-            </ReactMarkdown>
+                      </a>
+                    ),
+                    // 自定义表格样式 - 响应式表格，支持水平滚动
+                    table: ({ children, ...props }) => (
+                      <div className="overflow-x-auto">
+                        {" "}
+                        {/* 水平滚动容器，防止表格在小屏幕上溢出 */}
+                        <table
+                          className="min-w-full border border-gray-200"
+                          {...props}
+                        >
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    // 表格头部单元格样式
+                    th: ({ children, ...props }) => (
+                      <th
+                        className="px-4 py-2 bg-gray-50 border-b border-gray-200 text-left font-medium text-gray-900"
+                        {...props}
+                      >
+                        {children}
+                      </th>
+                    ),
+                    // 表格数据单元格样式
+                    td: ({ children, ...props }) => (
+                      <td
+                        className="px-4 py-2 border-b border-gray-200 text-gray-700"
+                        {...props}
+                      >
+                        {children}
+                      </td>
+                    ),
+                    // 自定义引用块样式 - 左侧蓝色边框，浅蓝背景
+                    blockquote: ({ children, ...props }) => (
+                      <blockquote
+                        className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 text-gray-700 italic"
+                        {...props}
+                      >
+                        {children}
+                      </blockquote>
+                    ),
+                  }}
+                >
+                  {content || ""}
+                </ReactMarkdown>
+              ),
+              [content, headingIdMap]
+            )}{" "}
+            {/* 只依赖content和headingIdMap */}
           </div>
         </div>
 

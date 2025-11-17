@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import mermaid from "mermaid";
 
 interface MermaidProps {
@@ -8,21 +8,32 @@ interface MermaidProps {
   id: string;
 }
 
+// 全局缓存已渲染的图表
+const mermaidCache = new Map<string, { svg: string; theme: string }>();
+
 export default function Mermaid({ chart, id }: MermaidProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isDark, setIsDark] = useState(false);
+  const renderAttempted = useRef(false);
 
-  // 检测主题
+  // 检测主题 - 使用useMemo优化
+  const currentTheme = useMemo(() => {
+    if (typeof window === "undefined") return "default";
+    return document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "default";
+  }, []);
+
+  // 只在组件挂载时设置主题检测
   useEffect(() => {
-    const checkTheme = () => {
-      const html = document.documentElement;
-      setIsDark(html.classList.contains("dark"));
-    };
+    setIsDark(currentTheme === "dark");
 
-    // 初始检查
-    checkTheme();
+    const checkTheme = () => {
+      const newIsDark = document.documentElement.classList.contains("dark");
+      setIsDark(newIsDark);
+    };
 
     // 观察主题变化
     const observer = new MutationObserver(checkTheme);
@@ -32,8 +43,9 @@ export default function Mermaid({ chart, id }: MermaidProps) {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, []); // 只在挂载时执行一次
 
+  // 初始化Mermaid - 只在主题变化时重新初始化
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: true,
@@ -52,25 +64,59 @@ export default function Mermaid({ chart, id }: MermaidProps) {
     });
   }, [isDark]);
 
+  // 渲染图表 - 添加缓存机制
   useEffect(() => {
     const renderChart = async () => {
-      if (ref.current && chart) {
-        try {
-          setError("");
-          const { svg: renderedSvg } = await mermaid.render(
-            `mermaid-${id}`,
-            chart
-          );
-          setSvg(renderedSvg);
-        } catch (err) {
-          console.error("Mermaid render error:", err);
-          setError("Failed to render diagram");
-        }
+      if (!chart || renderAttempted.current) return;
+
+      const theme = isDark ? "dark" : "default";
+      const cacheKey = `${chart}-${theme}`;
+
+      // 检查缓存
+      const cached = mermaidCache.get(cacheKey);
+      if (cached) {
+        setSvg(cached.svg);
+        setError("");
+        return;
+      }
+
+      renderAttempted.current = true;
+
+      try {
+        setError("");
+        const { svg: renderedSvg } = await mermaid.render(
+          `mermaid-${id}-${Date.now()}`, // 添加时间戳确保唯一性
+          chart
+        );
+
+        // 存入缓存
+        mermaidCache.set(cacheKey, { svg: renderedSvg, theme });
+        setSvg(renderedSvg);
+      } catch (err) {
+        console.error("Mermaid render error:", err);
+        setError("Failed to render diagram");
+      } finally {
+        renderAttempted.current = false;
       }
     };
 
     renderChart();
   }, [chart, id, isDark]);
+
+  // 清理缓存（可选）- 防止内存泄漏
+  useEffect(() => {
+    return () => {
+      // 如果缓存太大，清理一些旧的条目
+      if (mermaidCache.size > 50) {
+        const entries = Array.from(mermaidCache.entries());
+        // 保留最新的20个
+        mermaidCache.clear();
+        entries.slice(-20).forEach(([key, value]) => {
+          mermaidCache.set(key, value);
+        });
+      }
+    };
+  }, []);
 
   if (error) {
     return (
@@ -81,6 +127,17 @@ export default function Mermaid({ chart, id }: MermaidProps) {
         <pre className="mt-2 text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
           {chart}
         </pre>
+      </div>
+    );
+  }
+
+  if (!svg) {
+    return (
+      <div className="flex justify-center items-center my-4 h-20">
+        <div className="flex items-center space-x-2 text-muted-foreground">
+          <div className="w-4 h-4 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
+          <span className="text-sm">渲染图表中...</span>
+        </div>
       </div>
     );
   }
