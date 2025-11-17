@@ -2,6 +2,30 @@ server {
     listen 80;
     server_name powder.icu www.powder.icu;
 
+    # 禁用所有缓存
+    proxy_cache off;
+    proxy_buffering off;
+    
+    # Next.js 静态资源 - 必须放在 location / 之前
+    location /_next/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # 禁用所有缓存
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
+        
+        # 禁用代理缓存
+        proxy_cache_bypass 1;
+        proxy_no_cache 1;
+    }
+
+    # Next.js 应用代理 - 放在最后作为兜底
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -11,16 +35,15 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-        proxy_read_timeout 86400;
+        
+        # 禁用所有缓存
+        proxy_cache_bypass 1;
+        proxy_no_cache 1;
         add_header Cache-Control "no-cache, no-store, must-revalidate" always;
         add_header Pragma "no-cache" always;
         add_header Expires "0" always;
-    }
-
-    location /_next/static/ {
-        proxy_pass http://127.0.0.1:3000;
-        add_header Cache-Control "public, max-age=31536000, immutable";
+        
+        proxy_read_timeout 86400;
     }
 
     access_log /www/wwwlogs/powder.icu.log;
