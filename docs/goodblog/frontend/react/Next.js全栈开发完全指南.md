@@ -25,7 +25,7 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/15691093812
 
 ---
 
-## 3. 第1章：后端的本质
+## 3.后端的本质
 
 ### 3.1 什么是后端？
 
@@ -54,7 +54,7 @@ coverImage: https://haowallpaper.com/link/common/file/previewFileImg/15691093812
 
 ---
 
-## 4. 第2章：Node.js入门
+## 4.Node.js入门
 
 ### 4.1 JavaScript Runtime运行时
 
@@ -150,7 +150,7 @@ const data = await response.json();
 
 ---
 
-## 5. 第3章：Next.js全栈框架
+## 5.Next.js全栈框架
 
 ### 5.1 传统开发方式的痛点
 
@@ -328,7 +328,7 @@ export async function GET(): Promise<Response> {
 
 ---
 
-## 6. 第4章：项目结构全解析
+## 6.项目结构全解析
 
 ### 6.1 项目目录结构
 
@@ -470,7 +470,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
 ---
 
-## 7. 第5章：数据库与Prisma ORM
+## 7.数据库与Prisma ORM
 
 ### 7.1 什么是ORM？
 
@@ -704,7 +704,7 @@ if (process.env.NODE_ENV !== "production") {
 
 ---
 
-## 8. 第6章：用户认证系统
+## 8.用户认证系统
 
 ### 8.1 为什么需要认证系统？
 
@@ -882,7 +882,7 @@ export async function POST(request: Request) {
 
 ---
 
-## 9. 第7章：部署与运维
+## 9.部署与运维
 
 ### 9.1 环境概念
 
@@ -1010,7 +1010,7 @@ server {
 
 ---
 
-## 10. 第8章：性能优化
+## 10.性能优化
 
 ### 10.1 Next.js性能优化
 
