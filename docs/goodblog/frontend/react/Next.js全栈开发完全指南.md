@@ -109,9 +109,7 @@ console.log("hello world");
 
 ### 4.3 Node.js的核心能力
 
-Node.js作为服务器端JavaScript运行时，提供了以下核心能力：
-
-#### 4.3.1 文件系统操作
+**文件系统操作：**
 
 ```javascript
 const fs = require("fs");
@@ -125,7 +123,7 @@ console.log(data);
 fs.writeFileSync("output.txt", "Hello Node.js", "utf8");
 ```
 
-#### 4.3.2 HTTP服务器
+**HTTP服务器：**
 
 ```javascript
 const http = require("http");
@@ -140,7 +138,7 @@ server.listen(3000, () => {
 });
 ```
 
-#### 4.3.3 数据库操作
+**数据库操作：**
 
 ```javascript
 // 使用Prisma ORM操作数据库
@@ -159,7 +157,7 @@ await prisma.user.create({
 const users = await prisma.user.findMany();
 ```
 
-#### 4.3.4 第三方API调用
+**第三方API调用：**
 
 ```javascript
 // 调用外部API
@@ -175,17 +173,6 @@ const data = await response.json();
 2. **生态丰富**：npm包管理器，海量第三方库
 3. **性能优秀**：基于V8引擎，执行效率高
 4. **社区活跃**：大量教程和开源项目
-
-### 4.5 学习目标
-
-通过本章，你应该理解：
-
-- Runtime是代码的执行环境
-- Node.js提供了服务器端JavaScript运行能力
-- Node.js的核心功能：文件操作、HTTP服务、数据库操作
-- 为什么前端同学选择Node.js学习后端最合适
-
-在下一章，我们将学习Next.js，这是一个基于Node.js的全栈框架，让全栈开发变得更加简单。
 
 ---
 
@@ -250,7 +237,7 @@ Next.js项目结构：
 
 ### 5.3 Next.js的核心优势
 
-#### 5.3.1 Turbopack构建系统
+**Turbopack构建系统：**
 
 Next.js 15引入了基于Rust的Turbopack构建系统，相比传统的Webpack有显著优势：
 
@@ -262,7 +249,7 @@ Next.js 15引入了基于Rust的Turbopack构建系统，相比传统的Webpack�
 - **原生支持**：原生支持TypeScript、JSX、CSS等
 - **未来架构**：基于Rust，为Next.js未来发展奠定基础
 
-#### 5.3.2 文件系统路由
+**文件系统路由：**
 
 文件即路由，非常直观：
 
@@ -276,7 +263,7 @@ app/
 └── api/posts/route.ts → /api/posts
 ```
 
-#### 5.3.3 特殊文件约定
+**特殊文件约定：**
 
 Next.js使用特殊文件名定义不同功能：
 
@@ -310,7 +297,7 @@ export default function Loading() {
 }
 ```
 
-#### 5.3.4 Server Components与Client Components
+**Server Components与Client Components：**
 
 **Server Components（默认）**：在服务器执行，可直接访问数据库
 
@@ -335,13 +322,13 @@ export default function PostForm() {
 }
 ```
 
-#### 5.3.5 多种渲染模式
+**多种渲染模式：**
 
 - **SSG**：静态生成，构建时生成HTML，性能最佳
 - **SSR**：服务端渲染，请求时生成HTML，SEO友好
 - **ISR**：增量静态再生，平衡性能和更新
 
-#### 5.3.6 类型安全
+**类型安全：**
 
 前后端共享TypeScript类型：
 
@@ -370,18 +357,6 @@ export async function GET(): Promise<Response> {
 3. **性能优秀**：自动代码分割、图片优化、缓存策略
 4. **类型安全**：前后端统一的TypeScript支持
 5. **部署简单**：支持Vercel一键部署
-
-### 5.5 学习目标
-
-通过本章，你应该理解：
-
-- 传统前后端分离开发的痛点
-- Next.js如何用一个项目解决所有问题
-- 文件系统路由和特殊文件约定
-- Server Components和Client Components的区别
-- Next.js的核心优势和选择理由
-
-在下一章，我们将了解具体的项目结构，看看文件是如何组织的。
 
 ---
 
@@ -430,7 +405,7 @@ Spring-Lament-Blog/
 
 ### 6.2 核心目录详解
 
-#### 6.2.1 src/app/ - 页面和API路由
+**src/app/ - 页面和API路由：**
 
 **页面路由示例：**
 
@@ -476,9 +451,7 @@ export async function POST(request: Request) {
 
 ### 6.4 数据流转过程
 
-理解数据在Next.js应用中的流转过程是全栈开发的关键。让我们通过一个具体例子来看看：
-
-#### 6.4.1 用户访问文章详情页的完整流程
+**用户访问文章详情页的完整流程：**
 
 **1. 用户访问URL**
 
@@ -525,20 +498,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
 - **零API调用**：服务端组件直接访问数据库
 - **首屏速度快**：服务端渲染，无需等待客户端请求
 - **SEO友好**：搜索引擎可以直接抓取完整内容
-
-### 6.5 学习目标
-
-通过本章，你应该理解：
-
-- Next.js项目的完整目录结构
-- 各个目录和文件的作用
-- 页面路由和API路由的组织方式
-- 数据在Next.js应用中的流转过程
-- 服务端组件的数据获取方式
-- 组件库的层次结构
-- 配置文件的作用
-
-在下一章，我们将学习数据库和Prisma ORM，了解如何管理应用的数据。
 
 ---
 
@@ -612,7 +571,7 @@ npx prisma migrate dev  # 生产环境
 
 ### 7.4 博客数据模型设计
 
-#### 7.4.1 核心实体关系
+**核心实体关系：**
 
 ```
 User (用户) 1:N Post (文章)
@@ -620,7 +579,7 @@ Post (文章) N:1 Category (分类)
 Post (文章) N:M Tag (标签)
 ```
 
-#### 7.4.2 Schema定义
+**Schema定义：**
 
 ```prisma
 // prisma/schema.prisma
@@ -670,15 +629,11 @@ model Post {
 
   @@map("posts")
 }
-
-
-
-
 ```
 
 ### 7.5 基础CRUD操作
 
-#### 7.5.1 创建数据
+**创建数据：**
 
 ```typescript
 // 创建用户
@@ -702,7 +657,7 @@ const post = await prisma.post.create({
 });
 ```
 
-#### 7.5.2 查询数据
+**查询数据：**
 
 ```typescript
 // 查询所有文章
@@ -723,7 +678,7 @@ const postsWithRelations = await prisma.post.findMany({
 });
 ```
 
-#### 7.5.3 更新数据
+**更新数据：**
 
 ```typescript
 // 更新文章
@@ -733,7 +688,7 @@ const updatedPost = await prisma.post.update({
 });
 ```
 
-#### 7.5.4 删除数据
+**删除数据：**
 
 ```typescript
 // 删除文章
@@ -744,7 +699,7 @@ await prisma.post.delete({
 
 ### 7.6 复杂查询示例
 
-#### 7.6.1 分页查询
+**分页查询：**
 
 ```typescript
 const posts = await prisma.post.findMany({
@@ -759,7 +714,7 @@ const posts = await prisma.post.findMany({
 });
 ```
 
-#### 7.6.2 按分类筛选
+**按分类筛选：**
 
 ```typescript
 const postsByCategory = await prisma.post.findMany({
@@ -787,59 +742,29 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 
-### 7.8 学习目标
-
-通过本章，你应该理解：
-
-- ORM的概念和优势
-- Prisma的完整使用流程
-- 博客系统的数据模型设计
-- 各种关联关系的实现
-- 基本的CRUD操作和复杂查询
-
-在下一章，我们将学习用户认证系统，保护应用的安全。
-
 ---
 
 ## 8. 第6章：用户认证系统
 
 ### 8.1 为什么需要认证系统？
 
-认证系统在现代Web应用中是必不可少的安全基础设施。无论是电商平台、社交媒体、在线银行还是博客系统，都需要认证系统来保护用户数据和业务逻辑。
-
-#### 8.1.1 通用后端认证系统的核心价值：
+认证系统在现代Web应用中是必不可少的安全基础设施，主要提供：
 
 **1. 身份验证(Authentication)**
 
-- 确认用户身份：验证"你是谁"
-- 防止未授权访问：只有合法用户才能登录系统
-- 保护用户隐私：个人数据只对本人可见
+- 确认用户身份，防止未授权访问
+- 保护用户隐私，个人数据只对本人可见
 
 **2. 权限控制(Authorization)**
 
 - 角色管理：不同用户有不同权限级别
 - 资源保护：敏感操作需要特定权限
-- 业务隔离：确保用户只能访问自己的数据
 
-**3. 安全审计**
-
-- 操作记录：追踪谁在什么时候做了什么
-- 异常检测：发现可疑登录或操作行为
-- 合规要求：满足数据保护法规要求
-
-**4. 用户体验**
-
-- 个性化服务：根据用户身份提供定制化内容
-- 状态保持：用户无需反复登录
-- 跨设备同步：多设备间保持一致的用户状态
-
-#### 8.1.2 在我们的博客系统中的具体应用：
+**3. 在博客系统中的应用**
 
 - **普通用户**：只能查看文章，不能编辑
 - **管理员**：可以管理文章、分类、标签
 - **未登录用户**：只能访问公开内容
-
-认证系统确保只有授权用户才能访问受保护的资源。
 
 ### 8.2 NextAuth.js简介
 
@@ -851,7 +776,7 @@ NextAuth.js是Next.js生态中最流行的认证解决方案，支持多种认�
 
 ### 8.3 认证配置
 
-#### 8.3.1 基础配置 (lib/auth.ts)
+**基础配置 (lib/auth.ts)：**
 
 ```typescript
 // lib/auth.ts
@@ -904,7 +829,7 @@ export const authOptions: NextAuthOptions = {
 };
 ```
 
-#### 8.3.2 密码加密
+**密码加密：**
 
 ```typescript
 // 注册时加密密码
@@ -916,7 +841,7 @@ const isPasswordValid = await bcrypt.compare(password, user.password);
 
 ### 8.4 Middleware路由保护
 
-#### 8.4.1 路由保护 (middleware.ts)
+**路由保护 (middleware.ts)：**
 
 Next.js的Middleware可以在请求到达页面前进行拦截和验证：
 
@@ -953,7 +878,7 @@ export const config = {
 
 ### 8.5 获取用户信息
 
-#### 8.5.1 在服务端组件中
+**在服务端组件中：**
 
 ```typescript
 import { getServerSession } from "next-auth";
@@ -963,7 +888,7 @@ const session = await getServerSession(authOptions);
 console.log(session?.user); // { id, email, name, role }
 ```
 
-#### 8.5.2 在客户端组件中
+**在客户端组件中：**
 
 ```typescript
 "use client";
@@ -977,7 +902,7 @@ if (status === "authenticated") {
 
 ### 8.6 实际应用场景
 
-#### 8.6.1 保护API路由
+**保护API路由：**
 
 ```typescript
 // app/api/admin/posts/route.ts
@@ -995,30 +920,13 @@ export async function POST(request: Request) {
 }
 ```
 
-### 8.7 学习目标
-
-通过本章，你应该理解：
-
-- 认证系统的必要性和工作原理
-- NextAuth.js的配置和使用
-- 密码加密和验证流程
-- Middleware如何保护路由
-- 如何在服务端和客户端获取用户信息
-- 如何保护API路由和实现权限控制
-
-在下一章，我们将学习如何将应用部署到生产环境。
-
----
-
 ---
 
 ## 9. 第7章：部署与运维
 
 ### 9.1 环境概念
 
-在实际开发中，我们通常需要区分不同的运行环境：
-
-#### 9.1.1 开发环境 vs 生产环境
+**开发环境 vs 生产环境：**
 
 | 环境类型     | 位置       | 端口 | 数据库            | 配置文件        | 特点               |
 | ------------ | ---------- | ---- | ----------------- | --------------- | ------------------ |
@@ -1037,7 +945,7 @@ export async function POST(request: Request) {
 
 ### 9.3 部署方式对比
 
-#### 9.3.1 Vercel (最简单)
+**Vercel (最简单)：**
 
 **优点:**
 
@@ -1051,7 +959,7 @@ export async function POST(request: Request) {
 - Serverless限制
 - 需要外部数据库
 
-#### 9.3.2 宝塔+PM2 (推荐)
+**宝塔+PM2 (推荐)：**
 
 **优点:**
 
@@ -1066,7 +974,7 @@ export async function POST(request: Request) {
 
 ### 9.4 宝塔+PM2部署实战
 
-#### 9.4.1 步骤1: 服务器准备
+**步骤1: 服务器准备**
 
 ```bash
 # 1. 购买VPS (阿里云/腾讯云)
@@ -1077,7 +985,7 @@ sudo bash install.sh
 # 3. 在宝塔面板安装 Node.js 18+
 ```
 
-#### 9.4.2 步骤2: 上传代码
+**步骤2: 上传代码**
 
 ```bash
 # 在服务器上
@@ -1087,7 +995,7 @@ cd Spring-Lament-Blog
 npm install
 ```
 
-#### 9.4.3 步骤3: 配置环境变量
+**步骤3: 配置环境变量**
 
 ```bash
 # .env.production
@@ -1097,20 +1005,20 @@ NEXTAUTH_URL="http://your-domain.com"
 NODE_ENV="production"
 ```
 
-#### 9.4.4 步骤4: 初始化数据库
+**步骤4: 初始化数据库**
 
 ```bash
 npm run db:push
 npm run db:seed
 ```
 
-#### 9.4.5 步骤5: 构建项目
+**步骤5: 构建项目**
 
 ```bash
 npm run build
 ```
 
-#### 9.4.6 步骤6: PM2配置
+**步骤6: PM2配置**
 
 创建`ecosystem.config.js`：
 
@@ -1141,7 +1049,7 @@ pm2 save
 pm2 startup
 ```
 
-#### 9.4.7 步骤7: Nginx配置
+**步骤7: Nginx配置**
 
 ```nginx
 server {
@@ -1164,7 +1072,7 @@ server {
 
 ### 9.5 常见问题解决
 
-#### 9.5.1 端口占用
+**端口占用：**
 
 ```bash
 # 检查端口占用
@@ -1173,7 +1081,7 @@ lsof -i :3000
 kill -9 PID
 ```
 
-#### 9.5.2 权限问题
+**权限问题：**
 
 ```bash
 # 设置文件权限
@@ -1181,7 +1089,7 @@ chmod -R 755 /www/wwwroot/Spring-Lament-Blog
 chown -R www:www /www/wwwroot/Spring-Lament-Blog
 ```
 
-#### 9.5.3 数据库权限
+**数据库权限：**
 
 ```bash
 # SQLite文件权限
@@ -1191,7 +1099,7 @@ chown www:www prisma/prod.db
 
 ### 9.6 运维管理
 
-#### 9.6.1 PM2常用命令
+**PM2常用命令：**
 
 ```bash
 pm2 list                # 查看进程
@@ -1201,7 +1109,7 @@ pm2 logs app-name       # 查看日志
 pm2 monit              # 监控面板
 ```
 
-#### 9.6.2 日志管理
+**日志管理：**
 
 ```bash
 # 查看应用日志
@@ -1212,26 +1120,13 @@ tail -f /var/log/nginx/access.log
 tail -f /var/log/nginx/error.log
 ```
 
-### 9.7 学习目标
-
-通过本章，你应该理解：
-
-- 开发环境和生产环境的区别
-- 不同部署方式的优劣
-- 宝塔+PM2的完整部署流程
-- GitHub Actions自动化部署
-- 常见问题的排查方法
-- 基本的运维管理操作
-
-在下一章，我们将学习性能优化技术，提升应用的运行效率。
-
 ---
 
 ## 10. 第8章：性能优化
 
 ### 10.1 Next.js性能优化
 
-#### 10.1.1 渲染模式优化
+**渲染模式优化：**
 
 **SSG (Static Site Generation)** - 静态站点生成：
 在构建时预先生成HTML页面，用户访问时直接返回静态文件，速度极快。
@@ -1265,7 +1160,7 @@ export async function generateStaticParams() {
 export const revalidate = 3600; // 每小时重新生成
 ```
 
-#### 10.1.2 图片优化
+**图片优化：**
 
 ```typescript
 import Image from 'next/image'
@@ -1285,7 +1180,7 @@ import Image from 'next/image'
 />
 ```
 
-#### 10.1.3 代码分割
+**代码分割：**
 
 ```typescript
 // 动态导入，减少首屏加载时间
@@ -1302,7 +1197,7 @@ const AdminPanel = dynamic(() => import('@/components/AdminPanel'), {
 
 ### 10.2 数据库查询优化
 
-#### 10.2.1 只查询需要的字段
+**只查询需要的字段：**
 
 ```typescript
 // ❌ 不好 - 查询所有字段
@@ -1314,7 +1209,7 @@ const users = await prisma.user.findMany({
 });
 ```
 
-#### 10.2.2 使用数据库索引
+**使用数据库索引：**
 
 ```prisma
 model Post {
@@ -1326,16 +1221,6 @@ model Post {
   @@index([authorId])              // 外键索引
 }
 ```
-
-### 10.3 学习目标
-
-通过本章，你应该理解：
-
-- Next.js的渲染模式优化策略
-- 图片和代码分割的最佳实践
-- 数据库查询优化技术
-
-恭喜你！通过前面8章的学习，你已经掌握了Next.js全栈开发的核心技能，可以独立构建现代化的Web应用了。
 
 ---
 
