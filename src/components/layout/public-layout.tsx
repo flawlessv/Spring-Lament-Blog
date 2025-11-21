@@ -83,7 +83,7 @@ export default function PublicLayout({
 
       {/* 顶部左侧按钮 - 与内容区域对齐 */}
       {leftButtons && (
-        <div className="fixed top-0 left-0 right-0 z-50 pt-6 pointer-events-none">
+        <div className="fixed top-0 left-[-120px] right-0 z-50 pt-6 pointer-events-none">
           <div className="max-w-7xl mx-auto px-6 lg:px-8 pointer-events-auto">
             <div className="-ml-1">{leftButtons}</div>
           </div>
