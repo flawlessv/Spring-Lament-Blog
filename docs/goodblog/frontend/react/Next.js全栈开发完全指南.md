@@ -1,9 +1,9 @@
 ---
-title: Next.js全栈开发完全指南
+title: AI时代前端破局：Next.js全栈开发从入门到部署实战
 slug: nextfullstack
 published: true
 featured: true
-publishedAt: 2025-10-23
+publishedAt: 2025-11-21
 readingTime: 20
 category: 前端
 tags:
