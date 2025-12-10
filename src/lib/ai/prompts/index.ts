@@ -3,12 +3,7 @@
  */
 
 // RAG 相关
-export {
-  RAG_SYSTEM_MESSAGE,
-  RAG_FALLBACK_SYSTEM_MESSAGE,
-  buildRAGPrompt,
-  buildRAGFallbackPrompt,
-} from "./rag";
+export { RAG_SYSTEM_MESSAGE, buildRAGPrompt } from "./rag";
 
 // 内容生成相关
 export {
