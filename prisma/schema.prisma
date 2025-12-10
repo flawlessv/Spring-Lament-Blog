@@ -151,6 +151,9 @@ model Post {
   
   tags       PostTag[]                            // 多对多：文章标签关系
 
+  // === AI 相关关系 ===
+  vectorIndex PostVectorIndex?                    // 一对一：文章向量索引
+
   // === 数据库映射 ===
   @@map("posts")
 }
@@ -233,6 +236,29 @@ model PostTag {
 }
 
 // ============================================================================
+// AI 功能相关模型
+// ============================================================================
+
+/**
+ * 文章向量索引模型
+ *
+ * 存储文章的向量索引信息
+ */
+model PostVectorIndex {
+  id         String   @id @default(cuid())
+  postId     String   @unique                     // 文章ID
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  vectorId   String?                              // 向量数据库中的ID
+  chunkCount Int      @default(0)                 // 分块数量
+  indexedAt  DateTime @default(now())             // 索引时间
+  updatedAt  DateTime @updatedAt                  // 更新时间
+
+  @@map("post_vector_indexes")
+  @@index([postId])
+}
+
+// ============================================================================
 // 数据库设计说明
 // ============================================================================
 
@@ -243,6 +269,7 @@ model PostTag {
  * User 1 ←→ N Post
  * Post N ←→ 1 Category
  * Post N ←→ M Tag (通过 PostTag)
+ * Post 1 ←→ 1 PostVectorIndex
  * 
  * 索引策略：
  * - 所有 @unique 字段自动创建唯一索引
