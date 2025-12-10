@@ -50,3 +50,9 @@ logs
 *.swp
 *.swo
 *~
+
+# Chroma 向量数据库（生成的索引数据）
+data/chroma/
+
+# Ollama 模型缓存（如果有）
+.ollama/
