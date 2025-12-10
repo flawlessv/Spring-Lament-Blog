@@ -5,6 +5,14 @@
 /* 导入 MD Editor 样式 */
 @import "@uiw/react-md-editor/markdown-editor.css";
 
+/* AI 补全建议样式 */
+.ai-completion-suggestion {
+  color: #9ca3af !important;
+  font-style: italic !important;
+  pointer-events: none;
+  user-select: none;
+}
+
 @layer base {
   :root {
     /* 苹果风格的极简配色 */
