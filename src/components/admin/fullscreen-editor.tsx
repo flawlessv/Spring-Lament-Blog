@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import { X, Send, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import MDEditor from "@uiw/react-md-editor";
 import PublishDialog from "./publish-dialog";
+import AIAssistant, { AIRecommendation } from "./ai-assistant";
+import NovelEditorWrapper from "./novel-editor-wrapper";
 
 interface FullscreenEditorProps {
   title: string;
@@ -44,6 +45,13 @@ export default function FullscreenEditor({
   const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+
+  // AI 生成的数据（传递给发布对话框）
+  const [aiExcerpt, setAiExcerpt] = useState<string | undefined>();
+  const [aiTags, setAiTags] = useState<AIRecommendation | undefined>();
+  const [aiCategories, setAiCategories] = useState<
+    AIRecommendation | undefined
+  >();
 
   // 计算字数和字符数
   useEffect(() => {
@@ -120,6 +128,24 @@ export default function FullscreenEditor({
             <span>{charCount} 字符</span>
           </div>
 
+          {/* AI 助手 */}
+          <AIAssistant
+            content={content}
+            title={title}
+            onTitleSelect={(newTitle) => onTitleChange(newTitle)}
+            onExcerptGenerated={(excerpt) => setAiExcerpt(excerpt)}
+            onTagsGenerated={(tags) => setAiTags(tags)}
+            onCategoryGenerated={(categories) => setAiCategories(categories)}
+            onContentInsert={(text) => {
+              // 将内容插入到编辑器末尾
+              onContentChange(content + "\n\n" + text);
+            }}
+            onContentReplace={(text) => {
+              // 润色功能：替换整个内容
+              onContentChange(text);
+            }}
+          />
+
           {/* 操作按钮 */}
           <Button
             variant="outline"
@@ -156,32 +182,16 @@ export default function FullscreenEditor({
         />
       </div>
 
-      {/* Markdown编辑器区域 */}
+      {/* Novel 编辑器区域 */}
       <div
-        className="flex-1 overflow-hidden pb-6"
+        className="flex-1 overflow-auto relative"
         style={{ height: "calc(100vh - 140px)" }}
       >
-        <div className="h-full" data-color-mode="light">
-          <MDEditor
+        <div className="h-full w-full">
+          <NovelEditorWrapper
             value={content}
             onChange={(val) => onContentChange(val || "")}
-            preview="live"
-            hideToolbar={false}
-            visibleDragbar={false}
-            height="100%"
-            data-color-mode="light"
-            className="h-full"
-            textareaProps={{
-              placeholder:
-                "开始写作吧...\n\n支持 Markdown 语法：\n- **粗体**\n- *斜体*\n- `代码`\n- # 标题\n- - 列表\n- [链接](url)\n- ![图片](url)",
-              style: {
-                fontSize: 16,
-                lineHeight: 1.6,
-                fontFamily:
-                  "'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace",
-                minHeight: "calc(100vh - 220px)",
-              },
-            }}
+            placeholder="开始写作吧...\n\n支持 Markdown 语法：\n- **粗体**\n- *斜体*\n- `代码`\n- # 标题\n- - 列表\n- [链接](url)\n- ![图片](url)"
           />
         </div>
       </div>
@@ -192,7 +202,13 @@ export default function FullscreenEditor({
         onOpenChange={setShowPublishDialog}
         onPublish={handlePublish}
         mode={mode}
-        initialData={initialPublishData}
+        initialData={{
+          ...initialPublishData,
+          excerpt: aiExcerpt || initialPublishData?.excerpt,
+        }}
+        aiSuggestedTags={aiTags}
+        aiSuggestedCategories={aiCategories}
+        articleContent={content}
       />
     </div>
   );
