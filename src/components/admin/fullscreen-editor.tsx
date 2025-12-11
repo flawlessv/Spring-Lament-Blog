@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { X, Send, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import PublishDialog from "./publish-dialog/index";
+import PublishDialog from "./publish-dialog";
 import AIAssistant, { AIRecommendation } from "./ai-assistant";
 import NovelEditorWrapper from "./novel-editor-wrapper";
 
