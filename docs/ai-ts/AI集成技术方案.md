@@ -31,9 +31,9 @@
 
 ### 技术栈
 
-- **AI 模型**: OpenAI GPT-4 / Claude / 通义千问 / 本地模型 (Ollama)
-- **向量数据库**: Chroma / Pinecone / Qdrant / 本地向量存储
-- **嵌入模型**: text-embedding-3-small / BGE-large-zh / 本地模型
+- **AI 模型**: Kimi (Moonshot AI) - 有免费额度
+- **向量数据库**: Chroma (开源免费)
+- **嵌入模型**: Ollama nomic-embed-text (本地免费)
 - **后端框架**: Next.js API Routes
 - **前端**: React + TypeScript
 
@@ -51,7 +51,6 @@
 - **语法优化**: 优化 Markdown 语法和格式
 - **风格调整**: 调整文章语气和风格(正式/轻松/技术)
 - **段落扩展**: 扩展简短段落为详细内容
-- **翻译功能**: 中英文互译
 
 #### 1.2 智能内容生成
 
@@ -136,7 +135,7 @@
         ▼                 ▼                 ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │  AI服务层     │  │ 向量数据库    │  │ 数据库(Prisma)│
-│ (LLM调用)     │  │ (Chroma/Qdrant)│ │ (SQLite/Postgres)│
+│ (Kimi API)    │  │ (Chroma)      │  │ (SQLite/Postgres)│
 └──────────────┘  └──────────────┘  └──────────────┘
 ```
 
@@ -159,7 +158,6 @@ lib/ai/
 lib/vector/
 ├── store.ts          # 向量存储接口
 ├── chroma.ts         # Chroma 实现
-├── qdrant.ts         # Qdrant 实现
 └── indexer.ts        # 索引构建器
 ```
 
@@ -998,44 +996,44 @@ export async function executePrompt(
 
 ### AI 模型选择
 
-| 模型         | 优势           | 劣势             | 适用场景      |
-| ------------ | -------------- | ---------------- | ------------- |
-| OpenAI GPT-4 | 能力强,API稳定 | 成本高,需要网络  | 生产环境      |
-| Claude 3     | 长文本处理强   | 成本较高         | 长文章处理    |
-| 通义千问     | 中文优化好     | API稳定性        | 中文内容      |
-| Ollama(本地) | 免费,隐私好    | 需要GPU,性能一般 | 开发/内网环境 |
+| 模型         | 优势                        | 劣势             | 适用场景         |
+| ------------ | --------------------------- | ---------------- | ---------------- |
+| **Kimi**     | 中文能力强,超长上下文(200k) | 生态较新         | **中文内容首选** |
+| OpenAI GPT-4 | 能力强,API稳定              | 成本高,需要代理  | 通用场景         |
+| Claude 3     | 长文本处理强                | 成本较高         | 长文章处理       |
+| Ollama(本地) | 免费,隐私好                 | 需要GPU,性能一般 | 开发/内网环境    |
 
 **推荐方案**:
 
-- 开发环境: Ollama(本地模型)
-- 生产环境: OpenAI GPT-4 或 Claude 3
+- 开发环境: Kimi (免费额度充足,中文优化好)
+- 生产环境: Kimi (moonshot-v1-128k / moonshot-v1-32k)
 
 ### 向量数据库选择
 
-| 数据库       | 优势          | 劣势         | 适用场景    |
-| ------------ | ------------- | ------------ | ----------- |
-| Chroma       | 轻量,易部署   | 功能相对简单 | 中小型项目  |
-| Qdrant       | 性能好,功能全 | 需要独立部署 | 中大型项目  |
-| Pinecone     | 托管服务,稳定 | 成本较高     | 企业级应用  |
-| 本地向量存储 | 免费,简单     | 性能一般     | 开发/小项目 |
+| 数据库       | 优势                 | 劣势           | 适用场景       |
+| ------------ | -------------------- | -------------- | -------------- |
+| **Chroma**   | 开源免费,轻量,易部署 | 大规模性能一般 | **推荐，免费** |
+| Qdrant       | 性能好,功能全        | 需要独立部署   | 中大型项目     |
+| Pinecone     | 托管服务,稳定        | 💰 收费        | 企业级应用     |
+| 本地向量存储 | 免费,简单            | 性能一般       | 开发/小项目    |
 
 **推荐方案**:
 
-- 开发环境: Chroma(本地)
-- 生产环境: Qdrant 或 Pinecone
+- 开发环境: Chroma (本地)
+- 生产环境: Chroma (免费，足够博客使用)
 
 ### 嵌入模型选择
 
-| 模型                   | 优势          | 劣势         | 适用场景 |
-| ---------------------- | ------------- | ------------ | -------- |
-| text-embedding-3-small | 质量好,多语言 | 需要API调用  | 通用场景 |
-| BGE-large-zh           | 中文优化好    | 需要本地部署 | 中文内容 |
-| 本地嵌入模型           | 免费,隐私好   | 需要资源     | 内网环境 |
+| 模型                        | 优势                | 劣势              | 适用场景          |
+| --------------------------- | ------------------- | ----------------- | ----------------- |
+| **Ollama nomic-embed-text** | 本地免费,部署简单   | 中文效果一般      | **推荐,完全免费** |
+| text-embedding-3-small      | 质量好,多语言       | 💰 需要OpenAI API | 追求效果          |
+| BGE-large-zh                | 中文优化好,开源免费 | 需要Python环境    | 中文效果最好      |
 
 **推荐方案**:
 
-- 中文内容: BGE-large-zh
-- 多语言: text-embedding-3-small
+- 追求免费简单: Ollama nomic-embed-text (一行命令安装)
+- 追求中文效果: BGE-large-zh (需要Python)
 
 ---
 
@@ -1044,25 +1042,21 @@ export async function executePrompt(
 ```bash
 # .env.local
 
-# AI 模型配置
-AI_PROVIDER=openai  # openai | claude | qwen | ollama
-OPENAI_API_KEY=sk-xxx
-OPENAI_BASE_URL=https://api.openai.com/v1  # 可选,支持代理
-CLAUDE_API_KEY=sk-ant-xxx
-QWEN_API_KEY=xxx
-OLLAMA_BASE_URL=http://localhost:11434  # 本地模型
+# AI 模型配置 (Kimi - 有免费额度)
+AI_PROVIDER=kimi
+KIMI_API_KEY=sk-xxx                           # Moonshot API Key
+KIMI_BASE_URL=https://api.moonshot.cn/v1      # Kimi API 地址
+KIMI_MODEL=moonshot-v1-32k                    # 可选: moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k
 
-# 向量数据库配置
-VECTOR_DB_PROVIDER=chroma  # chroma | qdrant | pinecone
-CHROMA_PATH=./data/chroma
-QDRANT_URL=http://localhost:6333
-QDRANT_API_KEY=xxx
-PINECONE_API_KEY=xxx
-PINECONE_ENVIRONMENT=us-east-1
+# 向量数据库配置 (Chroma - 免费开源)
+VECTOR_DB_PROVIDER=chroma
+CHROMA_PATH=./data/chroma                     # Chroma 数据存储路径
 
-# 嵌入模型配置
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIMENSION=1536
+# 嵌入模型配置 (Ollama - 本地免费)
+EMBEDDING_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434        # Ollama 服务地址
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text       # 嵌入模型名称
+EMBEDDING_DIMENSION=768                       # nomic-embed-text 维度
 
 # AI 功能开关
 ENABLE_AI_WRITING=true

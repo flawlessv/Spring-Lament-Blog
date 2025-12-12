@@ -9,6 +9,7 @@ import Image from "next/image";
 import PublicLayout from "@/components/layout/public-layout";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 import { ImmersiveReaderToggle } from "@/components/immersive-reader";
+import RelatedPosts from "@/components/posts/related-posts";
 
 interface Post {
   id: string;
@@ -190,9 +191,12 @@ export default async function PostPage({
       </header>
 
       {/* 文章内容 */}
-      <article className="mb-16">
+      <article className="mb-8">
         <MarkdownRenderer content={post.content || "暂无内容"} showToc={true} />
       </article>
+
+      {/* 相关文章推荐 */}
+      <RelatedPosts slug={slug} limit={3} />
 
       {/* 底部导航 */}
       <div className="pt-8 border-t border-gray-100">

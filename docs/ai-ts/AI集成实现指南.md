@@ -18,8 +18,19 @@
 ### 1. 安装依赖
 
 ```bash
-npm install openai @langchain/openai chromadb @qdrant/js-client
+# Kimi 使用 OpenAI 兼容的 SDK
+npm install openai chromadb
 npm install -D @types/node
+
+# 安装 Ollama (用于本地 embedding)
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 拉取 embedding 模型
+ollama pull nomic-embed-text
 ```
 
 ### 2. 配置环境变量
@@ -27,16 +38,20 @@ npm install -D @types/node
 在 `.env.local` 中添加:
 
 ```bash
-# AI 配置
-AI_PROVIDER=openai
-OPENAI_API_KEY=sk-your-key-here
+# AI 配置 (Kimi - 有免费额度)
+AI_PROVIDER=kimi
+KIMI_API_KEY=sk-your-kimi-key-here
+KIMI_BASE_URL=https://api.moonshot.cn/v1
+KIMI_MODEL=moonshot-v1-32k
 
-# 向量数据库
+# 向量数据库 (Chroma - 免费开源)
 VECTOR_DB_PROVIDER=chroma
 CHROMA_PATH=./data/chroma
 
-# 嵌入模型
-EMBEDDING_MODEL=text-embedding-3-small
+# 嵌入模型 (Ollama - 本地免费)
+EMBEDDING_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 ```
 
 ### 3. 运行数据库迁移
@@ -53,46 +68,26 @@ npx prisma migrate dev --name add_ai_features
 
 ```bash
 # ============================================
-# AI 模型配置
+# AI 模型配置 (Kimi - 有免费额度)
 # ============================================
-AI_PROVIDER=openai  # openai | claude | ollama
-
-# OpenAI 配置
-OPENAI_API_KEY=sk-xxx
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4-turbo-preview
-
-# Claude 配置
-CLAUDE_API_KEY=sk-ant-xxx
-CLAUDE_MODEL=claude-3-opus-20240229
-
-# Ollama 配置(本地模型)
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama2
+AI_PROVIDER=kimi
+KIMI_API_KEY=sk-xxx
+KIMI_BASE_URL=https://api.moonshot.cn/v1
+KIMI_MODEL=moonshot-v1-32k  # moonshot-v1-8k | moonshot-v1-32k | moonshot-v1-128k
 
 # ============================================
-# 向量数据库配置
+# 向量数据库配置 (Chroma - 免费开源)
 # ============================================
-VECTOR_DB_PROVIDER=chroma  # chroma | qdrant | pinecone
-
-# Chroma 配置
+VECTOR_DB_PROVIDER=chroma
 CHROMA_PATH=./data/chroma
 
-# Qdrant 配置
-QDRANT_URL=http://localhost:6333
-QDRANT_API_KEY=
-
-# Pinecone 配置
-PINECONE_API_KEY=xxx
-PINECONE_ENVIRONMENT=us-east-1
-PINECONE_INDEX_NAME=blog-index
-
 # ============================================
-# 嵌入模型配置
+# 嵌入模型配置 (Ollama - 本地免费)
 # ============================================
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIMENSION=1536
-EMBEDDING_PROVIDER=openai  # openai | local
+EMBEDDING_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+EMBEDDING_DIMENSION=768
 
 # ============================================
 # 功能开关
@@ -116,13 +111,11 @@ RAG_MAX_RESULTS=5
 ### 必需依赖
 
 ```bash
-# AI 客户端
-npm install openai @anthropic-ai/sdk
+# AI 客户端 (Kimi 使用 OpenAI SDK，因为 API 兼容)
+npm install openai
 
-# 向量数据库
+# 向量数据库 (Chroma - 免费开源)
 npm install chromadb
-# 或
-npm install @qdrant/js-client
 
 # 工具库
 npm install zod  # 已有,用于类型验证
@@ -134,9 +127,6 @@ npm install dotenv  # 环境变量管理
 ```bash
 # 本地模型支持
 npm install ollama
-
-# 中文嵌入模型(如果需要本地部署)
-# 需要 Python 环境,通过 API 调用
 ```
 
 ### package.json 更新
@@ -145,7 +135,6 @@ npm install ollama
 {
   "dependencies": {
     "openai": "^4.20.0",
-    "@anthropic-ai/sdk": "^0.9.0",
     "chromadb": "^1.8.0",
     "dotenv": "^16.3.1"
   }
@@ -391,7 +380,7 @@ tsx prisma/seed-ai.ts
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 
-export type AIProvider = "openai" | "claude" | "ollama";
+export type AIProvider = "kimi" | "openai" | "claude" | "ollama";
 
 export interface AIClient {
   chat(messages: ChatMessage[], options?: ChatOptions): Promise<ChatResponse>;
@@ -413,6 +402,70 @@ export interface ChatOptions {
 export interface ChatResponse {
   content: string;
   tokensUsed?: number;
+}
+
+/**
+ * Kimi 客户端 (Moonshot AI)
+ * 使用 OpenAI SDK，因为 Kimi API 兼容 OpenAI 格式
+ */
+class KimiClient implements AIClient {
+  private client: OpenAI;
+
+  constructor() {
+    this.client = new OpenAI({
+      apiKey: process.env.KIMI_API_KEY,
+      baseURL: process.env.KIMI_BASE_URL || "https://api.moonshot.cn/v1",
+    });
+  }
+
+  async chat(
+    messages: ChatMessage[],
+    options: ChatOptions = {}
+  ): Promise<ChatResponse> {
+    const response = await this.client.chat.completions.create({
+      model: options.model || process.env.KIMI_MODEL || "moonshot-v1-32k",
+      messages: messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
+      temperature: options.temperature ?? 0.7,
+      max_tokens: options.maxTokens ?? 2000,
+    });
+
+    return {
+      content: response.choices[0]?.message?.content || "",
+      tokensUsed: response.usage?.total_tokens,
+    };
+  }
+
+  async embed(text: string | string[]): Promise<number[][]> {
+    // Kimi 不支持 embedding，使用 Ollama
+    return ollamaEmbed(text);
+  }
+}
+
+/**
+ * Ollama 本地 Embedding (免费)
+ */
+async function ollamaEmbed(text: string | string[]): Promise<number[][]> {
+  const texts = Array.isArray(text) ? text : [text];
+  const baseUrl = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
+  const model = process.env.OLLAMA_EMBEDDING_MODEL || "nomic-embed-text";
+
+  const embeddings: number[][] = [];
+
+  for (const t of texts) {
+    const response = await fetch(`${baseUrl}/api/embeddings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model, prompt: t }),
+    });
+
+    const data = await response.json();
+    embeddings.push(data.embedding);
+  }
+
+  return embeddings;
 }
 
 class OpenAIClient implements AIClient {
@@ -504,9 +557,11 @@ class ClaudeClient implements AIClient {
 // 工厂函数
 export function createAIClient(provider?: AIProvider): AIClient {
   const providerName =
-    provider || (process.env.AI_PROVIDER as AIProvider) || "openai";
+    provider || (process.env.AI_PROVIDER as AIProvider) || "kimi";
 
   switch (providerName) {
+    case "kimi":
+      return new KimiClient();
     case "openai":
       return new OpenAIClient();
     case "claude":
@@ -562,6 +617,9 @@ export interface SearchResult {
   document?: string;
 }
 
+/**
+ * Chroma 向量存储 (开源免费)
+ */
 class ChromaVectorStore implements VectorStore {
   private client: ChromaClient;
   private collection: Collection | null = null;
@@ -620,7 +678,7 @@ class ChromaVectorStore implements VectorStore {
 
     return (results.ids[0] || []).map((id, i) => ({
       id: id as string,
-      score: 1 - (results.distances?.[0]?.[i] || 0), // 转换为相似度分数
+      score: 1 - (results.distances?.[0]?.[i] || 0),
       metadata: (results.metadatas?.[0]?.[i] as Record<string, any>) || {},
       document: results.documents?.[0]?.[i] as string,
     }));
@@ -1385,7 +1443,7 @@ import AIAssistantPanel from "./ai-assistant-panel";
 
 ## 测试和调试
 
-### 1. 测试 AI 客户端
+### 1. 测试 AI 客户端 (Kimi + Ollama)
 
 创建 `scripts/test-ai.ts`:
 
@@ -1393,27 +1451,32 @@ import AIAssistantPanel from "./ai-assistant-panel";
 import { getAIClient } from "../src/lib/ai/client";
 
 async function test() {
-  const client = getAIClient();
+  const client = getAIClient(); // 默认使用 Kimi
 
-  // 测试聊天
+  // 测试 Kimi 聊天
   const response = await client.chat([
+    { role: "system", content: "你是一个专业的技术博客助手" },
     { role: "user", content: "你好,请介绍一下自己" },
   ]);
 
-  console.log("AI 回复:", response.content);
+  console.log("Kimi 回复:", response.content);
   console.log("Token 使用:", response.tokensUsed);
 
-  // 测试嵌入
+  // 测试 Ollama embedding
   const embeddings = await client.embed("测试文本");
-  console.log("向量维度:", embeddings[0].length);
+  console.log("Embedding 维度:", embeddings[0].length); // 应该是 768
 }
 
 test().catch(console.error);
 ```
 
-运行:
+运行前确保 Ollama 服务已启动:
 
 ```bash
+# 启动 Ollama 服务
+ollama serve
+
+# 另一个终端运行测试
 tsx scripts/test-ai.ts
 ```
 
@@ -1489,11 +1552,34 @@ test().catch(console.error);
 
 ### Q: 如何切换 AI 模型?
 
-A: 修改 `.env.local` 中的 `AI_PROVIDER` 和对应的 API Key。
+A: 修改 `.env.local` 中的 `AI_PROVIDER`:
+
+- `kimi`: 使用 Moonshot AI (推荐，中文效果好，有免费额度)
+- `openai`: 使用 OpenAI GPT (收费)
+- `ollama`: 使用本地模型 (免费)
+
+### Q: 如何获取 Kimi API Key?
+
+A: 访问 [Moonshot AI 开放平台](https://platform.moonshot.cn/) 注册并创建 API Key。新用户有免费额度。
+
+### Q: 如何启动 Ollama embedding 服务?
+
+A:
+
+```bash
+# 1. 确保 Ollama 已安装
+ollama --version
+
+# 2. 拉取 embedding 模型 (首次需要)
+ollama pull nomic-embed-text
+
+# 3. 启动 Ollama 服务 (如果没有自动启动)
+ollama serve
+```
 
 ### Q: 向量数据库数据存储在哪里?
 
-A: Chroma 默认存储在 `./data/chroma` 目录,可以在 `.env.local` 中配置 `CHROMA_PATH`。
+A: Chroma 数据存储在 `./data/chroma` 目录，完全本地化，无需网络。
 
 ### Q: 如何批量索引已有文章?
 
@@ -1501,18 +1587,17 @@ A: 创建脚本遍历所有文章并调用 `indexPost` 函数。
 
 ### Q: 成本如何控制?
 
-A:
+A: 本方案**完全免费**:
 
-- 实现 Token 使用统计
-- 添加缓存机制
-- 设置使用限制
-- 考虑使用本地模型
+- **Kimi**: 有免费额度，个人博客基本够用
+- **Chroma**: 开源免费
+- **Ollama embedding**: 本地运行，完全免费
 
 ---
 
 ## 参考资源
 
-- [OpenAI API 文档](https://platform.openai.com/docs)
+- [Kimi API 文档 (Moonshot AI)](https://platform.moonshot.cn/docs)
 - [Chroma 文档](https://docs.trychroma.com/)
-- [LangChain 文档](https://js.langchain.com/)
+- [OpenAI API 文档](https://platform.openai.com/docs)
 - [RAG 最佳实践](https://www.pinecone.io/learn/retrieval-augmented-generation/)
