@@ -187,7 +187,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                   title="知识库问答"
                 >
                   <MessageSquare className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">问答</span>
+                  <span className="hidden sm:inline text-sm">知识库问答</span>
                 </Button>
               }
             />
