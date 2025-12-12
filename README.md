@@ -52,6 +52,7 @@ Spring Lament Blog/
 
 - Node.js >= 18.17.0
 - npm >= 9.0.0
+- **Ollama**（用于 AI 功能的向量生成，详见下方说明）
 
 ### 安装和运行
 
@@ -63,21 +64,30 @@ cd Spring-Lament-Blog
 # 2. 安装依赖
 npm install
 
-# 3. 配置环境变量
-cp .env.example .env.local
-# 编辑 .env.local 文件，配置数据库和认证信息
+# 3. 启动服务（AI 功能需要）
+# 启动 ChromaDB（选一种方式）
+chroma run --host localhost --port 8000
+# 或（如果有 Docker）
+docker run -d --name chromadb -p 8000:8000 chromadb/chroma:latest
 
-# 4. 初始化数据库
+# 启动 Ollama（首次需要先安装和拉取模型）
+# macOS: brew install ollama
+# Linux: curl -fsSL https://ollama.com/install.sh | sh
+ollama pull nomic-embed-text  # 首次需要
+ollama serve
+
+# 4. 配置环境变量
+cp .env.example .env.local
+
+# 5. 初始化数据库
 npm run db:push
 npm run db:seed
 
-# 5. 启动开发服务器
+# 6. 启动项目（新开终端）
 npm run dev
-
-# 6. 访问应用
-# 前台: http://localhost:3000
-# 后台: http://localhost:3000/admin
 ```
+
+> **⚠️ AI 功能需要：** ChromaDB 和 Ollama 服务必须运行。查看 [启动指南](./docs/启动指南.md) 了解详情。
 
 ### 常用命令
 
