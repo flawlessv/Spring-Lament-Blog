@@ -127,41 +127,127 @@ results.sort((a, b) => b.score - a.score);
 
 ## 5. AI Tab 实时补全
 
-TODO:这里说的太简单了 需要完善一下
-
 **评委问：你的 AI 补全功能是怎么实现的？**
 
-我实现了类似 GitHub Copilot 的内联补全功能。核心思路是：通过 ProseMirror 插件机制，在用户输入时提取光标前 500 字符作为上下文，调用 AI API 生成补全建议，然后以灰色斜体文本的形式内联显示在光标位置。
+我实现了类似 GitHub Copilot 的内联补全功能。这个功能的核心挑战在于：如何在用户快速输入时，实时生成补全建议，同时避免频繁的 API 调用和异步竞态问题。
 
-关键技术点：
+### 核心设计思路
 
-1. **防抖机制**：500ms 延迟，避免频繁 API 调用
-2. **位置校验**：API 返回后校验光标位置，防止异步竞态
-3. **装饰渲染**：使用 `Decoration.widget` 实现不影响文档结构的视觉提示
+**1. 状态驱动的插件架构**
 
-关键代码：
+我基于 ProseMirror 的 Plugin 机制实现。ProseMirror 的插件系统提供了 `apply` 方法来监听文档状态变化，`decorations` 方法来渲染视觉装饰。这种设计让我可以：
+
+- 在用户输入时自动触发补全逻辑
+- 使用装饰（Decoration）显示补全建议，而不影响文档结构
+- 通过插件状态管理补全信息，确保 UI 与数据同步
+
+**2. 防抖机制优化**
+
+用户快速输入时，如果每次输入都调用 API，会导致：
+
+- 大量无效请求（前面的请求会被后面的输入覆盖）
+- 服务器压力大
+- 补全建议频繁闪烁，体验差
+
+我的解决方案是：**500ms 防抖延迟**。每次新输入时，清除之前的定时器，只保留最后一次输入的定时器。这样用户停止输入 500ms 后才会触发 API 调用。
 
 ```typescript
-// 防抖延迟
+// 每次新输入时清除旧定时器
+if (debounceTimer) {
+  clearTimeout(debounceTimer);
+  debounceTimer = null;
+}
+
+// 设置新定时器，延迟 500ms
 debounceTimer = setTimeout(async () => {
-  // 记录当前光标位置
-  const currentFrom = from;
-
-  // API 调用...
-  const suggestion = await fetchCompletion(context);
-
-  // 再次检查光标位置（防止异步竞态）
-  if (latestState.selection.from === currentFrom) {
-    // 更新插件状态，显示补全建议
-    tr.setMeta("ai-completion-update", {
-      suggestion: suggestionText,
-      position: currentFrom,
-    });
-  }
+  // API 调用逻辑
 }, 500);
 ```
 
-用户可以通过 `Tab` 键接受补全，`Esc` 键取消。这样提供了无缝的写作体验，不打断写作流程。
+**3. 双重位置校验防止异步竞态**
+
+这是最关键的优化点。AI API 调用是异步的，用户可能在 API 返回前继续输入或移动光标。如果直接显示补全建议，可能会显示在错误的位置。
+
+我的解决方案是**双重位置校验**：
+
+- **第一次校验**：防抖回调执行时，检查光标位置是否仍然一致
+- **第二次校验**：API 返回后，再次检查光标位置
+
+只有两次校验都通过，才会显示补全建议。
+
+```typescript
+// 第一次校验：防抖回调执行时
+const currentState = extension.editor.state;
+const currentFrom = currentState.selection.from;
+
+// 如果位置已改变，直接返回
+if (currentFrom !== from) {
+  return;
+}
+
+// 调用 API
+const suggestion = await fetchCompletion(context);
+
+// 第二次校验：API 返回后
+const latestState = extension.editor.state;
+if (latestState.selection.from === currentFrom) {
+  // 位置仍然一致，更新状态显示补全
+  tr.setMeta("ai-completion-update", {
+    suggestion: suggestionText,
+    position: currentFrom,
+  });
+}
+```
+
+**4. 非侵入式渲染**
+
+补全建议使用 `Decoration.widget` 实现，这是一个视觉提示，不拦截用户操作。关键特性：
+
+- 不影响文档结构（不会插入到文档中）
+- 不拦截鼠标事件（`pointer-events: none`）
+- 灰色斜体样式，清晰区分建议和实际内容
+
+```typescript
+decorations(state) {
+  const pluginState = pluginKey.getState(state);
+
+  if (!pluginState.suggestion) {
+    return DecorationSet.empty;
+  }
+
+  // 创建装饰元素
+  const widget = document.createElement("span");
+  widget.style.cssText = "color: #9ca3af; font-style: italic; pointer-events: none;";
+  widget.textContent = pluginState.suggestion;
+
+  return DecorationSet.create(state.doc, [
+    Decoration.widget(pluginState.position, widget, { side: 1 })
+  ]);
+}
+```
+
+**5. 边界条件处理**
+
+我还实现了多个边界检查，确保补全只在合适的时机触发：
+
+- **文本选择检查**：用户选择文本时，可能想要替换或删除，不需要补全
+- **代码块检查**：代码块的补全应该由专门的代码编辑器处理
+- **文本长度检查**：文本太短时，上下文不足，补全质量差
+
+### 用户交互
+
+用户可以通过 `Tab` 键接受补全，`Esc` 键取消。接受补全时，会插入补全文本并清除补全状态；取消时，只清除补全状态，不影响文档内容。
+
+### 技术优势
+
+这个实现方案的优势在于：
+
+1. **无缝体验**：补全建议直接显示在光标位置，不打断写作流程
+2. **性能优化**：防抖机制减少 API 调用，双重校验避免无效更新
+3. **可靠性高**：多重边界检查和处理，确保功能稳定
+4. **可扩展性强**：基于 ProseMirror 插件机制，易于扩展和维护
+
+整个功能从用户输入到补全建议显示，形成了一个完整的闭环，既保证了用户体验，又确保了系统的稳定性和性能。
 
 ---
 
