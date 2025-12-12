@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Tag } from "../types";
 
-const DEFAULT_TAGS: Tag[] = [
-  { id: "react", name: "React", color: "#61DAFB" },
-  { id: "typescript", name: "TypeScript", color: "#3178C6" },
-  { id: "nextjs", name: "Next.js", color: "#000000" },
-  { id: "javascript", name: "JavaScript", color: "#F7DF1E" },
-  { id: "css", name: "CSS", color: "#1572B6" },
-  { id: "nodejs", name: "Node.js", color: "#339933" },
-];
-
 export function useTags(open: boolean) {
   const [tags, setTags] = useState<Tag[]>([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -19,11 +10,13 @@ export function useTags(open: boolean) {
       const response = await fetch("/api/admin/tags");
       if (response.ok) {
         const data = await response.json();
-        setTags(data.tags);
+        setTags(data.tags || []);
+      } else {
+        setTags([]);
       }
     } catch (error) {
       console.error("获取标签失败:", error);
-      setTags(DEFAULT_TAGS);
+      setTags([]);
     }
   };
 

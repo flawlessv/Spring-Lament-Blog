@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Category } from "../types";
 
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: "tech", name: "技术", color: "#3B82F6" },
-  { id: "life", name: "生活", color: "#10B981" },
-  { id: "thoughts", name: "随想", color: "#8B5CF6" },
-];
-
 export function useCategories(open: boolean) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -16,11 +10,13 @@ export function useCategories(open: boolean) {
       const response = await fetch("/api/admin/categories");
       if (response.ok) {
         const data = await response.json();
-        setCategories(data.categories);
+        setCategories(data.categories || []);
+      } else {
+        setCategories([]);
       }
     } catch (error) {
       console.error("获取分类失败:", error);
-      setCategories(DEFAULT_CATEGORIES);
+      setCategories([]);
     }
   };
 

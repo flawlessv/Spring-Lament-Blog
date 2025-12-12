@@ -30,6 +30,7 @@ import {
   Folder,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AI_GENERATION_TYPES, type AIGenerationType } from "@/lib/ai/constants";
 
 // AI 推荐结果的类型（区分已存在和新建）
 export interface AIRecommendation {
@@ -48,16 +49,8 @@ interface AIAssistantProps {
   onContentReplace?: (text: string) => void; // 用于润色功能，替换整个内容
 }
 
-type GenerationType =
-  | "title"
-  | "excerpt"
-  | "tags"
-  | "category"
-  | "outline"
-  | "polish";
-
 interface GenerationResult {
-  type: GenerationType;
+  type: AIGenerationType;
   results: string | string[] | AIRecommendation;
 }
 
@@ -72,7 +65,7 @@ export default function AIAssistant({
   onContentReplace,
 }: AIAssistantProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingType, setLoadingType] = useState<GenerationType | null>(null);
+  const [loadingType, setLoadingType] = useState<AIGenerationType | null>(null);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [generationResult, setGenerationResult] =
     useState<GenerationResult | null>(null);
@@ -84,9 +77,9 @@ export default function AIAssistant({
 
   const { toast } = useToast();
 
-  const generateContent = async (type: GenerationType) => {
+  const generateContent = async (type: AIGenerationType) => {
     // 润色功能使用单独的弹窗
-    if (type === "polish") {
+    if (type === AI_GENERATION_TYPES.POLISH) {
       if (!content.trim()) {
         toast({
           title: "内容为空",
@@ -99,7 +92,7 @@ export default function AIAssistant({
       return;
     }
 
-    if (!content.trim() && type !== "outline") {
+    if (!content.trim() && type !== AI_GENERATION_TYPES.OUTLINE) {
       toast({
         title: "内容为空",
         description: "请先输入文章内容",
@@ -117,9 +110,12 @@ export default function AIAssistant({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type,
-          content: type === "outline" ? title || "技术博客文章" : content,
+          content:
+            type === AI_GENERATION_TYPES.OUTLINE
+              ? title || "技术博客文章"
+              : content,
           options: {
-            count: type === "title" ? 3 : undefined,
+            count: type === AI_GENERATION_TYPES.TITLE ? 3 : undefined,
           },
         }),
       });
@@ -168,7 +164,7 @@ export default function AIAssistant({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: "polish",
+          type: AI_GENERATION_TYPES.POLISH,
           content: content,
           options: { customPrompt: customPrompt.trim() || undefined },
         }),
@@ -184,7 +180,7 @@ export default function AIAssistant({
       if (typeof data.results === "string") {
         // 显示结果让用户确认
         setGenerationResult({
-          type: "polish",
+          type: AI_GENERATION_TYPES.POLISH,
           results: data.results,
         });
         setShowPolishDialog(false);
@@ -208,37 +204,37 @@ export default function AIAssistant({
     if (!generationResult) return;
 
     switch (generationResult.type) {
-      case "title":
+      case AI_GENERATION_TYPES.TITLE:
         if (result) {
           onTitleSelect?.(result);
           toast({ title: "已应用标题", variant: "success" });
         }
         break;
-      case "excerpt":
+      case AI_GENERATION_TYPES.EXCERPT:
         if (typeof generationResult.results === "string") {
           onExcerptGenerated?.(generationResult.results);
           toast({ title: "已生成摘要", variant: "success" });
         }
         break;
-      case "tags":
+      case AI_GENERATION_TYPES.TAGS:
         if (isRecommendation(generationResult.results)) {
           onTagsGenerated?.(generationResult.results);
           toast({ title: "已生成标签推荐", variant: "success" });
         }
         break;
-      case "category":
+      case AI_GENERATION_TYPES.CATEGORY:
         if (isRecommendation(generationResult.results)) {
           onCategoryGenerated?.(generationResult.results);
           toast({ title: "已生成分类推荐", variant: "success" });
         }
         break;
-      case "outline":
+      case AI_GENERATION_TYPES.OUTLINE:
         if (typeof generationResult.results === "string") {
           onContentInsert?.(generationResult.results);
           toast({ title: "已插入内容", variant: "success" });
         }
         break;
-      case "polish":
+      case AI_GENERATION_TYPES.POLISH:
         if (typeof generationResult.results === "string") {
           // 润色功能使用 onContentReplace 替换整个内容
           onContentReplace?.(generationResult.results);
@@ -262,14 +258,15 @@ export default function AIAssistant({
     );
   };
 
-  const getTypeLabel = (type: GenerationType) => {
-    const labels: Record<GenerationType, string> = {
-      title: "生成的标题",
-      excerpt: "生成的摘要",
-      tags: "推荐的标签",
-      category: "推荐的分类",
-      outline: "生成的大纲",
-      polish: "润色后的内容",
+  const getTypeLabel = (type: AIGenerationType) => {
+    const labels: Record<AIGenerationType, string> = {
+      [AI_GENERATION_TYPES.TITLE]: "生成的标题",
+      [AI_GENERATION_TYPES.EXCERPT]: "生成的摘要",
+      [AI_GENERATION_TYPES.TAGS]: "推荐的标签",
+      [AI_GENERATION_TYPES.CATEGORY]: "推荐的分类",
+      [AI_GENERATION_TYPES.OUTLINE]: "生成的大纲",
+      [AI_GENERATION_TYPES.EXPAND]: "扩展的内容",
+      [AI_GENERATION_TYPES.POLISH]: "润色后的内容",
     };
     return labels[type];
   };
@@ -277,9 +274,9 @@ export default function AIAssistant({
   // 渲染推荐结果（标签/分类）
   const renderRecommendation = (
     recommendation: AIRecommendation,
-    type: "tags" | "category"
+    type: typeof AI_GENERATION_TYPES.TAGS | typeof AI_GENERATION_TYPES.CATEGORY
   ) => {
-    const isCategory = type === "category";
+    const isCategory = type === AI_GENERATION_TYPES.CATEGORY;
     const hasExisting = recommendation.existing.length > 0;
     const hasNew = recommendation.new.length > 0;
 
@@ -363,50 +360,60 @@ export default function AIAssistant({
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuLabel>内容生成</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => generateContent("title")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.TITLE)}
             disabled={isLoading}
           >
             <Wand2 className="h-4 w-4 mr-2" />
-            {loadingType === "title" ? "生成中..." : "生成标题"}
+            {loadingType === AI_GENERATION_TYPES.TITLE
+              ? "生成中..."
+              : "生成标题"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => generateContent("excerpt")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.EXCERPT)}
             disabled={isLoading}
           >
             <FileText className="h-4 w-4 mr-2" />
-            {loadingType === "excerpt" ? "生成中..." : "生成摘要"}
+            {loadingType === AI_GENERATION_TYPES.EXCERPT
+              ? "生成中..."
+              : "生成摘要"}
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel>智能推荐</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => generateContent("category")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.CATEGORY)}
             disabled={isLoading}
           >
             <Folder className="h-4 w-4 mr-2" />
-            {loadingType === "category" ? "分析中..." : "推荐分类"}
+            {loadingType === AI_GENERATION_TYPES.CATEGORY
+              ? "分析中..."
+              : "推荐分类"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => generateContent("tags")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.TAGS)}
             disabled={isLoading}
           >
             <Tag className="h-4 w-4 mr-2" />
-            {loadingType === "tags" ? "分析中..." : "推荐标签"}
+            {loadingType === AI_GENERATION_TYPES.TAGS
+              ? "分析中..."
+              : "推荐标签"}
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel>写作辅助</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => generateContent("outline")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.OUTLINE)}
             disabled={isLoading}
           >
             <ListTree className="h-4 w-4 mr-2" />
-            {loadingType === "outline" ? "生成中..." : "生成大纲"}
+            {loadingType === AI_GENERATION_TYPES.OUTLINE
+              ? "生成中..."
+              : "生成大纲"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => generateContent("polish")}
+            onClick={() => generateContent(AI_GENERATION_TYPES.POLISH)}
             disabled={isLoading}
           >
             <Pencil className="h-4 w-4 mr-2" />
@@ -476,10 +483,10 @@ export default function AIAssistant({
               {generationResult && getTypeLabel(generationResult.type)}
             </DialogTitle>
             <DialogDescription>
-              {generationResult?.type === "tags" ||
-              generationResult?.type === "category"
+              {generationResult?.type === AI_GENERATION_TYPES.TAGS ||
+              generationResult?.type === AI_GENERATION_TYPES.CATEGORY
                 ? "AI 已分析文章内容，为你推荐以下选项"
-                : generationResult?.type === "polish"
+                : generationResult?.type === AI_GENERATION_TYPES.POLISH
                   ? "查看润色后的内容，确认后将替换原文"
                   : "点击选择要使用的内容"}
             </DialogDescription>
@@ -489,8 +496,8 @@ export default function AIAssistant({
             {generationResult && (
               <>
                 {/* 标签/分类推荐 - 新格式 */}
-                {(generationResult.type === "tags" ||
-                  generationResult.type === "category") &&
+                {(generationResult.type === AI_GENERATION_TYPES.TAGS ||
+                  generationResult.type === AI_GENERATION_TYPES.CATEGORY) &&
                   isRecommendation(generationResult.results) &&
                   renderRecommendation(
                     generationResult.results,
@@ -498,7 +505,7 @@ export default function AIAssistant({
                   )}
 
                 {/* 标题选择 */}
-                {generationResult.type === "title" &&
+                {generationResult.type === AI_GENERATION_TYPES.TITLE &&
                   Array.isArray(generationResult.results) && (
                     <div className="space-y-3">
                       {(generationResult.results as string[]).map(
@@ -519,9 +526,9 @@ export default function AIAssistant({
                   )}
 
                 {/* 单个结果（摘要、大纲、润色） */}
-                {(generationResult.type === "excerpt" ||
-                  generationResult.type === "outline" ||
-                  generationResult.type === "polish") &&
+                {(generationResult.type === AI_GENERATION_TYPES.EXCERPT ||
+                  generationResult.type === AI_GENERATION_TYPES.OUTLINE ||
+                  generationResult.type === AI_GENERATION_TYPES.POLISH) &&
                   typeof generationResult.results === "string" && (
                     <div className="space-y-4">
                       <div className="p-4 bg-muted/50 rounded-lg whitespace-pre-wrap text-sm leading-relaxed max-h-[400px] overflow-y-auto">
@@ -531,9 +538,9 @@ export default function AIAssistant({
                         className="w-full"
                         onClick={() => handleResultSelect()}
                       >
-                        {generationResult.type === "excerpt"
+                        {generationResult.type === AI_GENERATION_TYPES.EXCERPT
                           ? "使用此摘要"
-                          : generationResult.type === "polish"
+                          : generationResult.type === AI_GENERATION_TYPES.POLISH
                             ? "应用润色内容（替换原文）"
                             : "插入到编辑器"}
                       </Button>

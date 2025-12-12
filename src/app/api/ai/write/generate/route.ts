@@ -12,6 +12,7 @@ import {
   buildExpandPrompt,
   buildPolishPrompt,
 } from "@/lib/ai/prompts/write";
+import { AI_GENERATION_TYPES } from "@/lib/ai/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,18 +36,18 @@ export async function POST(request: NextRequest) {
     let prompt = "";
 
     switch (type) {
-      case "title":
+      case AI_GENERATION_TYPES.TITLE:
         prompt = buildTitlePrompt(content, {
           count: options?.count,
           style: options?.style,
         });
         break;
 
-      case "excerpt":
+      case AI_GENERATION_TYPES.EXCERPT:
         prompt = buildExcerptPrompt(content);
         break;
 
-      case "tags": {
+      case AI_GENERATION_TYPES.TAGS: {
         // 从数据库获取现有标签
         const existingTags = await prisma.tag.findMany({
           select: { name: true },
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
         break;
       }
 
-      case "category": {
+      case AI_GENERATION_TYPES.CATEGORY: {
         // 从数据库获取现有分类
         const existingCategories = await prisma.category.findMany({
           select: { name: true },
@@ -70,15 +71,15 @@ export async function POST(request: NextRequest) {
         break;
       }
 
-      case "outline":
+      case AI_GENERATION_TYPES.OUTLINE:
         prompt = buildOutlinePrompt(content);
         break;
 
-      case "expand":
+      case AI_GENERATION_TYPES.EXPAND:
         prompt = buildExpandPrompt(content);
         break;
 
-      case "polish": {
+      case AI_GENERATION_TYPES.POLISH: {
         prompt = buildPolishPrompt(content, options?.customPrompt);
         break;
       }
@@ -95,7 +96,10 @@ export async function POST(request: NextRequest) {
     // 解析结果
     let results: string | string[] | { existing: string[]; new: string[] };
 
-    if (type === "tags" || type === "category") {
+    if (
+      type === AI_GENERATION_TYPES.TAGS ||
+      type === AI_GENERATION_TYPES.CATEGORY
+    ) {
       // 解析带有 existing/new 的 JSON 格式
       try {
         const jsonMatch = response.content.match(/\{[\s\S]*\}/);
@@ -112,7 +116,7 @@ export async function POST(request: NextRequest) {
       } catch {
         results = { existing: [], new: [] };
       }
-    } else if (type === "title") {
+    } else if (type === AI_GENERATION_TYPES.TITLE) {
       try {
         const jsonMatch = response.content.match(/\[[\s\S]*\]/);
         if (jsonMatch) {

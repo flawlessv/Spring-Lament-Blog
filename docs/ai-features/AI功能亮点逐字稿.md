@@ -102,26 +102,125 @@ export function buildRAGPrompt(context: string, question: string): string {
 
 **评委问：你是怎么实现文章推荐的？**
 
-我实现了基于向量相似度的语义推荐。主要策略是：使用文章标题 + 摘要生成查询向量，在向量数据库中搜索相似文章，按相似度分数排序返回。
+我实现了基于向量相似度的语义推荐系统，核心思路是：用当前文章的标题和摘要生成查询向量，在向量数据库中搜索语义相似的文章，然后过滤掉当前文章，按相似度排序返回。
 
-关键代码：
+### 核心设计思路
+
+**1. 查询向量生成策略**
+
+我选择使用**标题 + 摘要（前500字符）**来生成查询向量，而不是全文。这样做的原因：
+
+- **效率更高**：摘要已经包含了文章的核心信息，不需要处理全文
+- **语义更聚焦**：标题和摘要通常最能代表文章主题
+- **成本更低**：向量化更短的文本，API 调用更快
 
 ```typescript
-// 生成查询向量
-const [queryVector] = await aiClient.embed(`${post.title} ${post.excerpt}`);
-
-// 向量相似度搜索
-const searchResults = await vectorStore.search(queryVector, {
-  limit: options.limit || 10,
-});
-
-// 按相似度排序
-results.sort((a, b) => b.score - a.score);
+// 使用文章标题 + 摘要生成查询向量（比全文更高效）
+const queryText = `${currentPost.title}\n${currentPost.content.slice(0, 500)}`;
+const [queryVector] = await aiClient.embed(queryText);
 ```
 
-我还实现了**降级策略**：当向量服务不可用时，自动降级为标签+分类匹配。计算共同标签数量作为相关度分数，确保功能可用性。
+**2. 当前文章过滤机制**
 
-相比传统的标签匹配推荐，向量相似度推荐的优势是：能理解语义关联，不受关键词限制，能发现表面不相关但语义相近的文章。比如"React Hooks"和"函数式组件"在语义上相关，但关键词完全不同。
+这是推荐系统的关键点。向量搜索可能会返回当前文章本身（因为相似度最高），所以必须过滤掉。
+
+我的实现方式：
+
+- 在搜索时多取一些结果（`limit * 3`），因为要排除当前文章和去重
+- 使用 `Set` 数据结构记录已处理的文章 ID，包括当前文章 ID
+- 遍历搜索结果时，跳过当前文章和已处理过的文章
+
+```typescript
+// 获取相关文章的详细信息（排除当前文章，去重）
+const seenPostIds = new Set<string>([currentPost.id]);
+const relatedPostIds: string[] = [];
+
+for (const result of searchResults) {
+  const postId = result.metadata.postId as string;
+  if (!seenPostIds.has(postId)) {
+    seenPostIds.add(postId);
+    relatedPostIds.push(postId);
+    if (relatedPostIds.length >= limit) break;
+  }
+}
+```
+
+**3. 去重处理**
+
+向量搜索可能返回同一篇文章的多个块（因为一篇文章被切分成多个块），需要去重。我的做法是：
+
+- 使用 `Set` 记录已处理的文章 ID
+- 只保留每个文章的第一个匹配结果（相似度最高的）
+- 通过 `postId` 去重，而不是通过块 ID
+
+**4. 相似度分数保留**
+
+为了保持推荐质量，我保留了向量搜索的相似度分数：
+
+- 在搜索时记录每个文章的相似度分数
+- 使用 `Map` 存储 `postId -> score` 的映射
+- 返回结果时带上分数，前端可以显示推荐强度
+
+```typescript
+// 按相似度排序
+const scoreMap = new Map<string, number>();
+for (const result of searchResults) {
+  const postId = result.metadata.postId as string;
+  if (!scoreMap.has(postId)) {
+    scoreMap.set(postId, result.score);
+  }
+}
+```
+
+**5. 降级策略**
+
+当向量服务不可用时（比如 Ollama 未启动），我实现了降级策略：
+
+- 优先使用分类匹配：同分类的文章优先推荐
+- 其次使用标签匹配：有共同标签的文章作为补充
+- 计算相关度分数：共同标签数量 _ 0.3 + 同分类 _ 0.5
+- 如果没有分类和标签，返回最新文章
+
+```typescript
+// 降级推荐：基于分类和标签
+const where: any = {
+  id: { notIn: Array.from(excludeSet) },
+  published: true,
+  OR: [] as any[],
+};
+
+if (currentPost.categoryId) {
+  where.OR.push({ categoryId: currentPost.categoryId });
+}
+
+if (tagIds.length > 0) {
+  where.OR.push({
+    tags: {
+      some: {
+        tagId: { in: tagIds },
+      },
+    },
+  });
+}
+```
+
+### 技术优势
+
+相比传统的标签匹配推荐，向量相似度推荐的优势：
+
+1. **语义理解**：能理解语义关联，不受关键词限制
+2. **发现隐藏关联**：能发现表面不相关但语义相近的文章
+3. **更精准**：基于内容相似度，而不是简单的标签匹配
+4. **降级保证**：向量服务不可用时自动降级，保证功能可用性
+
+### 性能优化
+
+1. **多取少用**：搜索时取 `limit * 3` 个结果，过滤后只返回 `limit` 个
+2. **数据库查询优化**：只查询需要的字段，减少数据传输
+3. **Map 数据结构**：使用 Map 存储文章映射和分数，O(1) 查找
+4. **提前终止**：找到足够的文章后立即终止循环
+
+这个推荐系统既保证了推荐质量（语义相似度），又保证了可用性（降级策略），还优化了性能（高效查询和去重）。
 
 ---
 
