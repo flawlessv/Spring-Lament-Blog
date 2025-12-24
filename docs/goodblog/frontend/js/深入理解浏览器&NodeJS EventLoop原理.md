@@ -1,4 +1,16 @@
-# 深入理解 Event Loop 原理
+---
+title: 深入解析 JavaScript Event Loop 与浏览器渲染机制
+slug: eventrok01t
+published: true
+featured: false
+publishedAt: 2025-11-01
+readingTime: 25
+category: 前端
+tags:
+  - js
+  - 浏览器原理
+coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673910169619840
+---
 
 ## 一、进程与线程的区别
 
