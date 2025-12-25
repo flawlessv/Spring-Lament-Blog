@@ -25,12 +25,10 @@ interface AuthProviderProps {
 export default function AuthProvider({ children }: AuthProviderProps) {
   return (
     <SessionProvider
-      // 会话检查间隔时间（秒）
-      // 设置为 0 表示不自动刷新会话
-      refetchInterval={0}
-      // 当窗口获得焦点时是否重新获取会话
-      // 在用户切换标签页后回来时确保会话状态最新
-      refetchOnWindowFocus={true}
+      // 优化：减少会话刷新频率，从每次焦点变化改为5分钟
+      refetchInterval={5 * 60} // 5分钟自动刷新一次
+      // 优化：禁用窗口焦点时自动刷新，避免不必要的网络请求
+      refetchOnWindowFocus={false}
     >
       {children}
     </SessionProvider>

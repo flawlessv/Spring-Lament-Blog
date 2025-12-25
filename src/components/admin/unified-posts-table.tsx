@@ -2,9 +2,10 @@
 
 /**
  * 统一风格的文章管理表格
+ * 性能优化：添加useMemo、useCallback、防抖等优化
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
@@ -83,7 +84,7 @@ interface UnifiedPostsTableProps {
   statusFilter?: string;
   categoryFilter?: string;
   onSelectionChange?: (selectedIds: string[]) => void;
-  enableTableFilters?: boolean; // 新增：启用表头筛选
+  enableTableFilters?: boolean;
 }
 
 export default function UnifiedPostsTable({
@@ -116,8 +117,11 @@ export default function UnifiedPostsTable({
 
   const { toast } = useToast();
 
-  // 获取可用标签
-  const fetchAvailableTags = async () => {
+  // 优化：使用useRef存储防抖定时器
+  const debounceRef = useRef<NodeJS.Timeout>();
+
+  // 优化：使用useCallback缓存事件处理函数
+  const fetchAvailableTags = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/tags");
       if (response.ok) {
@@ -132,10 +136,9 @@ export default function UnifiedPostsTable({
     } catch (error) {
       console.error("获取标签失败:", error);
     }
-  };
+  }, []);
 
-  // 获取可用分类
-  const fetchAvailableCategories = async () => {
+  const fetchAvailableCategories = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/categories");
       if (response.ok) {
@@ -150,17 +153,10 @@ export default function UnifiedPostsTable({
     } catch (error) {
       console.error("获取分类失败:", error);
     }
-  };
+  }, []);
 
-  // 处理表头筛选
-  const handleTableFilters = (filters: Record<string, any>) => {
-    console.log("处理表头筛选:", filters);
-    setTableFilters(filters);
-    setPagination((prev) => ({ ...prev, page: 1 })); // 重置到第一页
-  };
-
-  // 获取文章数据
-  const fetchPosts = async () => {
+  // 优化：防抖版本的fetchPosts
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -200,8 +196,6 @@ export default function UnifiedPostsTable({
         params.set("tagIds", tableFilters.tags.join(","));
       }
 
-      console.log("发送筛选参数:", Object.fromEntries(params));
-
       const response = await fetch(`/api/admin/posts?${params}`);
 
       if (!response.ok) {
@@ -218,31 +212,53 @@ export default function UnifiedPostsTable({
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchPosts();
   }, [
     searchQuery,
     statusFilter,
     categoryFilter,
     pagination.page,
+    pagination.limit,
     tableFilters,
   ]);
+
+  // 优化：防抖版本的fetchPosts，用于搜索等频繁触发的场景
+  const debouncedFetchPosts = useCallback(
+    (delay = 300) => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(() => {
+        fetchPosts();
+      }, delay);
+    },
+    [fetchPosts]
+  );
+
+  // 处理表头筛选
+  const handleTableFilters = useCallback((filters: Record<string, any>) => {
+    console.log("处理表头筛选:", filters);
+    setTableFilters(filters);
+    setPagination((prev) => ({ ...prev, page: 1 })); // 重置到第一页
+  }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   useEffect(() => {
     if (enableTableFilters) {
       fetchAvailableTags();
       fetchAvailableCategories();
     }
-  }, [enableTableFilters]);
+  }, [enableTableFilters, fetchAvailableTags, fetchAvailableCategories]);
 
-  const formatDate = (date: string | Date) => {
+  // 优化：使用useMemo缓存格式化函数和计算结果
+  const formatDate = useCallback((date: string | Date) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return format(dateObj, "MM月dd日 HH:mm", { locale: zhCN });
-  };
+  }, []);
 
-  const getStatusBadge = (post: Post) => {
+  const getStatusBadge = useCallback((post: Post) => {
     if (post.featured) {
       return (
         <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0">
@@ -264,459 +280,501 @@ export default function UnifiedPostsTable({
         草稿
       </Badge>
     );
-  };
+  }, []);
 
-  // 切换发布状态
-  const handleTogglePublish = async (post: Post) => {
-    try {
-      const response = await fetch(`/api/admin/posts/${post.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ published: !post.published }),
-      });
+  // 优化：使用useCallback缓存事件处理函数
+  const handleTogglePublish = useCallback(
+    async (post: Post) => {
+      try {
+        const response = await fetch(`/api/admin/posts/${post.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ published: !post.published }),
+        });
 
-      if (response.ok) {
+        if (response.ok) {
+          toast({
+            title: post.published ? "取消发布成功" : "发布成功",
+            variant: "success",
+          });
+          await fetchPosts();
+        } else {
+          throw new Error("操作失败");
+        }
+      } catch (error) {
         toast({
-          title: post.published ? "取消发布成功" : "发布成功",
+          title: "操作失败",
+          description: "请稍后重试",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, fetchPosts]
+  );
+
+  const handleToggleFeature = useCallback(
+    async (post: Post) => {
+      try {
+        const response = await fetch(`/api/admin/posts/${post.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ featured: !post.featured }),
+        });
+
+        if (response.ok) {
+          toast({
+            title: post.featured ? "取消精选成功" : "设为精选成功",
+            variant: "success",
+          });
+          await fetchPosts();
+        } else {
+          throw new Error("操作失败");
+        }
+      } catch (error) {
+        toast({
+          title: "操作失败",
+          description: "请稍后重试",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, fetchPosts]
+  );
+
+  const handleDelete = useCallback(
+    async (post: Post) => {
+      try {
+        const response = await fetch(`/api/admin/posts/${post.id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          toast({
+            title: "删除成功",
+            description: "文章已成功删除",
+            variant: "success",
+          });
+          await fetchPosts();
+        } else {
+          throw new Error("删除失败");
+        }
+      } catch (error) {
+        toast({
+          title: "删除失败",
+          description: "请稍后重试",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, fetchPosts]
+  );
+
+  const handleBatchDelete = useCallback(
+    async (selectedIds: string[]) => {
+      try {
+        await Promise.all(
+          selectedIds.map((id) =>
+            fetch(`/api/admin/posts/${id}`, { method: "DELETE" })
+          )
+        );
+
+        toast({
+          title: "批量删除成功",
+          description: `已删除 ${selectedIds.length} 篇文章`,
           variant: "success",
         });
+
+        setSelectedIds([]);
+        onSelectionChange?.([]);
         await fetchPosts();
-      } else {
-        throw new Error("操作失败");
-      }
-    } catch (error) {
-      toast({
-        title: "操作失败",
-        description: "请稍后重试",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // 切换精选状态
-  const handleToggleFeature = async (post: Post) => {
-    try {
-      const response = await fetch(`/api/admin/posts/${post.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ featured: !post.featured }),
-      });
-
-      if (response.ok) {
+      } catch (error) {
         toast({
-          title: post.featured ? "取消精选成功" : "设为精选成功",
-          variant: "success",
+          title: "批量删除失败",
+          description: "请稍后重试",
+          variant: "destructive",
         });
-        await fetchPosts();
-      } else {
-        throw new Error("操作失败");
       }
-    } catch (error) {
-      toast({
-        title: "操作失败",
-        description: "请稍后重试",
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    [toast, onSelectionChange, fetchPosts]
+  );
 
-  // 删除文章
-  const handleDelete = async (post: Post) => {
-    try {
-      const response = await fetch(`/api/admin/posts/${post.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
+  const handleExportSelected = useCallback(
+    async (selectedIds: string[]) => {
+      if (selectedIds.length === 0) {
         toast({
-          title: "删除成功",
-          description: "文章已成功删除",
-          variant: "success",
-        });
-        await fetchPosts();
-      } else {
-        throw new Error("删除失败");
-      }
-    } catch (error) {
-      toast({
-        title: "删除失败",
-        description: "请稍后重试",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // 批量删除
-  const handleBatchDelete = async (selectedIds: string[]) => {
-    try {
-      await Promise.all(
-        selectedIds.map((id) =>
-          fetch(`/api/admin/posts/${id}`, { method: "DELETE" })
-        )
-      );
-
-      toast({
-        title: "批量删除成功",
-        description: `已删除 ${selectedIds.length} 篇文章`,
-        variant: "success",
-      });
-
-      setSelectedIds([]);
-      onSelectionChange?.([]);
-      await fetchPosts();
-    } catch (error) {
-      toast({
-        title: "批量删除失败",
-        description: "请稍后重试",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // 导出选中文章
-  const handleExportSelected = async (selectedIds: string[]) => {
-    if (selectedIds.length === 0) {
-      toast({
-        title: "提示",
-        description: "请先选择要导出的文章",
-        variant: "default",
-      });
-      return;
-    }
-
-    setExporting(true);
-    try {
-      const response = await fetch("/api/admin/posts/export", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postIds: selectedIds,
-        }),
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `blog-export-selected-${new Date().toISOString().slice(0, 10)}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-
-        toast({
-          title: "导出成功",
-          description: `已导出 ${selectedIds.length} 篇文章`,
+          title: "提示",
+          description: "请先选择要导出的文章",
           variant: "default",
         });
-      } else {
-        const result = await response.json();
-        throw new Error(result.error || "导出失败");
+        return;
       }
-    } catch (error) {
-      toast({
-        title: "导出失败",
-        description: error instanceof Error ? error.message : "未知错误",
-        variant: "destructive",
-      });
-    } finally {
-      setExporting(false);
-    }
-  };
 
-  // 状态筛选选项
-  const statusOptions = [
-    { label: "已发布", value: "published", color: "#10B981" },
-    { label: "草稿", value: "draft", color: "#6B7280" },
-    { label: "精选", value: "featured", color: "#F59E0B" },
-  ];
+      setExporting(true);
+      try {
+        const response = await fetch("/api/admin/posts/export", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postIds: selectedIds,
+          }),
+        });
 
-  const columns = [
-    {
-      key: "title",
-      title: "文章信息",
-      width: "flex-1",
-      filter: enableTableFilters
-        ? {
-            type: "text" as const,
-            placeholder: "搜索文章标题...",
-            onFilter: (value: string) => {
-              console.log("Title filter:", value);
-            },
-          }
-        : undefined,
-      render: (_: unknown, post: Post) => (
-        <div className="min-w-0">
-          <Link
-            href={`/admin/posts/${post.id}/edit`}
-            className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block truncate"
-          >
-            {post.title}
-          </Link>
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `blog-export-selected-${new Date().toISOString().slice(0, 10)}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
 
-          <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
-            <div className="flex items-center space-x-1">
-              <Calendar className="h-3 w-3" />
-              <span>{formatDate(post.createdAt)}</span>
-            </div>
-            {post.category && (
+          toast({
+            title: "导出成功",
+            description: `已导出 ${selectedIds.length} 篇文章`,
+            variant: "default",
+          });
+        } else {
+          const result = await response.json();
+          throw new Error(result.error || "导出失败");
+        }
+      } catch (error) {
+        toast({
+          title: "导出失败",
+          description: error instanceof Error ? error.message : "未知错误",
+          variant: "destructive",
+        });
+      } finally {
+        setExporting(false);
+      }
+    },
+    [toast]
+  );
+
+  // 优化：使用useMemo缓存静态配置
+  const statusOptions = useMemo(
+    () => [
+      { label: "已发布", value: "published", color: "#10B981" },
+      { label: "草稿", value: "draft", color: "#6B7280" },
+      { label: "精选", value: "featured", color: "#F59E0B" },
+    ],
+    []
+  );
+
+  // 优化：使用useMemo缓存columns配置，避免每次渲染重新创建
+  const columns = useMemo(
+    () => [
+      {
+        key: "title",
+        title: "文章信息",
+        width: "flex-1",
+        filter: enableTableFilters
+          ? {
+              type: "text" as const,
+              placeholder: "搜索文章标题...",
+              onFilter: (value: string) => {
+                console.log("Title filter:", value);
+              },
+            }
+          : undefined,
+        render: (_: unknown, post: Post) => (
+          <div className="min-w-0">
+            <Link
+              href={`/admin/posts/${post.id}/edit`}
+              className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block truncate"
+            >
+              {post.title}
+            </Link>
+
+            <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
               <div className="flex items-center space-x-1">
+                <Calendar className="h-3 w-3" />
+                <span>{formatDate(post.createdAt)}</span>
+              </div>
+              {post.category && (
+                <div className="flex items-center space-x-1">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{
+                      backgroundColor: post.category.color || "#6B7280",
+                    }}
+                  />
+                  <span>{post.category.name}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ),
+      },
+      {
+        key: "category",
+        title: "分类",
+        width: "w-32",
+        filter: enableTableFilters
+          ? {
+              type: "multiselect" as const,
+              options: availableCategories,
+              placeholder: "筛选分类",
+              onFilter: (value: string) => {
+                console.log("Category filter:", value);
+              },
+            }
+          : undefined,
+        render: (_: unknown, post: Post) => (
+          <div className="flex items-center space-x-2">
+            {post.category ? (
+              <>
                 <div
-                  className="w-2 h-2 rounded-full"
+                  className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: post.category.color || "#6B7280" }}
                 />
-                <span>{post.category.name}</span>
-              </div>
+                <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                  {post.category.name}
+                </span>
+              </>
+            ) : (
+              <span className="text-sm text-gray-400 dark:text-gray-500">
+                -
+              </span>
             )}
           </div>
-        </div>
-      ),
-    },
-    {
-      key: "category",
-      title: "分类",
-      width: "w-32",
-      filter: enableTableFilters
-        ? {
-            type: "multiselect" as const,
-            options: availableCategories,
-            placeholder: "筛选分类",
-            onFilter: (value: string) => {
-              console.log("Category filter:", value);
-            },
-          }
-        : undefined,
-      render: (_: unknown, post: Post) => (
-        <div className="flex items-center space-x-2">
-          {post.category ? (
-            <>
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: post.category.color || "#6B7280" }}
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
-                {post.category.name}
-              </span>
-            </>
-          ) : (
-            <span className="text-sm text-gray-400 dark:text-gray-500">-</span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "tags",
-      title: "标签",
-      width: "w-56",
-      filter: enableTableFilters
-        ? {
-            type: "multiselect" as const,
-            options: availableTags,
-            placeholder: "筛选标签",
-            onFilter: (value: string) => {
-              console.log("Tags filter:", value);
-            },
-          }
-        : undefined,
-      render: (_: unknown, post: Post) => (
-        <div className="flex flex-wrap gap-1">
-          {post.tags.slice(0, 3).map((tag) => (
-            <Badge
-              key={tag.id}
-              style={{ backgroundColor: tag.color || "#6B7280" }}
-              className="text-white text-xs px-2 py-0.5 rounded-lg"
-            >
-              {tag.name}
-            </Badge>
-          ))}
-          {post.tags.length > 3 && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              +{post.tags.length - 3}
-            </span>
-          )}
-          {post.tags.length === 0 && (
-            <span className="text-sm text-gray-400 dark:text-gray-500">-</span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "status",
-      title: "状态",
-      width: "w-24",
-      className: "text-center",
-      filter: enableTableFilters
-        ? {
-            type: "multiselect" as const,
-            options: statusOptions,
-            placeholder: "筛选状态",
-            onFilter: (value: string) => {
-              console.log("Status filter:", value);
-            },
-          }
-        : undefined,
-      render: (_: unknown, post: Post) => getStatusBadge(post),
-    },
-    {
-      key: "views",
-      title: "浏览量",
-      width: "w-20",
-      className: "text-center",
-      render: (_: unknown, post: Post) => (
-        <div className="flex items-center justify-center space-x-1 text-gray-600 dark:text-gray-400">
-          <Eye className="h-4 w-4" />
-          <span className="font-medium">{post.views.toLocaleString()}</span>
-        </div>
-      ),
-    },
-    {
-      key: "updatedAt",
-      title: "更新时间",
-      width: "w-24",
-      className: "text-center",
-      render: (_: unknown, post: Post) => (
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {formatDate(post.updatedAt)}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      title: "操作",
-      width: "w-52",
-      className: "text-center",
-      render: (_: unknown, post: Post) => (
-        <div className="flex items-center justify-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
-            onClick={() => window.open(`/posts/${post.slug}`, "_blank")}
-          >
-            <Eye className="h-4 w-4 mr-1" />
-            预览
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
-            onClick={() =>
-              (window.location.href = `/admin/posts/${post.id}/edit`)
+        ),
+      },
+      {
+        key: "tags",
+        title: "标签",
+        width: "w-56",
+        filter: enableTableFilters
+          ? {
+              type: "multiselect" as const,
+              options: availableTags,
+              placeholder: "筛选标签",
+              onFilter: (value: string) => {
+                console.log("Tags filter:", value);
+              },
             }
-          >
-            <Edit className="h-4 w-4 mr-1" />
-            编辑
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+          : undefined,
+        render: (_: unknown, post: Post) => (
+          <div className="flex flex-wrap gap-1">
+            {post.tags.slice(0, 3).map((tag) => (
+              <Badge
+                key={tag.id}
+                style={{ backgroundColor: tag.color || "#6B7280" }}
+                className="text-white text-xs px-2 py-0.5 rounded-lg"
               >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                {tag.name}
+              </Badge>
+            ))}
+            {post.tags.length > 3 && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                +{post.tags.length - 3}
+              </span>
+            )}
+            {post.tags.length === 0 && (
+              <span className="text-sm text-gray-400 dark:text-gray-500">
+                -
+              </span>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "status",
+        title: "状态",
+        width: "w-24",
+        className: "text-center",
+        filter: enableTableFilters
+          ? {
+              type: "multiselect" as const,
+              options: statusOptions,
+              placeholder: "筛选状态",
+              onFilter: (value: string) => {
+                console.log("Status filter:", value);
+              },
+            }
+          : undefined,
+        render: (_: unknown, post: Post) => getStatusBadge(post),
+      },
+      {
+        key: "views",
+        title: "浏览量",
+        width: "w-20",
+        className: "text-center",
+        render: (_: unknown, post: Post) => (
+          <div className="flex items-center justify-center space-x-1 text-gray-600 dark:text-gray-400">
+            <Eye className="h-4 w-4" />
+            <span className="font-medium">{post.views.toLocaleString()}</span>
+          </div>
+        ),
+      },
+      {
+        key: "updatedAt",
+        title: "更新时间",
+        width: "w-24",
+        className: "text-center",
+        render: (_: unknown, post: Post) => (
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {formatDate(post.updatedAt)}
+          </span>
+        ),
+      },
+      {
+        key: "actions",
+        title: "操作",
+        width: "w-52",
+        className: "text-center",
+        render: (_: unknown, post: Post) => (
+          <div className="flex items-center justify-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
+              onClick={() => window.open(`/posts/${post.slug}`, "_blank")}
             >
-              <DropdownMenuLabel className="text-gray-700 dark:text-gray-300">
-                更多操作
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => handleTogglePublish(post)}
-                className={`rounded-lg ${
-                  post.published
-                    ? "text-orange-600 dark:text-orange-400"
-                    : "text-green-600 dark:text-green-400"
-                }`}
+              <Eye className="h-4 w-4 mr-1" />
+              预览
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
+              onClick={() =>
+                (window.location.href = `/admin/posts/${post.id}/edit`)
+              }
+            >
+              <Edit className="h-4 w-4 mr-1" />
+              编辑
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
               >
-                {post.published ? "取消发布" : "发布"}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleToggleFeature(post)}
-                className="rounded-lg"
-              >
-                <Star className="h-4 w-4 mr-2" />
-                {post.featured ? "取消精选" : "设为精选"}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(post)}
-                className="rounded-lg text-red-600 dark:text-red-400"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                删除
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
-    },
-  ];
-
-  const actions = [
-    {
-      key: "preview",
-      label: "预览",
-      icon: <Eye className="h-4 w-4" />,
-      onClick: (post: Post) => {
-        window.open(`/${post.slug}`, "_blank");
+                <DropdownMenuLabel className="text-gray-700 dark:text-gray-300">
+                  更多操作
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => handleTogglePublish(post)}
+                  className={`rounded-lg ${
+                    post.published
+                      ? "text-orange-600 dark:text-orange-400"
+                      : "text-green-600 dark:text-green-400"
+                  }`}
+                >
+                  {post.published ? "取消发布" : "发布"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleToggleFeature(post)}
+                  className="rounded-lg"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  {post.featured ? "取消精选" : "设为精选"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDelete(post)}
+                  className="rounded-lg text-red-600 dark:text-red-400"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  删除
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ),
       },
-    },
-    {
-      key: "edit",
-      label: "编辑",
-      icon: <Edit className="h-4 w-4" />,
-      onClick: (post: Post) => {
-        window.location.href = `/admin/posts/${post.id}/edit`;
-      },
-    },
-    {
-      key: "publish",
-      label: (post: Post) => (post.published ? "取消发布" : "发布"),
-      onClick: handleTogglePublish,
-      variant: (post: Post) =>
-        post.published ? "warning" : ("success" as const),
-    },
-    {
-      key: "feature",
-      label: (post: Post) => (post.featured ? "取消精选" : "设为精选"),
-      icon: <Star className="h-4 w-4" />,
-      onClick: handleToggleFeature,
-    },
-    {
-      key: "delete",
-      label: "删除",
-      icon: <Trash2 className="h-4 w-4" />,
-      onClick: handleDelete,
-      variant: "danger" as const,
-    },
-  ];
+    ],
+    [
+      enableTableFilters,
+      availableCategories,
+      availableTags,
+      statusOptions,
+      formatDate,
+      getStatusBadge,
+      handleTogglePublish,
+      handleToggleFeature,
+      handleDelete,
+    ]
+  );
 
-  const batchActions = [
-    {
-      label: exporting ? "导出中..." : "导出选中",
-      onClick: handleExportSelected,
-      variant: "default" as const,
-      icon: exporting ? (
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-      ) : (
-        <Download className="h-4 w-4 mr-2" />
-      ),
-      disabled: exporting,
-    },
-    {
-      label: "批量删除",
-      onClick: handleBatchDelete,
-      variant: "danger" as const,
-      icon: <Trash2 className="h-4 w-4 mr-2" />,
-    },
-  ];
+  // 优化：使用useMemo缓存actions配置
+  const actions = useMemo(
+    () => [
+      {
+        key: "preview",
+        label: "预览",
+        icon: <Eye className="h-4 w-4" />,
+        onClick: (post: Post) => {
+          window.open(`/${post.slug}`, "_blank");
+        },
+      },
+      {
+        key: "edit",
+        label: "编辑",
+        icon: <Edit className="h-4 w-4" />,
+        onClick: (post: Post) => {
+          window.location.href = `/admin/posts/${post.id}/edit`;
+        },
+      },
+      {
+        key: "publish",
+        label: (post: Post) => (post.published ? "取消发布" : "发布"),
+        onClick: handleTogglePublish,
+        variant: (post: Post) =>
+          post.published ? "warning" : ("success" as const),
+      },
+      {
+        key: "feature",
+        label: (post: Post) => (post.featured ? "取消精选" : "设为精选"),
+        icon: <Star className="h-4 w-4" />,
+        onClick: handleToggleFeature,
+      },
+      {
+        key: "delete",
+        label: "删除",
+        icon: <Trash2 className="h-4 w-4" />,
+        onClick: handleDelete,
+        variant: "danger" as const,
+      },
+    ],
+    [handleTogglePublish, handleToggleFeature, handleDelete]
+  );
+
+  // 优化：使用useMemo缓存batchActions配置
+  const batchActions = useMemo(
+    () => [
+      {
+        label: exporting ? "导出中..." : "导出选中",
+        onClick: handleExportSelected,
+        variant: "default" as const,
+        icon: exporting ? (
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        ) : (
+          <Download className="h-4 w-4 mr-2" />
+        ),
+        disabled: exporting,
+      },
+      {
+        label: "批量删除",
+        onClick: handleBatchDelete,
+        variant: "danger" as const,
+        icon: <Trash2 className="h-4 w-4 mr-2" />,
+      },
+    ],
+    [exporting, handleExportSelected, handleBatchDelete]
+  );
 
   return (
     <ModernTable

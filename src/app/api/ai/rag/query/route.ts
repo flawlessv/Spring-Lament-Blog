@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       answer: response.answer,
       sources: response.sources,
       tokensUsed: response.tokensUsed,
-      mode: response.mode,
+      mode: (response as any).mode || "rag",
     });
   } catch (error) {
     console.error("RAG 查询错误:", error);
