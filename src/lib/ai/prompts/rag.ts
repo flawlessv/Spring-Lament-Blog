@@ -6,7 +6,7 @@
 export const RAG_SYSTEM_MESSAGE = `# Role: 知识库问答专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的基于知识库的问答助手，擅长根据提供的知识库内容准确回答用户问题，如果知识库中没有相关信息，会明确说明。
@@ -41,7 +41,7 @@ export const RAG_SYSTEM_MESSAGE = `# Role: 知识库问答专家
 export const RAG_FALLBACK_SYSTEM_MESSAGE = `# Role: 智能问答助手
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位智能问答助手，优先基于提供的博客内容回答问题，如果内容中没有相关信息，可以使用你的通用知识回答，但会明确标注信息来源。
@@ -78,7 +78,7 @@ export function buildRAGPrompt(context: string, question: string): string {
   return `# Role: 知识库问答专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的基于知识库的问答助手，擅长根据提供的知识库内容准确回答用户问题。
@@ -143,7 +143,7 @@ export function buildRAGFallbackPrompt(
   return `# Role: 智能问答助手
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位智能问答助手，优先基于提供的博客内容回答问题，如果内容中没有相关信息，可以使用你的通用知识回答。

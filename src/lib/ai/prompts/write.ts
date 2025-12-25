@@ -16,7 +16,7 @@ export function buildTitlePrompt(
   return `# Role: SEO 标题生成专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位资深的 SEO 内容营销专家，擅长根据文章内容生成既符合 SEO 要求又吸引读者的标题。
@@ -73,7 +73,7 @@ export function buildExcerptPrompt(content: string): string {
   return `# Role: 内容摘要撰写专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容编辑，擅长从长文中提取核心信息，撰写简洁有力的摘要。
@@ -139,7 +139,7 @@ export function buildTagsPrompt(
   return `# Role: 内容标签分类专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容分类专家，擅长分析文章主题并为其推荐最合适的标签，既考虑现有标签库的复用，也识别需要新增的标签。
@@ -218,7 +218,7 @@ export function buildCategoryPrompt(
   return `# Role: 内容分类专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容分类专家，擅长根据文章的主题和领域为其推荐最合适的分类，确保分类体系的层次性和一致性。
@@ -289,7 +289,7 @@ export function buildOutlinePrompt(topic: string): string {
   return `# Role: 内容策划与结构设计专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容策划专家，擅长根据主题设计清晰、逻辑严密的文章结构和大纲，确保内容的完整性和可读性。
@@ -361,7 +361,7 @@ export function buildExpandPrompt(content: string): string {
   return `# Role: 内容扩展与深化专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容编辑，擅长在保持原文风格和核心观点的基础上，通过添加细节、例子和深入分析来扩展内容，使其更加丰富和完整。
@@ -428,7 +428,7 @@ export function buildPolishPrompt(
   return `# Role: 内容润色与优化专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的内容编辑和语言优化专家，擅长修正语法错误、优化表达方式、提升文本流畅度，同时严格保持原文的核心观点和意图不变。

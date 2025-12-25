@@ -108,7 +108,7 @@ function LoginForm() {
             </div>
             <div className="space-y-2">
               <CardTitle className="text-4xl font-bold text-center tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                SpringLament
+                Spring Broken AI Blog
               </CardTitle>
               <CardDescription className="text-center text-base text-gray-600">
                 请使用管理员账户登录
@@ -217,7 +217,7 @@ function LoginForm() {
 
         {/* 底部提示 */}
         <p className="mt-8 text-center text-sm text-gray-500 animate-fade-in">
-          © 2025 SpringLament Blog. All rights reserved.
+          © 2025 Spring Broken AI Blog Blog. All rights reserved.
         </p>
       </div>
     </div>

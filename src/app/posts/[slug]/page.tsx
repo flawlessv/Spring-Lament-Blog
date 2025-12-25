@@ -75,13 +75,13 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "文章不存在 - SpringLament Blog",
+      title: "文章不存在 - Spring Broken AI Blog Blog",
     };
   }
 
   return {
-    title: `${post.title} - SpringLament Blog`,
-    description: post.excerpt || "SpringLament Blog 文章详情",
+    title: `${post.title} - Spring Broken AI Blog Blog`,
+    description: post.excerpt || "Spring Broken AI Blog Blog 文章详情",
   };
 }
 

@@ -163,7 +163,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
               </div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                  SpringLament
+                  Spring Broken AI
                 </h1>
                 <span className="text-sm text-gray-400 dark:text-gray-500">
                   |
