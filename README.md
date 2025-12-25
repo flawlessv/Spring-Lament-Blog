@@ -1,10 +1,10 @@
 # Next.js全栈开发完全指南
 
-> 基于Spring Lament Blog项目的实战经验，帮助前端同学快速掌握全栈开发技能
+> 基于Spring Broken AI Blog项目的实战经验，帮助前端同学快速掌握全栈开发技能
 
 ## 🚀 项目介绍
 
-Spring Lament Blog 是一个基于 Next.js 15 的现代化全栈博客系统，专注于优雅的写作体验和流畅的阅读感受。本项目采用最新的 App Router 架构，集成了完整的认证系统、内容管理、数据存储等功能，是学习全栈开发的绝佳实践项目。
+Spring Broken AI Blog 是一个基于 Next.js 15 的现代化全栈博客系统，专注于优雅的写作体验和流畅的阅读感受。本项目采用最新的 App Router 架构，集成了完整的认证系统、内容管理、数据存储等功能，是学习全栈开发的绝佳实践项目。
 
 ### 主要功能
 
@@ -17,7 +17,7 @@ Spring Lament Blog 是一个基于 Next.js 15 的现代化全栈博客系统，�
 ## 📁 项目目录结构
 
 ```
-Spring Lament Blog/
+Spring Broken AI Blog/
 ├── src/
 │   ├── app/                    # Next.js App Router 页面
 │   │   ├── admin/             # 后台管理页面
@@ -109,7 +109,7 @@ npm run format       # 代码格式化
 
 ## 前言
 
-最近部门在大力推全栈开发，作为一名前端开发者，想要入门全栈开发，那么这份指南就是为你准备的。我们将通过一个真实的博客项目(Spring Lament Blog)，从零开始学习如何使用Next.js 15构建现代化的全栈应用以及后端、数据库、部署等相关知识简介。
+最近部门在大力推全栈开发，作为一名前端开发者，想要入门全栈开发，那么这份指南就是为你准备的。我们将通过一个真实的博客项目(Spring Broken AI Blog)，从零开始学习如何使用Next.js 15构建现代化的全栈应用以及后端、数据库、部署等相关知识简介。
 
 ## 文章大纲
 
@@ -648,7 +648,7 @@ export default async function PostPage({ params }: Props) {
 
 ### 项目概述
 
-Spring Lament Blog是一个基于Next.js 15的现代化博客系统，包含：
+Spring Broken AI Blog是一个基于Next.js 15的现代化博客系统，包含：
 
 - **前台功能**：文章展示、分类浏览、标签筛选
 - **后台管理**：文章CRUD、用户管理、数据统计
@@ -1310,7 +1310,7 @@ npx prisma migrate deploy
 
 ### 项目数据模型概览
 
-Spring Lament Blog的数据模型包含以下核心实体：
+Spring Broken AI Blog的数据模型包含以下核心实体：
 
 ```
 User (用户)
@@ -1656,7 +1656,7 @@ const tagCloud = await prisma.tag.findMany({
 
 ### 项目目录结构
 
-Spring Lament Blog采用Next.js 15的App Router架构，目录结构如下：
+Spring Broken AI Blog采用Next.js 15的App Router架构，目录结构如下：
 
 ```
 Spring-Lament-Blog/
@@ -2534,6 +2534,6 @@ model Post {
 - [Prisma官方文档](https://www.prisma.io/docs)
 - [NextAuth.js文档](https://next-auth.js.org/)
 - [shadcn/ui组件库](https://ui.shadcn.com/)
-- [Spring Lament Blog源码](https://github.com/flawlessv/Spring-Lament-Blog)
+- [Spring Broken AI Blog源码](https://github.com/flawlessv/Spring-Lament-Blog)
 
 **祝你全栈开发之路顺利！** 🚀

@@ -1,5 +1,5 @@
 {
-  "name": "spring-lament-blog",
+  "name": "spring-broken-ai-blog",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -27,9 +27,9 @@
     "deploy:setup": "npm run db:push && npm run db:seed",
     "deploy:setup:prod": "npm run db:generate:prod && npm run db:push:prod && npm run db:seed:prod && npm run build",
     "pm2:start": "pm2 start ecosystem.config.js",
-    "pm2:restart": "pm2 restart spring-lament-blog",
-    "pm2:stop": "pm2 stop spring-lament-blog",
-    "pm2:delete": "pm2 delete spring-lament-blog"
+    "pm2:restart": "pm2 restart spring-broken-ai-blog",
+    "pm2:stop": "pm2 stop spring-broken-ai-blog",
+    "pm2:delete": "pm2 delete spring-broken-ai-blog"
   },
   "dependencies": {
     "@chroma-core/default-embed": "^0.1.9",

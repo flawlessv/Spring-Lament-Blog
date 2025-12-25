@@ -1,10 +1,10 @@
-# SpringLament 博客系统 - Claude 开发文档
+# Spring Broken AI Blog 博客系统 - Claude 开发文档
 
 这是一个基于 Next.js 15 + TypeScript + shadcn/ui + NextAuth.js 构建的现代化个人博客系统。
 
 ## 🚀 项目概览
 
-SpringLament 是一个全栈博客系统，专注于**高效创作**和**优雅展示**。系统采用现代化技术栈，提供完整的内容管理功能和用户友好的管理界面。
+Spring Broken AI Blog 是一个全栈博客系统，专注于**高效创作**和**优雅展示**。系统采用现代化技术栈，提供完整的内容管理功能和用户友好的管理界面。
 
 ### 核心特性
 
@@ -19,7 +19,7 @@ SpringLament 是一个全栈博客系统，专注于**高效创作**和**优雅�
 ## 📁 项目结构
 
 ```
-SpringLament Blog/
+Spring Broken AI Blog Blog/
 ├── src/
 │   ├── app/                    # Next.js App Router 页面
 │   │   ├── admin/             # 管理后台页面
@@ -92,7 +92,7 @@ npm >= 8.0.0
 ```bash
 # 克隆项目
 git clone <repository-url>
-cd "Spring Lament Blog"
+cd "Spring Broken AI Blog"
 
 # 安装依赖
 npm install
@@ -233,7 +233,7 @@ import { Metadata } from "next";
 import AdminLayout from "@/components/admin/admin-layout";
 
 export const metadata: Metadata = {
-  title: "示例页面 - SpringLament Blog",
+  title: "示例页面 - Spring Broken AI Blog Blog",
   description: "这是一个示例页面",
 };
 
@@ -442,7 +442,7 @@ npm start
 
 ```bash
 # 生产环境环境变量
-DATABASE_URL="postgresql://username:password@localhost:5432/spring_lament"
+DATABASE_URL="postgresql://username:password@localhost:5432/spring_broken_ai"
 NEXTAUTH_SECRET="your-production-secret-key"
 NEXTAUTH_URL="http://powder.icu/"
 ADMIN_USERNAME="admin"
@@ -513,6 +513,6 @@ chore: 构建过程或工具变更
 
 ---
 
-**SpringLament Blog** - 专注于高效创作和优雅展示的现代化博客系统
+**Spring Broken AI Blog Blog** - 专注于高效创作和优雅展示的现代化博客系统
 
 🔗 **技术栈**: Next.js 15 + TypeScript + shadcn/ui + NextAuth.js + Prisma + Tailwind CSS

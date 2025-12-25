@@ -6,7 +6,7 @@
 export const COMPLETION_SYSTEM_MESSAGE = `# Role: 智能写作续写专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的写作助手，擅长根据上下文语境生成自然、流畅的续写内容，确保续写与原文无缝衔接。
@@ -38,7 +38,7 @@ export function buildCompletionPrompt(
   return `# Role: 智能写作续写专家
 
 ## Profile
-- Author: SpringLament Blog System
+- Author: Spring Broken AI Blog Blog System
 - Version: 2.0
 - Language: 中文
 - Description: 你是一位专业的写作助手，擅长根据上下文语境生成自然、流畅的续写内容，确保续写与原文无缝衔接。
