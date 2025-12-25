@@ -105,7 +105,7 @@ export default async function PostPage({
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          <span>返回123123213123</span>
+          <span>返回</span>
         </Link>
       }
       extraButtons={
