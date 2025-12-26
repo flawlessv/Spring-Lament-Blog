@@ -253,6 +253,70 @@ npm run dev
 密码: 0919
 ```
 
+---
+
+## 🚀 快速启动命令
+
+### 方式一: 仅启动博客 (不含 AI 功能)
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 配置环境变量 (仅基础配置)
+cp .env.example .env.local
+# 编辑 .env.local,配置数据库和 NextAuth
+
+# 3. 初始化数据库
+npm run db:generate
+npm run db:push
+npm run db:seed
+
+# 4. 启动开发服务器
+npm run dev
+
+# 访问 http://localhost:7777
+```
+
+### 方式二: 完整启动 (含 AI 功能)
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 启动 AI 服务 (使用项目提供的脚本)
+./start-ai.sh
+
+# 3. 配置环境变量 (含 AI 配置)
+cp .env.example .env.local
+# 编辑 .env.local,添加:
+# KIMI_API_KEY="your-kimi-api-key"
+# OLLAMA_BASE_URL="http://localhost:11434"
+# OLLAMA_EMBEDDING_MODEL="nomic-embed-text"
+# CHROMA_HOST="localhost"
+# CHROMA_PORT="8000"
+
+# 4. 初始化数据库
+npm run db:generate
+npm run db:push
+npm run db:seed
+
+# 5. 启动开发服务器
+npm run dev
+
+# 访问 http://localhost:7777
+```
+
+**停止 AI 服务:**
+
+```bash
+./stop-ai.sh
+```
+
+**详细启动指南:** 请查看 [启动指南.md](./docs/启动指南.md)
+
+---
+
 ## 📝 开发指南
 
 ### 代码规范
