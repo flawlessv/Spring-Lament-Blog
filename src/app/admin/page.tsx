@@ -7,7 +7,7 @@
 import { Suspense } from "react";
 import CleanAdminLayout from "@/components/admin/clean-admin-layout";
 import CleanDashboardStats from "@/components/admin/clean-dashboard-stats";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { FullScreenLoading } from "@/components/ui/loading";
 
 export default function AdminDashboard() {
   return (
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* 统计卡片 */}
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<FullScreenLoading text="永言配命，莫向外求。" />}>
           <CleanDashboardStats />
         </Suspense>
       </div>

@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { FullScreenLoading } from "@/components/ui/loading";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface CleanAdminLayoutProps {
@@ -79,11 +79,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
 
   // 显示加载状态
   if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <FullScreenLoading text="永言配命，莫向外求。" />;
   }
 
   // 未登录

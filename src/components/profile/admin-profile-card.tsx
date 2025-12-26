@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { FullScreenLoading } from "@/components/ui/loading";
 
 interface AdminProfile {
   id: string;
@@ -93,44 +94,7 @@ export default function AdminProfileCard() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="lg:sticky lg:top-24 w-full max-w-xs">
-        <div className="animate-pulse space-y-6">
-          {/* 头像和名称 */}
-          <div>
-            <div className="w-28 h-28 bg-gray-200 dark:bg-gray-700 rounded-full mb-3"></div>
-            <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40 mb-3"></div>
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24 mb-6"></div>
-          </div>
-
-          {/* 分类 */}
-          <div className="min-h-[200px]">
-            <div className="space-y-1">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-7 bg-gray-200 dark:bg-gray-700 rounded flex items-center space-x-1.5"
-                >
-                  <div className="w-3.5 h-3.5 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                  <div className="flex-1 h-3.5 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 社交媒体图标 */}
-          <div className="flex space-x-2 pt-2">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded"
-              ></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <FullScreenLoading text="永言配命，莫向外求。" />;
   }
 
   if (!profile) {

@@ -508,6 +508,20 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Shimmer动画 */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 /* 图片加载占位符 */
 .image-placeholder {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
