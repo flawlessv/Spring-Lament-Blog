@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 
 export const metadata: Metadata = {
-  title: "管理后台 - SpringLament",
-  description: "SpringLament 博客管理后台",
+  title: "管理后台 - Spring Broken AI Blog",
+  description: "Spring Broken AI Blog 博客管理后台",
   icons: {
     icon: [
       {

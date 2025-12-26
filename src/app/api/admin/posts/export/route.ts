@@ -174,7 +174,7 @@ function generateIndexContent(posts: PostWithRelations[]): string {
 ${postListItems.join("\n")}
 
 ---
-由 SpringLament 博客系统导出
+由 Spring Broken AI Blog 博客系统导出
 `;
 }
 

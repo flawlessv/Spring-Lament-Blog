@@ -9,6 +9,7 @@ import Image from "next/image";
 import PublicLayout from "@/components/layout/public-layout";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 import { ImmersiveReaderToggle } from "@/components/immersive-reader";
+import RelatedPosts from "@/components/posts/related-posts";
 
 interface Post {
   id: string;
@@ -74,13 +75,13 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "文章不存在 - SpringLament Blog",
+      title: "文章不存在 - Spring Broken AI Blog Blog",
     };
   }
 
   return {
-    title: `${post.title} - SpringLament Blog`,
-    description: post.excerpt || "SpringLament Blog 文章详情",
+    title: `${post.title} - Spring Broken AI Blog Blog`,
+    description: post.excerpt || "Spring Broken AI Blog Blog 文章详情",
   };
 }
 
@@ -104,7 +105,7 @@ export default async function PostPage({
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          <span>返回123123213123</span>
+          <span>返回</span>
         </Link>
       }
       extraButtons={
@@ -190,9 +191,12 @@ export default async function PostPage({
       </header>
 
       {/* 文章内容 */}
-      <article className="mb-16">
+      <article className="mb-8">
         <MarkdownRenderer content={post.content || "暂无内容"} showToc={true} />
       </article>
+
+      {/* 相关文章推荐 */}
+      <RelatedPosts slug={slug} limit={3} />
 
       {/* 底部导航 */}
       <div className="pt-8 border-t border-gray-100">

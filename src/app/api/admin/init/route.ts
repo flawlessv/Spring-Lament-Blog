@@ -37,7 +37,7 @@ export async function GET() {
         profile: {
           create: {
             displayName: "管理员",
-            bio: "SpringLament Blog 系统管理员",
+            bio: "Spring Broken AI Blog Blog 系统管理员",
             website: "https://springlament.com",
           },
         },

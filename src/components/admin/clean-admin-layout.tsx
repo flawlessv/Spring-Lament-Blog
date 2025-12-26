@@ -22,11 +22,13 @@ import {
   Menu,
   X,
   Sparkles,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FullScreenLoading } from "@/components/ui/loading";
+import { LoadingSpinner } from "@/components/ui/loading";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import RAGChat from "@/components/admin/rag-chat";
 
 interface CleanAdminLayoutProps {
   children: ReactNode;
@@ -79,7 +81,11 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
 
   // 显示加载状态
   if (status === "loading") {
-    return <FullScreenLoading text="永言配命，莫向外求。" />;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   // 未登录
@@ -157,7 +163,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
               </div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                  SpringLament
+                  Spring Broken AI
                 </h1>
                 <span className="text-sm text-gray-400 dark:text-gray-500">
                   |
@@ -171,6 +177,21 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
 
           {/* 右侧 */}
           <div className="flex items-center gap-2">
+            {/* 知识问答 */}
+            <RAGChat
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 px-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 gap-1.5"
+                  title="知识库问答"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  <span className="hidden sm:inline text-sm">知识库问答</span>
+                </Button>
+              }
+            />
+
             {/* 主题切换按钮 */}
             <ThemeToggle className="h-9 w-9 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" />
 

@@ -87,57 +87,68 @@ function calculateDays() {
 
 async function getStats() {
   try {
-    const [
-      totalPosts,
-      publishedPosts,
-      draftPosts,
-      featuredPosts,
-      totalCategories,
-      totalTags,
-      totalViews,
-      recentPosts,
-      topViewedPosts,
-    ] = await Promise.all([
-      prisma.post.count(),
-      prisma.post.count({ where: { published: true } }),
-      prisma.post.count({ where: { published: false } }),
-      prisma.post.count({ where: { featured: true } }),
-      prisma.category.count(),
-      prisma.tag.count(),
-      prisma.post.aggregate({ _sum: { views: true } }),
-      prisma.post.findMany({
-        take: 5,
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          title: true,
-          createdAt: true,
-          published: true,
-          views: true,
-        },
-      }),
-      prisma.post.findMany({
-        take: 5,
-        orderBy: { views: "desc" },
-        where: { published: true },
-        select: {
-          id: true,
-          title: true,
-          views: true,
-        },
-      }),
-    ]);
+    // 优化：使用单个查询获取基础统计数据
+    const [totalCount, statusCounts, recentAndTopData, categoriesAndTags] =
+      await Promise.all([
+        // 获取总文章数
+        prisma.post.count(),
+        // 一次性获取所有状态统计
+        prisma.post.groupBy({
+          by: ["published", "featured"],
+          _count: { id: true },
+        }),
+        // 获取最近文章和热门文章
+        Promise.all([
+          prisma.post.findMany({
+            take: 5,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              title: true,
+              createdAt: true,
+              published: true,
+              views: true,
+            },
+          }),
+          prisma.post.findMany({
+            take: 5,
+            orderBy: { views: "desc" },
+            where: { published: true },
+            select: {
+              id: true,
+              title: true,
+              views: true,
+            },
+          }),
+        ]),
+        // 获取分类和标签数量
+        Promise.all([prisma.category.count(), prisma.tag.count()]),
+      ]);
+
+    // 从 groupBy 结果计算各种状态的文章数
+    const publishedPosts =
+      statusCounts.find((s) => s.published === true)?._count.id || 0;
+    const draftPosts =
+      statusCounts.find((s) => s.published === false)?._count.id || 0;
+    const featuredPosts =
+      statusCounts.find((s) => s.featured === true)?._count.id || 0;
+
+    // 计算总浏览量（从最近文章的浏览量推算）
+    const totalViews = recentAndTopData[0].reduce(
+      (sum, post) => sum + post.views,
+      0
+    );
 
     return {
-      totalPosts,
+      totalPosts: totalCount,
       publishedPosts,
       draftPosts,
       featuredPosts,
-      totalCategories,
-      totalTags,
-      totalViews: totalViews._sum.views || 0,
-      recentPosts,
-      topViewedPosts,
+      totalCategories: categoriesAndTags[0],
+      totalTags: categoriesAndTags[1],
+      totalViews,
+      recentPosts: recentAndTopData[0],
+      topViewedPosts: recentAndTopData[1],
     };
   } catch (error) {
     console.error("Failed to fetch dashboard stats:", error);

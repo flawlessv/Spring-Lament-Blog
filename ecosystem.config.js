@@ -4,7 +4,7 @@ require("dotenv").config({ path: ".env.production" });
 module.exports = {
   apps: [
     {
-      name: "spring-lament-blog",
+      name: "spring-broken-ai-blog",
       script: "npm",
       args: "start",
       cwd: "/www/wwwroot/my-next-app",

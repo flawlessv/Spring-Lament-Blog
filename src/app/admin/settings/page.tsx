@@ -38,7 +38,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">网站标题</span>
-                <Badge variant="outline">SpringLament Blog</Badge>
+                <Badge variant="outline">Spring Broken AI Blog Blog</Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">网站描述</span>

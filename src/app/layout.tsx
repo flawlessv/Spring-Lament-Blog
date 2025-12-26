@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import AuthProvider from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/toaster";
-import AdminInit from "@/components/admin-init";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SpringLament-春光摧折",
-  description: "春光摧折，夏花凋零，秋叶飘零，冬雪纷飞",
+  title: "Spring Broken AI Blog-春光摧折",
+  description: "心好命就好",
   icons: {
     icon: [
       {
@@ -25,7 +24,6 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body>
         <AuthProvider>
-          <AdminInit />
           {children}
           <Toaster />
         </AuthProvider>
