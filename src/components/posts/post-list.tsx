@@ -117,8 +117,11 @@ export default function PostList({
     <div className={`space-y-[60px] sm:space-y-[60px] ${className}`}>
       {posts.map((post, index) => (
         <article key={post.id}>
-          <Link href={`/posts/${post.slug}`}>
-            <div className="relative w-full max-w-[680px] h-[220px] sm:h-[285px] mx-auto overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
+          <Link
+            href={`/posts/${post.slug}`}
+            className="block w-full max-w-[680px] mx-auto"
+          >
+            <div className="relative w-full h-[220px] sm:h-[285px] overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
               {/* 优化的背景图片 */}
               <div className="absolute inset-0">
                 <BackgroundImage
