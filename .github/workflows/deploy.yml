@@ -191,11 +191,11 @@ jobs:
             echo "✅ .env.production 文件存在"
 
             echo "=== 停止旧应用进程 ==="
-            pm2 stop spring-lament-blog || true
+            pm2 stop spring-broken-ai-blog || true
             sleep 2
 
             echo "=== 删除旧进程 ==="
-            pm2 delete spring-lament-blog || true
+            pm2 delete spring-broken-ai-blog || true
 
             echo "=== 启动应用 ==="
             pm2 start ecosystem.config.js --env production --update-env
@@ -206,7 +206,7 @@ jobs:
             echo "=== 验证应用状态 ==="
             pm2 list
 
-            if pm2 list | grep -q "spring-lament-blog.*online"; then
+            if pm2 list | grep -q "spring-broken-ai-blog.*online"; then
                 echo "✅ 应用启动成功"
 
                 echo "=== 检查端口 3000 是否监听 ==="
@@ -218,9 +218,9 @@ jobs:
             else
                 echo "❌ 应用启动失败"
                 echo "=== PM2 进程详情 ==="
-                pm2 describe spring-lament-blog || true
+                pm2 describe spring-broken-ai-blog || true
                 echo "=== 最近日志 ==="
-                pm2 logs spring-lament-blog --lines 50 --nostream || true
+                pm2 logs spring-broken-ai-blog --lines 50 --nostream || true
                 exit 1
             fi
 
