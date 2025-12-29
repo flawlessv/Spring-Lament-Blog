@@ -159,6 +159,79 @@ jobs:
             echo "Build ID: $(cat .next/BUILD_ID)"
             ls -lh .next/ | head -20
 
+      # 启动 AI 服务（如果配置了 AI 相关环境变量）
+      - name: 启动 AI 服务
+        uses: appleboy/ssh-action@master
+        env:
+          KIMI_API_KEY: ${{ secrets.KIMI_API_KEY }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          command_timeout: 10m
+          script: |
+            cd /www/wwwroot/my-next-app
+
+            # 如果没有配置 Kimi API Key，跳过 AI 服务启动
+            if [ -z "${KIMI_API_KEY}" ]; then
+              echo "⚠️  未配置 AI 服务，跳过 Ollama 和 ChromaDB 启动"
+              exit 0
+            fi
+
+            echo "=== 启动 AI 服务 ==="
+
+            # 1. 启动 Ollama
+            echo "🤖 检查 Ollama 服务..."
+            if pgrep -f "ollama serve" > /dev/null; then
+                echo "✅ Ollama 已在运行"
+            else
+                echo "启动 Ollama..."
+                nohup ollama serve > /tmp/ollama.log 2>&1 &
+                sleep 5
+
+                if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
+                    echo "✅ Ollama 启动成功"
+                else
+                    echo "❌ Ollama 启动失败，查看日志: tail -f /tmp/ollama.log"
+                    exit 1
+                fi
+            fi
+
+            # 2. 检查并下载 Embedding 模型
+            echo "🔍 检查 Embedding 模型..."
+            if ollama list 2>/dev/null | grep -q "nomic-embed-text"; then
+                echo "✅ 模型已安装"
+            else
+                echo "下载 nomic-embed-text 模型..."
+                ollama pull nomic-embed-text
+                echo "✅ 模型下载完成"
+            fi
+
+            # 3. 启动 ChromaDB
+            echo "📦 检查 ChromaDB 服务..."
+            if pgrep -f "chromadb" > /dev/null || pgrep -f "chroma run" > /dev/null; then
+                echo "✅ ChromaDB 已在运行"
+            else
+                # 创建数据目录
+                mkdir -p /www/wwwroot/my-next-app/data/chroma
+
+                echo "启动 ChromaDB..."
+                nohup npx chromadb run --path /www/wwwroot/my-next-app/data/chroma --port 8000 > /tmp/chromadb.log 2>&1 &
+                sleep 5
+
+                if curl -s http://localhost:8000/api/v1/heartbeat > /dev/null 2>&1; then
+                    echo "✅ ChromaDB 启动成功"
+                else
+                    echo "❌ ChromaDB 启动失败，查看日志: tail -f /tmp/chromadb.log"
+                    exit 1
+                fi
+            fi
+
+            echo "✅ AI 服务启动完成"
+            echo "   Ollama:   http://localhost:11434"
+            echo "   ChromaDB: http://localhost:8000"
+
       # 重启 PM2 应用
       - name: 重启应用
         uses: appleboy/ssh-action@master
