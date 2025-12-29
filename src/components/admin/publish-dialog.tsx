@@ -43,6 +43,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PublishData } from "./fullscreen-editor";
+import type { AIRecommendation } from "./ai-assistant";
 
 const publishSchema = z.object({
   categoryId: z.string().optional(),
@@ -76,6 +77,9 @@ interface PublishDialogProps {
   onPublish: (data: PublishData) => void;
   mode?: "create" | "edit";
   initialData?: Partial<PublishData>;
+  aiSuggestedTags?: AIRecommendation;
+  aiSuggestedCategories?: AIRecommendation;
+  articleContent?: string;
 }
 
 export default function PublishDialog({
@@ -84,6 +88,9 @@ export default function PublishDialog({
   onPublish,
   mode = "create",
   initialData,
+  aiSuggestedTags,
+  aiSuggestedCategories,
+  articleContent,
 }: PublishDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
