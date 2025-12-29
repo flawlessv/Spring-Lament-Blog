@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { SimpleLoading } from "@/components/ui/loading";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import RAGChatButton from "@/components/admin/rag-chat-button";
 import AutoIndexer from "@/components/admin/auto-indexer";
@@ -84,7 +84,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <LoadingSpinner />
+        <SimpleLoading />
       </div>
     );
   }

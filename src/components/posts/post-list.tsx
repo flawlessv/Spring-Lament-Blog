@@ -10,6 +10,8 @@ import { BackgroundImage } from "@/components/optimized/image-with-fallback";
 interface PostListProps {
   className?: string;
   categorySlug?: string;
+  initialPosts?: Post[];
+  initialHasMore?: boolean;
 }
 
 interface Post {
@@ -30,11 +32,12 @@ interface Post {
 export default function PostList({
   className = "",
   categorySlug,
+  initialPosts = [],
+  initialHasMore = true,
 }: PostListProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [page, setPage] = useState(initialPosts.length > 0 ? 1 : 1);
+  const [hasMore, setHasMore] = useState(initialHasMore);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const fetchPosts = useCallback(
@@ -64,7 +67,6 @@ export default function PostList({
       } catch (error) {
         console.error("获取文章列表失败:", error);
       } finally {
-        setLoading(false);
         setLoadingMore(false);
       }
     },
@@ -72,20 +74,19 @@ export default function PostList({
   );
 
   useEffect(() => {
-    fetchPosts(page);
-  }, [page, fetchPosts]);
+    if (initialPosts.length === 0) {
+      fetchPosts(page);
+    }
+  }, [page, fetchPosts, initialPosts]);
 
   // 当分类变化时重置页面并重新加载
   useEffect(() => {
-    // 避免初始化时重复加载
-    if (categorySlug !== undefined) {
+    if (categorySlug !== undefined && initialPosts.length === 0) {
       setPage(1);
       setHasMore(true);
-      setLoading(true);
-      // 不立即清空posts，等新数据加载完成后再更新，减少页面抖动
       fetchPosts(1);
     }
-  }, [categorySlug, fetchPosts]);
+  }, [categorySlug, fetchPosts, initialPosts]);
 
   // 滚动监听自动加载
   useEffect(() => {
@@ -94,7 +95,6 @@ export default function PostList({
         window.innerHeight + document.documentElement.scrollTop >=
           document.documentElement.offsetHeight - 1000 &&
         hasMore &&
-        !loading &&
         !loadingMore
       ) {
         setPage((prev) => prev + 1);
@@ -103,27 +103,7 @@ export default function PostList({
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loading, loadingMore]);
-
-  if (loading && page === 1) {
-    return (
-      <div className={`space-y-4 ${className}`}>
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="overflow-hidden rounded-lg animate-pulse">
-            <div className="flex space-x-4">
-              <div className="w-24 h-24 bg-gray-200 rounded-lg flex-shrink-0"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-3 bg-gray-200 rounded w-32"></div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  }, [hasMore, loadingMore]);
 
   if (!posts.length) {
     return (
@@ -200,9 +180,10 @@ export default function PostList({
       {/* 自动加载指示器 */}
       {loadingMore && (
         <div className="text-center py-8">
-          <div className="inline-flex items-center space-x-2 text-muted-foreground">
-            <div className="w-4 h-4 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
-            <span className="text-sm">加载中...</span>
+          <div className="inline-flex items-center gap-3 text-muted-foreground">
+            {/* 简单的旋转圈 */}
+            <div className="w-5 h-5 border-2 border-t-primary border-r-primary/50 border-b-transparent border-l-transparent rounded-full animate-spin" />
+            <span className="text-sm animate-pulse">永言配命，莫向外求。</span>
           </div>
         </div>
       )}
