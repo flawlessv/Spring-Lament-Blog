@@ -28,7 +28,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import RAGChat from "@/components/admin/rag-chat";
+import RAGChatButton from "@/components/admin/rag-chat-button";
+import AutoIndexer from "@/components/admin/auto-indexer";
 
 interface CleanAdminLayoutProps {
   children: ReactNode;
@@ -143,6 +144,9 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50/50 dark:bg-gray-900/50">
+      {/* 自动索引组件 - 在后台自动索引文章 */}
+      <AutoIndexer />
+
       {/* 顶部导航栏 */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/80 dark:border-gray-700/80 z-50">
         <div className="h-full px-4 lg:px-6 flex items-center justify-between">
@@ -178,19 +182,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
           {/* 右侧 */}
           <div className="flex items-center gap-2">
             {/* 知识问答 */}
-            <RAGChat
-              trigger={
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 px-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 gap-1.5"
-                  title="知识库问答"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">知识库问答</span>
-                </Button>
-              }
-            />
+            <RAGChatButton />
 
             {/* 主题切换按钮 */}
             <ThemeToggle className="h-9 w-9 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" />

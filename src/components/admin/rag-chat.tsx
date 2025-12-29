@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -336,15 +335,34 @@ export default function RAGChat({ trigger }: RAGChatProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="max-w-2xl h-[600px] flex flex-col p-0">
-        {/* 头部 */}
-        <DialogHeader className="px-4 py-3 border-b flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
+      <DialogContent className="max-w-2xl h-[600px] flex flex-col p-0 gap-0">
+        {/* 头部 - 不使用 DialogHeader 避免双重渲染 */}
+        <div className="px-4 py-3 border-b flex-shrink-0">
+          <div className="flex items-center justify-between mb-2 pr-8">
+            {/* 左侧标题 */}
+            <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              知识库问答
-            </DialogTitle>
-            <div className="flex items-center gap-1">
+              <DialogTitle className="text-lg font-semibold">
+                知识库问答
+              </DialogTitle>
+            </div>
+
+            {/* 右侧按钮组 - 添加间距避免与关闭按钮重叠 */}
+            <div className="flex items-center gap-2">
+              {/* 清空按钮 */}
+              {messages.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClear}
+                  className="h-8 px-2 text-muted-foreground"
+                  title="清空对话"
+                >
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">清空</span>
+                </Button>
+              )}
+
               {/* 索引按钮 */}
               <Button
                 variant="ghost"
@@ -359,25 +377,16 @@ export default function RAGChat({ trigger }: RAGChatProps) {
                 ) : (
                   <Database className="h-4 w-4 mr-1" />
                 )}
-                {isIndexing ? "索引中..." : "构建索引"}
+                <span className="hidden sm:inline">
+                  {isIndexing ? "索引中..." : "构建索引"}
+                </span>
               </Button>
-              {messages.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClear}
-                  className="h-8 px-2 text-muted-foreground"
-                >
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  清空
-                </Button>
-              )}
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground pl-7">
             基于博客文章内容的智能问答。首次使用请先点击「构建索引」
           </p>
-        </DialogHeader>
+        </div>
 
         {/* 消息列表 */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
@@ -433,9 +442,16 @@ export default function RAGChat({ trigger }: RAGChatProps) {
                   ) : (
                     <>
                       <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                          {message.content}
-                        </p>
+                        {message.content === "" && isLoading ? (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>正在思考...</span>
+                          </div>
+                        ) : (
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                            {message.content}
+                          </p>
+                        )}
                         {message.mode === "fallback" && (
                           <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
                             <span>⚠️</span>
@@ -485,8 +501,8 @@ export default function RAGChat({ trigger }: RAGChatProps) {
             ))
           )}
 
-          {/* 加载状态 */}
-          {isLoading && (
+          {/* 加载状态 - 不再单独显示,使用空消息代替 */}
+          {/* {isLoading && (
             <div className="flex gap-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                 <Bot className="h-4 w-4 text-primary" />
@@ -498,7 +514,7 @@ export default function RAGChat({ trigger }: RAGChatProps) {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           <div ref={messagesEndRef} />
         </div>
