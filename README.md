@@ -255,7 +255,7 @@ npm run dev
 
 ---
 
-## 🚀 快速启动命令
+## 🚀 快速启动
 
 ### 方式一: 仅启动博客 (不含 AI 功能)
 
@@ -263,14 +263,12 @@ npm run dev
 # 1. 安装依赖
 npm install
 
-# 2. 配置环境变量 (仅基础配置)
+# 2. 配置环境变量
 cp .env.example .env.local
-# 编辑 .env.local,配置数据库和 NextAuth
+# 编辑 .env.local，配置数据库和 NextAuth
 
 # 3. 初始化数据库
-npm run db:generate
-npm run db:push
-npm run db:seed
+npm run db:generate && npm run db:push && npm run db:seed
 
 # 4. 启动开发服务器
 npm run dev
@@ -284,24 +282,21 @@ npm run dev
 # 1. 安装依赖
 npm install
 
-# 2. 启动 AI 服务 (使用项目提供的脚本)
+# 2. 安装 Ollama (macOS)
+brew install ollama
+
+# 3. 启动 AI 服务
 ./start-ai.sh
 
-# 3. 配置环境变量 (含 AI 配置)
+# 4. 配置环境变量
 cp .env.example .env.local
-# 编辑 .env.local,添加:
-# KIMI_API_KEY="your-kimi-api-key"
-# OLLAMA_BASE_URL="http://localhost:11434"
-# OLLAMA_EMBEDDING_MODEL="nomic-embed-text"
-# CHROMA_HOST="localhost"
-# CHROMA_PORT="8000"
+# 编辑 .env.local，添加 Kimi API Key:
+# KIMI_API_KEY="sk-your-key-here"
 
-# 4. 初始化数据库
-npm run db:generate
-npm run db:push
-npm run db:seed
+# 5. 初始化数据库
+npm run db:generate && npm run db:push && npm run db:seed
 
-# 5. 启动开发服务器
+# 6. 启动开发服务器
 npm run dev
 
 # 访问 http://localhost:7777
@@ -313,7 +308,18 @@ npm run dev
 ./stop-ai.sh
 ```
 
-**详细启动指南:** 请查看 [启动指南.md](./docs/启动指南.md)
+### AI 服务启动说明
+
+项目提供了 `start-ai.sh` 和 `stop-ai.sh` 脚本来管理 AI 服务:
+
+- **start-ai.sh**: 自动启动 Ollama (向量生成) 和 ChromaDB (向量存储)
+- **stop-ai.sh**: 停止所有 AI 服务
+
+**注意**:
+
+- 首次运行 `start-ai.sh` 会自动下载 `nomic-embed-text` 模型 (约 274MB)
+- 需要申请 [Kimi API Key](https://platform.moonshot.cn/) 才能使用 AI 对话功能
+- 详细的启动指南和故障排查请查看 [启动指南.md](./docs/启动指南.md)
 
 ---
 

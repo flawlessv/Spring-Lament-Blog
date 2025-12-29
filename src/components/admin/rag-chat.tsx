@@ -113,8 +113,12 @@ export default function RAGChat({ trigger }: RAGChatProps) {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    // 生成唯一的消息 ID
+    const userMessageId = `msg_${Date.now()}_user`;
+    const assistantMessageId = `msg_${Date.now()}_assistant`;
+
     const userMessage: Message = {
-      id: `msg_${Date.now()}`,
+      id: userMessageId,
       role: "user",
       content: input.trim(),
       timestamp: new Date(),
@@ -125,7 +129,6 @@ export default function RAGChat({ trigger }: RAGChatProps) {
     setIsLoading(true);
 
     // 创建流式消息占位符
-    const assistantMessageId = `msg_${Date.now()}`;
     const assistantMessage: Message = {
       id: assistantMessageId,
       role: "assistant",
@@ -302,7 +305,7 @@ export default function RAGChat({ trigger }: RAGChatProps) {
       }
 
       const systemMessage: Message = {
-        id: `msg_${Date.now()}`,
+        id: `msg_${Date.now()}_index_${Math.random().toString(36).substring(7)}`,
         role: "assistant",
         content,
         timestamp: new Date(),
@@ -311,7 +314,7 @@ export default function RAGChat({ trigger }: RAGChatProps) {
     } catch (error) {
       console.error("索引失败:", error);
       const errorMessage: Message = {
-        id: `msg_${Date.now()}`,
+        id: `msg_${Date.now()}_error_${Math.random().toString(36).substring(7)}`,
         role: "assistant",
         content: `❌ 索引构建失败：${error instanceof Error ? error.message : "未知错误"}`,
         timestamp: new Date(),
