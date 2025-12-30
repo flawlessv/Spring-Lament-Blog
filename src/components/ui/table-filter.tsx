@@ -133,12 +133,6 @@ export function TableFilter({
                         }}
                         className="rounded"
                       />
-                      {option.color && (
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: option.color }}
-                        />
-                      )}
                       <span className="text-sm">{option.label}</span>
                     </label>
                   );
@@ -166,12 +160,6 @@ export function TableFilter({
                         }}
                         className="rounded"
                       />
-                      {option.color && (
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: option.color }}
-                        />
-                      )}
                       <span className="text-sm">{option.label}</span>
                     </label>
                   );

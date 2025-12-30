@@ -243,15 +243,7 @@ export default function PublishDialog({
                           <SelectItem value="none">无分类</SelectItem>
                           {categories.map((category) => (
                             <SelectItem key={category.id} value={category.id}>
-                              <div className="flex items-center space-x-2">
-                                {category.color && (
-                                  <div
-                                    className="w-3 h-3 rounded-full"
-                                    style={{ backgroundColor: category.color }}
-                                  />
-                                )}
-                                <span>{category.name}</span>
-                              </div>
+                              {category.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -321,12 +313,6 @@ export default function PublishDialog({
                       htmlFor={`tag-${tag.id}`}
                       className="flex items-center space-x-2 text-sm cursor-pointer"
                     >
-                      {tag.color && (
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: tag.color }}
-                        />
-                      )}
                       <span>{tag.name}</span>
                     </label>
                   </div>
@@ -344,14 +330,6 @@ export default function PublishDialog({
                         key={tagId}
                         variant="secondary"
                         className="text-xs"
-                        style={
-                          tag.color
-                            ? {
-                                backgroundColor: tag.color + "20",
-                                borderColor: tag.color,
-                              }
-                            : {}
-                        }
                       >
                         {tag.name}
                         <button

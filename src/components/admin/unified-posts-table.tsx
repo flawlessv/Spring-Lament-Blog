@@ -129,7 +129,6 @@ export default function UnifiedPostsTable({
         const tags = (data.tags || []).map((tag: any) => ({
           label: tag.name,
           value: tag.name,
-          color: tag.color,
         }));
         setAvailableTags(tags);
       }
@@ -146,7 +145,6 @@ export default function UnifiedPostsTable({
         const categories = (data.categories || []).map((category: any) => ({
           label: category.name,
           value: category.name,
-          color: category.color,
         }));
         setAvailableCategories(categories);
       }
@@ -496,12 +494,6 @@ export default function UnifiedPostsTable({
               </div>
               {post.category && (
                 <div className="flex items-center space-x-1">
-                  <div
-                    className="w-2 h-2 rounded-full"
-                    style={{
-                      backgroundColor: post.category.color || "#6B7280",
-                    }}
-                  />
                   <span>{post.category.name}</span>
                 </div>
               )}
@@ -526,15 +518,9 @@ export default function UnifiedPostsTable({
         render: (_: unknown, post: Post) => (
           <div className="flex items-center space-x-2">
             {post.category ? (
-              <>
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: post.category.color || "#6B7280" }}
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
-                  {post.category.name}
-                </span>
-              </>
+              <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                {post.category.name}
+              </span>
             ) : (
               <span className="text-sm text-gray-400 dark:text-gray-500">
                 -
@@ -562,8 +548,8 @@ export default function UnifiedPostsTable({
             {post.tags.slice(0, 3).map((tag) => (
               <Badge
                 key={tag.id}
-                style={{ backgroundColor: tag.color || "#6B7280" }}
-                className="text-white text-xs px-2 py-0.5 rounded-lg"
+                variant="secondary"
+                className="text-xs px-2 py-0.5 rounded-lg"
               >
                 {tag.name}
               </Badge>
