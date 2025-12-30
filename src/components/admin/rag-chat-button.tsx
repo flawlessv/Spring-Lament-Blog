@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import RAGChat from "./rag-chat";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Database, Check, AlertCircle } from "lucide-react";
 
@@ -11,6 +11,15 @@ interface IndexStatus {
   needsIndex: boolean;
   lastIndexed: string | null;
 }
+
+interface RAGChatProps {
+  trigger: React.ReactNode;
+}
+
+// 动态导入 RAGChat 组件避免服务端渲染问题
+const RAGChat = dynamic(() => import("./rag-chat"), {
+  ssr: false,
+}) as React.ComponentType<RAGChatProps>;
 
 export default function RAGChatButton() {
   const [indexStatus, setIndexStatus] = useState<IndexStatus | null>(null);
