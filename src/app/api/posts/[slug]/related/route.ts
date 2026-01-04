@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getVectorStore } from "@/lib/vector/store";
-import { getAIClient } from "@/lib/ai/client";
 
 interface RelatedPost {
   id: string;
@@ -92,6 +90,10 @@ async function getVectorRelatedPosts(
   },
   limit: number
 ): Promise<RelatedPost[]> {
+  // 动态导入服务器端模块,避免客户端打包警告
+  const { getAIClient } = await import("@/lib/ai/client");
+  const { getVectorStore } = await import("@/lib/vector/store");
+
   const aiClient = getAIClient();
   const vectorStore = getVectorStore();
 

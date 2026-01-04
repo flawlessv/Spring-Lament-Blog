@@ -132,18 +132,9 @@ export default function UnifiedTagsTable({
       title: "标签",
       width: "w-48",
       render: (_: unknown, tag: Tag) => (
-        <div className="flex items-center space-x-2">
-          <div
-            className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ backgroundColor: tag.color || "#6B7280" }}
-          />
-          <Badge
-            style={{ backgroundColor: tag.color || "#6B7280" }}
-            className="text-white font-medium rounded-lg"
-          >
-            {tag.name}
-          </Badge>
-        </div>
+        <Badge variant="secondary" className="font-medium rounded-lg">
+          {tag.name}
+        </Badge>
       ),
     },
     {

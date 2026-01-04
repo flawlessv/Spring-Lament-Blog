@@ -3,29 +3,50 @@
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
-interface LoadingProps {
-  className?: string;
-  size?: "sm" | "md" | "lg";
+/**
+ * 简单的圆形 Loading - 推荐使用
+ * 统一默认文案：永言配命，莫向外求。
+ */
+export function SimpleLoading({
+  text = "永言配命，莫向外求。",
+  className,
+}: {
   text?: string;
-}
-
-export function Loading({ className, size = "md", text }: LoadingProps) {
-  const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-6 w-6",
-    lg: "h-8 w-8",
-  };
-
+  className?: string;
+}) {
   return (
-    <div className={cn("flex items-center justify-center", className)}>
-      <Loader2 className={cn("animate-spin", sizeClasses[size])} />
+    <div
+      className={cn(
+        "fixed inset-0 flex flex-col items-center justify-center gap-8 bg-background z-50",
+        className
+      )}
+    >
+      {/* 简洁的旋转圆环 */}
+      <div className="relative w-16 h-16">
+        <div className="absolute inset-0 animate-spin">
+          <div className="w-full h-full border-4 border-primary/20 rounded-full" />
+          <div className="absolute inset-0 w-full h-full border-4 border-transparent border-t-primary rounded-full" />
+        </div>
+      </div>
+
+      {/* 文字带动态省略号 */}
       {text && (
-        <span className="ml-2 text-sm text-muted-foreground">{text}</span>
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-muted-foreground tracking-wide">
+            {text}
+          </span>
+          <span className="text-sm text-muted-foreground animate-pulse">
+            ...
+          </span>
+        </div>
       )}
     </div>
   );
 }
 
+/**
+ * 简单的 Loading Spinner - 用于表格等组件
+ */
 export function LoadingSpinner({
   className,
   ...props

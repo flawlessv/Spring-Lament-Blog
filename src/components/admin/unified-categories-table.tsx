@@ -191,12 +191,6 @@ export default function UnifiedCategoriesTable({
                   <div className="flex items-center space-x-4">
                     {/* 分类信息 */}
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-medium flex-shrink-0 shadow-sm"
-                        style={{ backgroundColor: category.color || "#6B7280" }}
-                      >
-                        {category.icon || "📁"}
-                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-gray-900 dark:text-gray-100 text-base">
                           {category.name}
