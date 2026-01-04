@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Mail,
@@ -18,7 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { SimpleLoading } from "@/components/ui/loading";
 
 interface AdminProfile {
   id: string;
@@ -112,10 +110,18 @@ export default function AdminProfileCard({
           )}
         </div>
 
-        {/* Subscribe 按钮 */}
-        <button className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all duration-200 text-sm font-medium">
-          Subscribe
-        </button>
+        {/* Subscribe 和 About 按钮 */}
+        <div className="flex items-center gap-3">
+          <button className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all duration-200 text-sm font-medium">
+            Subscribe
+          </button>
+          <Link
+            href="/about"
+            className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-muted-foreground/50 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-200 text-sm font-medium"
+          >
+            关于我
+          </Link>
+        </div>
       </div>
 
       {/* 分类导航 */}
