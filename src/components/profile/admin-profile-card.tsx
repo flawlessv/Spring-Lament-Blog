@@ -110,18 +110,13 @@ export default function AdminProfileCard({
           )}
         </div>
 
-        {/* Subscribe 和 About 按钮 */}
-        <div className="flex items-center gap-3">
-          <button className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all duration-200 text-sm font-medium">
-            Subscribe
-          </button>
-          <Link
-            href="/about"
-            className="inline-flex items-center justify-center h-8 px-5 rounded-full border-2 border-muted-foreground/50 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-200 text-sm font-medium"
-          >
-            关于我
-          </Link>
-        </div>
+        {/* 关于我按钮 */}
+        <Link
+          href="/about"
+          className="inline-block w-full text-center px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+        >
+          关于我
+        </Link>
       </div>
 
       {/* 分类导航 */}
