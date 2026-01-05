@@ -44,11 +44,9 @@ import {
 } from "@/components/ui/form";
 import { PublishData } from "./fullscreen-editor";
 import type { AIRecommendation } from "./ai-assistant";
-import ImageUpload from "./image-upload";
 
 const publishSchema = z.object({
   categoryId: z.string().optional(),
-  coverImage: z.string().optional(),
   excerpt: z.string().max(500, "摘要不能超过500个字符").optional(),
   published: z.boolean(),
   featured: z.boolean(),
@@ -98,7 +96,6 @@ export default function PublishDialog({
     resolver: zodResolver(publishSchema),
     defaultValues: {
       categoryId: undefined,
-      coverImage: "",
       excerpt: "",
       published: true,
       featured: false,
@@ -156,7 +153,6 @@ export default function PublishDialog({
       if (initialData) {
         form.reset({
           categoryId: initialData.categoryId,
-          coverImage: initialData.coverImage || "",
           excerpt: initialData.excerpt || "",
           published: initialData.published ?? true,
           featured: initialData.featured ?? false,
@@ -166,7 +162,6 @@ export default function PublishDialog({
         // 如果没有初始数据，重置为默认值
         form.reset({
           categoryId: undefined,
-          coverImage: "",
           excerpt: "",
           published: true,
           featured: false,
@@ -341,34 +336,6 @@ export default function PublishDialog({
                   })}
                 </div>
               )}
-            </div>
-
-            {/* 封面图片 */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2 text-sm font-medium">
-                <ImageIcon className="h-4 w-4" />
-                <span>封面图片</span>
-              </div>
-              <FormField
-                control={form.control}
-                name="coverImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <ImageUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        type="cover"
-                        aspectRatio="16:9"
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs">
-                      上传封面图片，推荐尺寸 1200 x 630 px (16:9)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             {/* 文章摘要 */}

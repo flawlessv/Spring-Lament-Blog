@@ -128,7 +128,6 @@ export default function PostList({
                   src={post.coverImage || ""}
                   className="w-full h-full"
                   priority={index < 2} // 前两张图片优先加载
-                  fallbackSrc="https://source.unsplash.com/random/800x600"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/70 transition-opacity duration-300 group-hover:from-black/20 group-hover:via-black/30 group-hover:to-black/80"></div>
               </div>
