@@ -34,6 +34,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ImageUpload from "./image-upload";
 
 const profileSchema = z.object({
   // 基础信息
@@ -41,7 +42,7 @@ const profileSchema = z.object({
   password: z.string().optional(),
   displayName: z.string().optional(),
   bio: z.string().max(500, "简介不能超过500字符").optional(),
-  avatar: z.string().url("请输入有效的头像URL").optional().or(z.literal("")),
+  avatar: z.string().optional(),
 
   // 联系信息
   email: z.string().email("请输入有效的邮箱地址").optional().or(z.literal("")),
@@ -278,14 +279,18 @@ export default function ProfileForm() {
               name="avatar"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>头像URL</FormLabel>
+                  <FormLabel>头像</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://example.com/avatar.jpg"
-                      {...field}
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      type="avatar"
+                      aspectRatio="1:1"
                     />
                   </FormControl>
-                  <FormDescription>头像图片的URL地址</FormDescription>
+                  <FormDescription>
+                    上传头像图片，推荐尺寸 400 x 400 px (1:1)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

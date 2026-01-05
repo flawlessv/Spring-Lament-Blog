@@ -22,6 +22,7 @@ import {
   MoreHorizontal,
   Download,
   Loader2,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -712,6 +713,14 @@ export default function UnifiedPostsTable({
         icon: <Edit className="h-4 w-4" />,
         onClick: (post: Post) => {
           window.location.href = `/admin/posts/${post.id}/edit`;
+        },
+      },
+      {
+        key: "images",
+        label: "图片",
+        icon: <ImageIcon className="h-4 w-4" />,
+        onClick: (post: Post) => {
+          window.location.href = `/admin/posts/${post.id}/images`;
         },
       },
       {

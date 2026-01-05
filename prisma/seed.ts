@@ -24,7 +24,7 @@ async function main() {
         create: {
           displayName: "春光摧折",
           bio: "虚无主义 | INFJ",
-          avatar: "https://youke1.picui.cn/s1/2025/10/20/68f62247112d7.png",
+          avatar: "/images/avatar.png",
           website: "http://powder.icu/",
           github: "https://github.com/flawlessv",
           bilibili: "INFJ_LIB_0919",

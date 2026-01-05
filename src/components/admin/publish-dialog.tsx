@@ -44,14 +44,11 @@ import {
 } from "@/components/ui/form";
 import { PublishData } from "./fullscreen-editor";
 import type { AIRecommendation } from "./ai-assistant";
+import ImageUpload from "./image-upload";
 
 const publishSchema = z.object({
   categoryId: z.string().optional(),
-  coverImage: z
-    .string()
-    .url("请输入有效的图片URL")
-    .optional()
-    .or(z.literal("")),
+  coverImage: z.string().optional(),
   excerpt: z.string().max(500, "摘要不能超过500个字符").optional(),
   published: z.boolean(),
   featured: z.boolean(),
@@ -358,10 +355,15 @@ export default function PublishDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="图片 URL (可选)" {...field} />
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        type="cover"
+                        aspectRatio="16:9"
+                      />
                     </FormControl>
                     <FormDescription className="text-xs">
-                      输入封面图片的 URL 地址，用于文章展示
+                      上传封面图片，推荐尺寸 1200 x 630 px (16:9)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

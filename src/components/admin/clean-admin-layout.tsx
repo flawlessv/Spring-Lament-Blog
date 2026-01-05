@@ -23,6 +23,7 @@ import {
   X,
   Sparkles,
   MessageSquare,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -126,6 +127,12 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
       href: "/admin/tags",
       icon: Tags,
       current: pathname?.startsWith("/admin/tags"),
+    },
+    {
+      name: "图片管理",
+      href: "/admin/images",
+      icon: ImageIcon,
+      current: pathname?.startsWith("/admin/images"),
     },
     {
       name: "个人信息",
