@@ -106,6 +106,35 @@ Puppeteer是Google开发的Node.js库，可以通过DevTools协议控制无头Ch
 React 的渲染是异步的，`render` 之后立刻截图，很容易截到"还没 commit 完成"的中间态。这里我不采用 `setTimeout` / `MutationObserver` / 多次 `requestAnimationFrame` 这种偏经验的等待方式，而是用 **React 官方提供的 commit 信号** 来做"已渲染完成"的判定：
 
 - 我在导出内容外层包一层 `Gate` 组件，在它的 `useLayoutEffect` 里发出 **ready 信号**。`useLayoutEffect` 的语义是：**DOM 已经被 React 写入（commit），并且在浏览器绘制之前执行**，这是我们能拿到的最确定时机。
+
+**为什么使用 useLayoutEffect 而不是 useEffect？**
+
+两者的核心区别在于执行时机和同步性：
+
+1. **useLayoutEffect**：在 DOM 更新后、浏览器绘制前**同步执行**，会阻塞浏览器绘制
+   - 执行时机：React commit 阶段完成 → useLayoutEffect **立即同步执行** → 浏览器绘制
+   - 特点：此时 DOM 已经更新，但用户还看不到变化（因为还没绘制）
+   - 适用场景：需要读取 DOM 布局信息、避免视觉闪烁的操作
+
+2. **useEffect**：在浏览器绘制完成后**异步执行**，不会阻塞绘制
+   - 执行时机：React commit 阶段完成 → 浏览器绘制 → useEffect **异步执行**（可能延迟到下一个事件循环）
+   - 特点：此时用户已经能看到页面变化，但执行时机不确定
+   - 适用场景：数据获取、订阅、手动 DOM 操作等不依赖布局的操作
+
+**在这个导出场景中优先使用 useLayoutEffect 的原因：**
+
+虽然理论上 `useEffect` 也可以工作（因为执行时 DOM 已经 commit，样式也已计算完成），但 `useLayoutEffect` 有以下优势：
+
+1. **同步性保证**：`useLayoutEffect` 是同步执行的，可以确保在浏览器进行任何绘制操作之前就发出 ready 信号，时序更可控。而 `useEffect` 是异步的，可能被事件循环中的其他任务延迟执行。
+
+2. **更早的时机**：`useLayoutEffect` 在绘制前执行，可以更早地知道渲染完成，减少等待时间。
+
+3. **避免潜在的时序问题**：虽然隐藏容器不会影响视觉，但同步执行可以避免任何潜在的竞态条件。例如，如果后续代码中有其他异步操作，`useLayoutEffect` 的同步特性可以确保 ready 信号在正确的时机发出。
+
+4. **语义更准确**：`useLayoutEffect` 的语义就是"在 DOM 更新后、布局计算完成后执行"，这正是我们需要的时机。而 `useEffect` 的语义是"副作用处理"，更适合数据获取、订阅等场景。
+
+**总结**：`useEffect` 理论上也可以工作，但 `useLayoutEffect` 提供了更好的同步性和时序保证，更适合这种需要精确控制 DOM 读取时机的场景。
+
 - 由于项目使用的是 React 17，我使用传统的 `ReactDOM.render` API 来渲染隐藏容器。React 17 的渲染本身是同步的（没有并发特性），因此不需要使用 `flushSync` 来强制同步渲染。
 - ready 之后，为了确保html2canvas能读取到稳定的样式，我会调用一次 `container.getBoundingClientRect()`。这个操作会**强制浏览器完成一次layout计算**（触发强制回流），确保所有的CSS样式都已经被完全计算并应用到DOM上。这一步对于复杂布局尤其重要，因为某些CSS属性（如transform、flex布局）的计算可能会被浏览器延迟。
 
@@ -120,9 +149,17 @@ const renderHiddenAndWaitCommitted = async (
   element: React.ReactElement
 ): Promise<void> => {
   let resolveReady!: () => void;
+  // 创建一个Promise，并将resolve函数赋值给外部的resolveReady变量
+  // 这样可以在Promise创建之后，在React组件渲染完成时（通过Gate组件的useLayoutEffect）再resolve它
+  // 这是一种"延迟resolve"模式，用于精确控制异步操作的完成时机
   const ready = new Promise<void>((r) => (resolveReady = r));
 
   const Gate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    // 使用 useLayoutEffect 而不是 useEffect 的原因：
+    // 1. useLayoutEffect 是同步执行的，在 DOM commit 后、浏览器绘制前立即执行，时序可控
+    // 2. useEffect 是异步的，可能在下一个事件循环才执行，虽然此时 DOM 已更新，但时序不够精确
+    // 3. 虽然 useEffect 理论上也可以工作，但 useLayoutEffect 提供了更好的同步性保证
+    // 4. useLayoutEffect 的语义就是"布局完成后执行"，更符合我们"等待渲染完成"的需求
     useLayoutEffect(() => {
       resolveReady();
     }, []);
