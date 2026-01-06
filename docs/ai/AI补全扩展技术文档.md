@@ -1,593 +1,650 @@
 # AI 补全扩展技术文档
 
-## 第一部分：需求背景
+## 第一部分：需求背景与目标
 
-### 目标：在 Markdown 编辑器中实现 AI Tab 补全功能
+### 功能需求
 
-我们希望为 Markdown 编辑器添加类似 GitHub Copilot 的实时内联补全功能。当用户在编辑器中输入文本时，系统应该：
+在 Markdown 编辑器中实现类似 GitHub Copilot 的实时内联 AI 补全功能：
 
-1. **自动提取上下文**：获取光标前的文本内容作为上下文
-2. **调用 AI API**：基于上下文生成补全建议
-3. **显示补全建议**：以灰色斜体文本的形式显示在光标位置
-4. **用户交互**：
-   - 按 `Tab` 键接受补全，将建议文本插入文档
-   - 按 `Esc` 键取消补全，清除建议
-   - 继续输入时，补全建议自动消失
+```
+用户输入: Next.js 是一个基于 React 的|
+AI 提示:   全栈框架，它提供了... (灰色斜体显示)
+用户按 Tab: 全栈框架，它提供了... (插入文档)
+用户按 Esc: 提示消失
+```
+
+### 核心交互流程
+
+1. **自动触发**: 用户输入文本时自动提取上下文
+2. **智能生成**: 调用 AI API 生成补全建议
+3. **非侵入显示**: 以灰色斜体文本内联显示在光标位置
+4. **用户控制**:
+   - `Tab` 键接受补全
+   - `Esc` 键取消补全
+   - 继续输入自动清除补全
 
 ### 核心挑战
 
-- **非侵入式显示**：补全建议不能直接写入文档，否则会影响撤销栈、产生数据污染
-- **实时响应**：需要监听用户输入，及时触发补全请求
-- **异步竞态处理**：AI API 是异步的，用户可能在 API 返回前继续输入
-- **位置同步**：确保补全建议显示在正确的位置
+| 挑战             | 说明                                       | 影响         |
+| ---------------- | ------------------------------------------ | ------------ |
+| **非侵入式显示** | 补全不能写入文档，否则影响撤销栈和数据污染 | 用户体验差   |
+| **实时响应**     | 需要监听用户输入，及时触发补全             | 功能可用性   |
+| **异步竞态**     | AI API 是异步的，用户可能在返回前继续输入  | 显示错误位置 |
+| **位置同步**     | 确保补全建议始终在正确位置显示             | 功能准确性   |
 
-## 第二部分：初期尝试与遇到的问题
+---
 
-### 方案 A：直接插入文本 + 撤销
+## 第二部分：实现方案探索
 
-**思路**：补全建议直接插入到文档中，用户不接受时执行撤销操作。
+### 方案对比
 
-**实现尝试**：
+#### 方案 A：直接插入文本 + 撤销 ❌
 
 ```typescript
 // 伪代码
 const handleAIResponse = (suggestion: string) => {
-  // 直接插入补全文本
-  editor.insertText(suggestion);
-
-  // 用户不接受时撤销
+  editor.insertText(suggestion); // 直接插入
   if (userRejects) {
-    editor.undo();
+    editor.undo(); // 不接受时撤销
   }
 };
 ```
 
-**遇到的问题**：
-
-| 问题              | 说明                                                               | 影响       |
-| ----------------- | ------------------------------------------------------------------ | ---------- |
-| **撤销栈污染**    | 每次补全都会产生一次 Undo 记录，用户需要按多次 Ctrl+Z              | 用户体验差 |
-| **断网/关闭页面** | 补全插入后用户直接关闭页面，再打开时无法区分是用户输入还是 AI 补全 | 数据污染   |
-| **并发冲突**      | 用户快速输入时，补全插入和用户输入会产生竞态条件                   | 数据错乱   |
-| **视觉干扰**      | 补全文本直接插入会打断用户输入流，光标位置需要跳转                 | 注意力分散 |
-| **性能问题**      | 每次补全都需要修改文档模型，触发编辑器重新计算整个文档树           | 性能下降   |
-
-**具体场景示例**：
+**致命问题**:
 
 ```
-场景 1：断网后关闭页面
-用户输入：Hello|
-AI 补全插入：Hello, world!  (直接写入文档)
-用户未接受，直接关闭页面
-下次打开 → 文档中留下了 "Hello, world!"，用户可能误以为自己输入的
+场景 1: 撤销栈污染
+用户输入: function add(|
+AI 插入: function add(a, b) { return a + b; }
+用户按 Ctrl+Z → 可能只撤销一部分，需要多次撤销
 
-场景 2：撤销栈污染
-用户输入：function add(|
-AI 补全：a, b) { return a + b; }
-用户不接受，按 Ctrl+Z
-结果：可能撤销到补全之前，也可能只撤销了补全的一部分
-需要按多次 Ctrl+Z 才能回到 "function add(" 状态
+场景 2: 数据污染
+用户输入: Hello|
+AI 插入: Hello, world!
+用户直接关闭页面 → 下次打开文档中留下了 "Hello, world!"
 
-场景 3：并发冲突
-用户输入：const|
-AI 补全插入：const message = "hello"
-用户继续输入：  (空格)
-实际结果：const  message = "hello"  (多了空格，位置错乱)
+场景 3: 并发冲突
+用户输入: const|
+AI 插入: const message = "hello"
+用户继续输入空格 → 实际结果: const  message = "hello" (位置错乱)
 ```
 
-**结论**：直接插入方案存在严重问题，不适合用于 AI 补全功能。
-
-### 方案 B：使用 DOM 叠加层
-
-**思路**：在编辑器上方叠加一个透明的 DOM 层，通过绝对定位显示补全建议。
-
-**实现尝试**：
+#### 方案 B：DOM 叠加层 ❌
 
 ```typescript
 // 伪代码
-const showSuggestion = (text: string, position: Position) => {
-  const overlay = document.createElement("div");
-  overlay.style.position = "absolute";
-  overlay.style.color = "#9ca3af";
-  overlay.style.fontStyle = "italic";
-  overlay.textContent = text;
-  // 计算光标位置并定位
-  editorContainer.appendChild(overlay);
-};
+const overlay = document.createElement("div");
+overlay.style.position = "absolute";
+overlay.style.color = "#9ca3af";
+overlay.textContent = suggestion;
+editorContainer.appendChild(overlay);
 ```
 
-**遇到的问题**：
+**技术难点**:
 
-1. **位置计算困难**：需要精确计算光标在编辑器中的像素位置，不同字体、字号、行高都会影响计算
-2. **滚动同步**：编辑器滚动时，叠加层位置需要同步更新
-3. **输入法兼容**：中文输入法（IME）的候选词窗口会干扰定位
-4. **移动端适配**：虚拟键盘弹出时位置计算更复杂
-5. **样式一致性**：难以保证补全文本的字体、字号、行高与编辑器完全一致
+1. **位置计算困难**: 需要精确计算光标像素位置
+2. **滚动同步**: 编辑器滚动时叠加层位置需要同步
+3. **输入法干扰**: 中文 IME 候选词窗口干扰定位
+4. **样式一致性**: 难以保证字体、行高完全一致
+5. **移动端适配**: 虚拟键盘弹出时位置计算复杂
 
-**结论**：DOM 叠加层方案实现复杂，维护成本高，且难以处理各种边界情况。
+#### 方案 C：ProseMirror Decoration ✅
 
-## 第三部分：学习 VSCode 的实现原理
-
-### VSCode 的虚拟文本（Virtual Text）机制
-
-在 VSCode 中，AI 补全功能通过**虚拟文本**机制实现。虚拟文本是一种**不实际写入文档、仅在编辑器界面渲染显示**的文本内容。
-
-#### 核心特性
-
-1. **非侵入性**
-   - 虚拟文本不会被保存到文件中
-   - 不会占用真实的文档字符位置
-   - 只是编辑器在界面上的 "视觉层叠加"
-   - 对代码的编译、运行、版本控制没有任何影响
-   - 例如：AI 补全的半透明建议，不按 Tab 确认就不会出现在真实代码里
-
-2. **动态渲染与绑定**
-   - 通常和光标位置、代码上下文绑定
-   - 会随着光标移动、代码修改实时更新或消失
-   - 光标移动到其他行，虚拟文本自动隐藏
-   - 继续输入自定义代码，虚拟文本会被覆盖并消失
-
-3. **样式可定制**
-   - 可设置为半透明、浅灰色
-   - 区分真实代码和预览内容
-   - 避免视觉混淆
-
-#### VSCode 虚拟文本的实现原理
-
-VSCode 虚拟文本的实现，核心基于**编辑器的分层渲染架构**和**文本模型与视图分离**的设计理念。
-
-**1. 文本模型（Text Model）与视图（View）分离**
-
-VSCode 的编辑器内核基于 Monaco Editor，核心设计是**模型-视图分离**：
+**核心思路**: 利用 ProseMirror 的插件系统和装饰机制，在视图层渲染补全建议，不修改文档模型。
 
 ```
-模型层（Model）
-  ├─ 存储真实文档内容
-  ├─ 字符、行数、偏移量等
-  ├─ 文件的读写、保存、编译都基于这个层
-  └─ 这是代码的「数据源」
+ProseMirror 文档模型 (真实数据)
+  └─ 不包含补全建议
 
-视图层（View）
-  ├─ 将模型层内容渲染到屏幕上
-  ├─ 处理光标位置、滚动、高亮等视觉交互
-  └─ 虚拟文本只挂载在视图层
+ProseMirror 视图层 (用户看到的)
+  └─ 包含补全建议的 Decoration
+  └─ 补全建议不影响文档模型
 ```
 
-**关键点**：虚拟文本只存在于视图层，不会被写入模型层。这意味着它只是 "看起来存在"，但在编辑器的底层数据结构里没有对应的字符记录。
+---
 
-**2. 装饰器 API（Decorator API）**
+## 第三部分：最终实现方案
 
-虚拟文本的渲染，依赖 Monaco Editor 提供的 `createDecorator` 装饰器 API：
+### 技术栈
 
-```
-插件定义装饰器规则
-  ├─ 指定位置（光标后的偏移量、行末等）
-  ├─ 指定内容（要显示的提示文本）
-  └─ 指定样式（颜色、透明度、字体等）
-
-编辑器在视图层渲染
-  ├─ 叠加渲染虚拟文本
-  ├─ 不改变模型层的字符偏移量
-  └─ 虚拟文本不占用真实的「字符位置」
-
-事件触发时更新或销毁
-  ├─ 光标移动 → 更新或销毁装饰器
-  ├─ 代码修改 → 重新生成虚拟文本
-  └─ 按 Tab 确认 → 写入模型层
-```
-
-**3. 事件驱动的动态更新机制**
-
-虚拟文本会随着操作动态变化，依赖 VSCode 的事件监听机制：
-
-```
-插件监听核心事件
-  ├─ onDidChangeCursorPosition  // 光标移动
-  └─ onDidChangeTextDocument    // 代码修改
-
-触发事件时重新计算
-  ├─ 光标移走 → 销毁装饰器
-  └─ 代码改变 → 重新生成虚拟文本
-```
-
-**AI 补全的完整流程**：
-
-1. 用户输入代码
-2. 插件实时监听输入内容
-3. 生成补全建议
-4. 通过装饰器 API 渲染成虚拟文本
-5. 用户按 Tab 键
-6. 插件把虚拟文本写入模型层，转化为真实代码
-
-#### 为什么虚拟文本不会挡住后面的代码？
-
-装饰器 API 支持「内联无占位渲染」：
-
-```
-实际文档：    func|
-虚拟文本层：     tion() {  (灰色，半透明)
-
-视觉效果：    func tion() {
-              ↑    ↑
-           真实  虚拟
-```
-
-- 虚拟文本的渲染区域是「紧贴光标的额外视觉层」
-- 编辑器自动调整视图布局，让虚拟文本和原有代码在视觉上 "前后排列"
-- 通过样式配置（低透明度、灰色字体）区分虚拟文本和真实代码
-
-### 启发：我们需要类似的机制
-
-通过学习 VSCode 的实现原理，我们认识到：
-
-1. **必须使用非侵入式渲染**：补全建议不能写入文档模型
-2. **需要装饰器/装饰机制**：在视图层叠加显示，不影响文档结构
-3. **需要事件监听**：实时响应输入、光标移动等操作
-4. **需要状态管理**：管理补全建议的内容、位置、显示状态
-
-## 第四部分：ProseMirror 简介
-
-### 什么是 ProseMirror
-
-ProseMirror 是一个用于构建富文本编辑器的工具包，由 Marijn Haverbeke（CodeMirror 的作者）开发。它提供了构建现代、可扩展的富文本编辑器所需的核心功能。
+- **编辑器基础**: Tiptap (基于 ProseMirror 的 React 编辑器)
+- **状态管理**: ProseMirror Plugin State
+- **渲染机制**: ProseMirror Decoration
+- **AI 集成**: Kimi API (Moonshot AI)
 
 ### 核心架构
 
-ProseMirror 采用**文档模型（Document Model）**和**事务（Transaction）**的设计：
-
 ```
-文档模型（Document）
-  ├─ 基于 JSON 的树形结构
-  ├─ 节点（Node）和标记（Mark）
-  ├─ 不可变（Immutable）设计
-  └─ 支持撤销/重做
-
-事务（Transaction）
-  ├─ 描述文档的变化
-  ├─ 可以携带元数据（Meta）
-  ├─ 通过 dispatch 应用变化
-  └─ 支持插件拦截和修改
-
-插件系统（Plugin）
-  ├─ 可以监听文档变化
-  ├─ 可以修改事务
-  ├─ 可以管理自己的状态
-  └─ 可以添加装饰（Decoration）
-```
-
-### 关键概念
-
-#### 1. 文档模型（Document Model）
-
-ProseMirror 的文档是一个树形结构，类似于 DOM，但更轻量：
-
-```typescript
-// 文档结构示例
-{
-  type: "doc",
-  content: [
-    {
-      type: "paragraph",
-      content: [
-        { type: "text", text: "Hello " },
-        { type: "text", marks: [{ type: "strong" }], text: "world" }
-      ]
-    }
-  ]
-}
-```
-
-#### 2. 事务（Transaction）
-
-所有文档变化都通过事务进行：
-
-```typescript
-// 创建事务
-const tr = state.tr;
-tr.insertText("Hello", pos);
-tr.setMeta("my-meta", { key: "value" });
-view.dispatch(tr);
+┌─────────────────────────────────────────────────────────────┐
+│                      AI 补全扩展架构                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌───────────────┐         ┌───────────────┐                │
+│  │   用户输入     │────────▶│  ProseMirror   │                │
+│  │  (键盘/鼠标)   │         │     事务       │                │
+│  └───────────────┘         └───────┬───────┘                │
+│                                     │                         │
+│                                     ▼                         │
+│                          ┌──────────────────┐                │
+│                          │   apply 方法      │                │
+│                          │  (状态更新核心)   │                │
+│                          └─────────┬────────┘                │
+│                                    │                         │
+│           ┌────────────────────────┼────────────────────────┐│
+│           │           │            │            │            ││
+│           ▼           ▼            ▼            ▼            ││
+│  ┌────────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    ││
+│  │元数据处理   │ │边界检查   │ │防抖定时器 │ │位置校验   │    ││
+│  │(优先级最高) │ │(4项检查)  │ │(500ms)   │ │(双重校验) │    ││
+│  └────────────┘ └─────┬────┘ └─────┬────┘ └─────┬────┘    ││
+│                      │            │            │            ││
+│                      ▼            ▼            ▼            ││
+│                ┌───────────────────────────────┐            ││
+│                │        AI API 调用            │            ││
+│                │  POST /api/ai/write/complete  │            ││
+│                └───────────────┬───────────────┘            ││
+│                                │                            ││
+│                                ▼                            ││
+│                      ┌──────────────────┐                   ││
+│                      │  decorations 方法 │                   ││
+│                      │  (渲染补全建议)   │                   ││
+│                      └─────────┬────────┘                   ││
+│                                │                            ││
+│                                ▼                            ││
+│                      ┌──────────────────┐                   ││
+│                      │   用户交互处理    │                   ││
+│                      │  (Tab/Esc 键)     │                   ││
+│                      └──────────────────┘                   ││
+│                                                               │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-#### 3. 插件（Plugin）
-
-插件可以扩展编辑器功能：
-
-```typescript
-const myPlugin = new Plugin({
-  state: {
-    init() {
-      return { count: 0 };
-    },
-    apply(tr, value) {
-      // 处理事务，更新状态
-      return { count: value.count + 1 };
-    },
-  },
-  view(editorView) {
-    // 插件视图初始化
-    return {
-      update(view, prevState) {
-        // 状态更新时的回调
-      },
-      destroy() {
-        // 清理资源
-      },
-    };
-  },
-});
-```
-
-#### 4. 装饰（Decoration）
-
-装饰用于在文档上叠加视觉元素，不改变文档结构：
-
-```typescript
-// 创建装饰
-const decoration = Decoration.widget(pos, widgetElement, {
-  side: 1, // 在位置之后显示
-  key: "my-widget",
-});
-
-// 装饰集
-const decorations = DecorationSet.create(doc, [decoration]);
-```
-
-### ProseMirror 的优势
-
-1. **强大的插件系统**：可以轻松扩展功能
-2. **状态管理**：插件可以管理自己的状态
-3. **装饰机制**：支持非侵入式渲染（类似 VSCode 的虚拟文本）
-4. **事务机制**：所有变化都通过事务，支持撤销/重做
-5. **类型安全**：基于 TypeScript，提供完整的类型定义
-
-### 为什么选择 ProseMirror
-
-对于我们的 AI 补全功能，ProseMirror 提供了：
-
-1. **Decoration 机制**：可以像 VSCode 一样在视图层叠加补全建议，不写入文档
-2. **Plugin 系统**：可以监听文档变化，管理补全状态
-3. **事务元数据**：可以通过元数据传递补全信息，避免循环触发
-4. **状态管理**：插件可以管理补全建议的内容、位置等状态
-
-## 第五部分：使用 ProseMirror 插件的实现方案
-
-### 整体架构
-
-基于 ProseMirror 的插件系统，我们实现了 AI 补全扩展：
-
-```mermaid
-graph TB
-    A[用户输入文本] --> B[ProseMirror 状态变化]
-    B --> C[apply 方法被调用]
-    C --> D{检查元数据}
-    D -->|有清除/接受/更新元数据| E[直接更新状态]
-    D -->|无元数据| F{是否有文本变化?}
-    F -->|无文本变化| G{光标位置改变?}
-    G -->|位置改变| H[清除补全]
-    G -->|位置未变| I[保持状态]
-    F -->|有文本变化| J[边界检查]
-    J --> K{通过所有检查?}
-    K -->|未通过| L[清除补全]
-    K -->|通过| M[设置防抖定时器]
-    M --> N[延迟 500ms]
-    N --> O[调用 AI API]
-    O --> P{API 返回成功?}
-    P -->|失败| Q[静默失败]
-    P -->|成功| R[位置校验]
-    R --> S{位置仍然有效?}
-    S -->|无效| Q
-    S -->|有效| T[更新插件状态]
-    T --> U[decorations 渲染]
-    U --> V[显示补全建议]
-
-    W[用户按 Tab] --> X[接受补全]
-    X --> Y[插入文本]
-    Y --> Z[清除补全状态]
-
-    AA[用户按 Esc] --> BB[清除补全状态]
-```
-
-### 核心设计思路
-
-#### 1. 状态管理
-
-- 使用 ProseMirror Plugin 的 `state` 机制管理补全状态
-- 状态包含：`suggestion`（补全文本）和 `position`（补全位置）
-- 通过事务元数据（meta）在不同阶段传递补全信息
-
-#### 2. 防抖机制
-
-- 用户快速输入时，避免频繁调用 AI API
-- 每次新输入都会取消之前的请求，只处理最后一次输入
-
-#### 3. 异步竞态防护
-
-- AI API 调用是异步的，用户可能在 API 返回前继续输入
-- 通过双重位置校验确保补全建议只显示在正确的位置
-
-#### 4. 非侵入式渲染
-
-- 使用 Decoration 机制渲染补全建议，不影响文档结构
-- 补全建议是视觉提示，不拦截用户操作
-
-### 详细流程说明
-
-#### 阶段 1：元数据处理（优先级最高）
-
-```mermaid
-graph LR
-    A[apply 被调用] --> B{检查元数据}
-    B -->|ai-completion-clear| C[清除补全]
-    B -->|ai-completion-accept| D[清除补全]
-    B -->|ai-completion-update| E[更新补全建议]
-    B -->|无元数据| F[进入阶段2]
-```
-
-**思路说明**：
-
-- 元数据是最高优先级的处理，因为它们是用户操作（Esc/Tab）或 AI 返回的直接结果
-- 这些操作需要立即响应，不经过其他逻辑判断
-
-#### 阶段 2：文本变化检测
-
-```mermaid
-graph TB
-    A[检测文本变化] --> B{tr.docChanged?}
-    B -->|否| C{光标位置改变?}
-    C -->|是| D[清除补全]
-    C -->|否| E[保持状态]
-    B -->|是| F{是补全相关操作?}
-    F -->|是| E
-    F -->|否| G[进入阶段3]
-```
-
-**思路说明**：
-
-- 只有真正的文本变化才需要触发补全请求
-- 光标移动但不输入文本时，如果位置改变则清除补全（补全建议是针对之前位置的）
-- 排除补全相关的元数据变化，避免循环触发
-
-#### 阶段 3：边界检查
-
-```mermaid
-graph TB
-    A[准备触发补全] --> B[清除之前的防抖定时器]
-    B --> C{检查1: 是否有文本选择?}
-    C -->|是| D[清除补全]
-    C -->|否| E{检查2: 是否在代码块中?}
-    E -->|是| D
-    E -->|否| F[提取光标前500字符]
-    F --> G{检查3: 文本长度 >= minChars?}
-    G -->|否| D
-    G -->|是| H[进入阶段4]
-```
-
-**边界检查说明**：
-
-1. **文本选择检查**
-   - 用户选择文本时，可能想要替换或删除，不需要补全
-   - 避免在错误时机显示补全
-
-2. **代码块检查**
-   - 代码块的补全应该由专门的代码编辑器处理
-   - 文本补全只适用于普通文本内容
-
-3. **文本长度检查**
-   - 文本太短时，上下文不足，补全质量差
-   - 避免无意义的 API 调用
-
-#### 阶段 4：防抖延迟与 AI 请求
+### 完整数据流
 
 ```mermaid
 sequenceDiagram
     participant User as 用户
-    participant Apply as apply 方法
-    participant Timer as 防抖定时器
+    participant Editor as Tiptap 编辑器
+    participant Plugin as AI 补全插件
+    participant Debounce as 防抖定时器
     participant API as AI API
-    participant State as 插件状态
+    participant Decoration as Decoration 渲染
 
-    User->>Apply: 输入文本
-    Apply->>Timer: 清除之前的定时器
-    Apply->>Timer: 设置新定时器(500ms)
+    User->>Editor: 输入文本 "Next.js 是一个"
+    Editor->>Plugin: 触发 ProseMirror 事务
+    Plugin->>Plugin: apply 方法被调用
 
-    Note over Timer: 用户继续输入...
-    User->>Apply: 再次输入
-    Apply->>Timer: 清除之前的定时器
-    Apply->>Timer: 设置新定时器(500ms)
+    alt 阶段 1: 元数据检查
+        Plugin->>Plugin: 检查 ai-completion-clear/accept/update
+        Note over Plugin: 无元数据，继续下一步
+    end
 
-    Timer->>Timer: 延迟500ms
-    Timer->>Apply: 触发回调
-    Apply->>Apply: 第一次位置校验
-    Apply->>API: 调用补全 API
+    alt 阶段 2: 文本变化检测
+        Plugin->>Plugin: 检查 tr.docChanged
+        Plugin->>Plugin: 检查光标位置是否改变
+        Note over Plugin: 有文本变化，继续下一步
+    end
 
-    Note over API: 异步处理...
-    API-->>Apply: 返回补全建议
+    alt 阶段 3: 边界检查
+        Plugin->>Plugin: 检查 1: from !== to? (文本选择)
+        Plugin->>Plugin: 检查 2: 在代码块中?
+        Plugin->>Plugin: 检查 3: 文本长度 >= minChars?
+        Note over Plugin: 所有检查通过，准备请求
+    end
 
-    Apply->>Apply: 第二次位置校验
-    Apply->>State: 更新插件状态
-    State->>User: 显示补全建议
+    alt 阶段 4: 防抖处理
+        Plugin->>Debounce: 清除之前的定时器
+        Plugin->>Debounce: 设置新定时器 (500ms)
+        Note over Debounce: 等待 500ms...
+
+        User->>Editor: 继续输入 "基于"
+        Editor->>Plugin: 触发新事务
+        Plugin->>Debounce: 清除之前的定时器
+        Plugin->>Debounce: 设置新定时器 (500ms)
+        Note over Debounce: 重新等待 500ms...
+    end
+
+    alt 阶段 5: 位置校验 (第一次)
+        Debounce->>Plugin: 定时器触发
+        Plugin->>Plugin: 获取当前编辑器状态
+        Plugin->>Plugin: 校验光标位置是否一致
+        Note over Plugin: 位置一致，继续请求
+    end
+
+    Plugin->>API: POST /api/ai/write/complete
+    Note over API: 异步处理 AI 请求...
+
+    alt 阶段 6: 位置校验 (第二次)
+        API-->>Plugin: 返回补全建议 "的全栈框架"
+        Plugin->>Plugin: 再次校验光标位置
+        Note over Plugin: 位置仍然一致，更新状态
+    end
+
+    Plugin->>Plugin: 创建事务，设置 ai-completion-update
+    Plugin->>Plugin: apply 处理更新元数据
+    Plugin->>Plugin: 更新插件状态
+
+    alt 阶段 7: 渲染补全
+        Plugin->>Decoration: decorations 方法被调用
+        Decoration->>Decoration: 校验位置有效性
+        Decoration->>Decoration: 创建 Decoration.widget
+        Decoration->>Decoration: 设置灰色斜体样式
+        Decoration-->>User: 显示补全建议 "的全栈框架"
+    end
+
+    alt 用户交互: Tab 接受
+        User->>Editor: 按 Tab 键
+        Editor->>Plugin: Tab 键监听器触发
+        Plugin->>Plugin: 检查是否有补全
+        Plugin->>Plugin: 创建事务，插入补全文本
+        Plugin->>Plugin: 设置 ai-completion-accept
+        Plugin->>Plugin: apply 清除补全状态
+        Plugin-->>User: 补全文本插入文档
+    end
+
+    alt 用户交互: Esc 取消
+        User->>Editor: 按 Esc 键
+        Editor->>Plugin: Esc 键监听器触发
+        Plugin->>Plugin: 检查是否有补全
+        Plugin->>Plugin: 创建事务，设置 ai-completion-clear
+        Plugin->>Plugin: apply 清除补全状态
+        Plugin-->>User: 补全建议消失
+    end
 ```
 
-**防抖机制说明**：
+---
 
-1. **为什么需要防抖？**
-   - 用户快速输入时，每次输入都触发 API 调用会导致：
-     - 大量无效请求（前面的请求会被后面的输入覆盖）
-     - 服务器压力大
-     - 用户体验差（补全建议频繁闪烁）
+## 第四部分：核心实现详解
 
-2. **防抖实现**
-   - 每次新输入时，清除之前的定时器
-   - 只保留最后一次输入的定时器
-   - 延迟 500ms 后调用 API（用户停止输入 500ms 后才请求）
+### 1. 插件状态管理
 
-3. **异步竞态防护**
-   - **第一次校验**：防抖回调执行时，检查光标位置是否仍然一致
-   - **第二次校验**：API 返回后，再次检查光标位置
-   - 双重校验确保补全建议只显示在正确的位置
+#### 状态结构
 
-#### 阶段 5：状态更新与渲染
+```typescript
+/**
+ * 插件状态：存储当前的补全建议和位置
+ */
+interface PluginState {
+  /** 补全建议文本，null 表示没有建议 */
+  suggestion: string | null;
+  /** 补全建议显示的位置（文档中的字符偏移量） */
+  position: number | null;
+}
+
+/**
+ * 插件键（PluginKey）
+ * 用于在插件状态、键盘快捷键和装饰渲染之间共享数据
+ */
+const pluginKey = new PluginKey<PluginState>("aiCompletion");
+```
+
+**设计要点**:
+
+1. **状态与文档分离**: 补全状态不存储在文档中，只存在于插件状态
+2. **位置追踪**: 记录补全建议对应的光标位置，用于校验
+3. **单一数据源**: 所有组件通过 `pluginKey` 访问同一状态
+
+### 2. apply 方法：状态更新核心
+
+#### 完整流程图
 
 ```mermaid
 graph TB
-    A[AI API 返回] --> B[第二次位置校验]
-    B -->|位置无效| C[丢弃补全]
-    B -->|位置有效| D[创建事务]
-    D --> E[设置元数据 ai-completion-update]
-    E --> F[dispatch 事务]
-    F --> G[触发 apply 方法]
-    G --> H[阶段1处理更新元数据]
-    H --> I[更新插件状态]
-    I --> J[decorations 方法被调用]
-    J --> K[渲染补全建议]
+    Start([apply 被调用]) --> MetaCheck{有元数据?}
+
+    MetaCheck -->|ai-completion-clear| ClearMeta[返回空状态]
+    MetaCheck -->|ai-completion-accept| ClearMeta
+    MetaCheck -->|ai-completion-update| UpdateMeta[返回新状态]
+    MetaCheck -->|无元数据| TextChange{有文本变化?}
+
+    TextChange -->|否| CursorMove{光标位置改变?}
+    CursorMove -->|是| ClearByCursor[清除补全]
+    CursorMove -->|否| KeepState[保持现有状态]
+
+    TextChange -->|是| ClearTimer[清除防抖定时器]
+    ClearTimer --> Check1{有文本选择?}
+    Check1 -->|是| ClearBySelection[清除补全]
+    Check1 -->|否| Check2{在代码块中?}
+    Check2 -->|是| ClearByCodeBlock[清除补全]
+    Check2 -->|否| Check3{文本长度 >= minChars?}
+    Check3 -->|否| ClearByLength[清除补全]
+    Check3 -->|是| SetTimer[设置防抖定时器]
+
+    SetTimer --> Wait[等待 500ms]
+    Wait --> Validate1{第一次位置校验}
+    Validate1 -->|位置改变| Discard1[丢弃请求]
+    Validate1 -->|位置一致| CallAPI[调用 AI API]
+
+    CallAPI --> APIResult{API 返回}
+    APIResult -->|失败| SilentFail[静默失败]
+    APIResult -->|成功| Validate2{第二次位置校验}
+
+    Validate2 -->|位置改变| Discard2[丢弃结果]
+    Validate2 -->|位置一致| DispatchMeta[dispatch 更新元数据]
+    DispatchMeta --> ReturnCurrent[返回当前状态]
+
+    ClearMeta --> End([结束])
+    UpdateMeta --> End
+    ClearByCursor --> End
+    KeepState --> End
+    ClearBySelection --> End
+    ClearByCodeBlock --> End
+    ClearByLength --> End
+    Discard1 --> End
+    SilentFail --> End
+    Discard2 --> End
+    ReturnCurrent --> End
 ```
 
-**状态更新流程**：
-
-1. **为什么使用元数据更新？**
-   - 不能直接在异步回调中修改状态
-   - 需要通过事务机制更新状态
-   - 元数据是 ProseMirror 推荐的状态更新方式
-
-2. **渲染机制**
-   - `decorations` 方法在每次状态变化时被调用
-   - 检查插件状态，如果有补全建议则创建装饰
-   - 装饰以灰色斜体文本显示在光标位置
-
-### 关键代码片段说明
-
-#### 1. 防抖定时器管理
+#### 阶段 1：元数据处理（优先级最高）
 
 ```typescript
-// 在闭包中保存定时器引用
-let debounceTimer: NodeJS.Timeout | null = null;
+apply(tr, value, oldState, newState) {
+  // 情况 1：用户按 Esc 键，清除补全建议
+  if (tr.getMeta("ai-completion-clear")) {
+    return { suggestion: null, position: null };
+  }
 
-// 每次新输入时清除之前的定时器
+  // 情况 2：用户按 Tab 键接受补全，清除建议
+  if (tr.getMeta("ai-completion-accept")) {
+    return { suggestion: null, position: null };
+  }
+
+  // 情况 3：AI API 返回补全建议，更新状态
+  const update = tr.getMeta("ai-completion-update");
+  if (update) {
+    return {
+      suggestion: update.suggestion,
+      position: update.position,
+    };
+  }
+
+  // ... 后续处理
+}
+```
+
+**为什么元数据优先级最高？**
+
+1. **即时响应**: 用户操作（Esc/Tab）需要立即生效
+2. **避免循环**: AI 返回的更新通过元数据传递，避免直接修改状态
+3. **清晰职责**: 元数据处理是明确的控制指令，优先于自动逻辑
+
+#### 阶段 2：文本变化检测
+
+```typescript
+// 判断是否有实际的文本变化
+const isTextChange =
+  tr.docChanged &&
+  !tr.getMeta("ai-completion") &&
+  !tr.getMeta("ai-completion-accept");
+
+if (!isTextChange) {
+  const { selection } = newState;
+  // 光标位置改变，清除补全
+  if (value.position !== null && selection.from !== value.position) {
+    return { suggestion: null, position: null };
+  }
+  return value; // 保持现有状态
+}
+```
+
+**关键逻辑**:
+
+1. **排除补全相关变化**: 补全本身的操作不应触发新的补全
+2. **光标移动检测**: 光标移动到其他位置时，补全建议不再有效
+3. **状态保持**: 无变化时保持现有状态，避免不必要的重新渲染
+
+#### 阶段 3：边界检查（4 项检查）
+
+```typescript
+// 边界检查 1：文本选择检查
+if (from !== to) {
+  return { suggestion: null, position: null };
+}
+
+// 边界检查 2：代码块检查
+const codeBlock = $from.node(-1)?.type.name === "codeBlock";
+if (codeBlock) {
+  return { suggestion: null, position: null };
+}
+
+// 边界检查 3：提取上下文
+const CONTEXT_LENGTH = 500;
+const textBeforeCursor = newState.doc.textBetween(
+  Math.max(0, from - CONTEXT_LENGTH),
+  from
+);
+
+// 边界检查 4：文本长度检查
+if (textBeforeCursor.trim().length < minChars) {
+  return { suggestion: null, position: null };
+}
+```
+
+**边界检查的设计理由**:
+
+| 检查项     | 原因                      | 处理方式          |
+| ---------- | ------------------------- | ----------------- |
+| 文本选择   | 选择文本时可能想替换/删除 | 清除补全          |
+| 代码块     | 代码块应有专门的代码补全  | 清除补全          |
+| 上下文长度 | 避免请求过长              | 限制 500 字符     |
+| 最小长度   | 上下文太短补全质量差      | 小于 3 字符不触发 |
+
+#### 阶段 4：防抖与异步处理
+
+```typescript
+// 记录当前光标位置（用于后续校验）
+const currentFrom = from;
+
+// 清除之前的定时器
 if (debounceTimer) {
   clearTimeout(debounceTimer);
   debounceTimer = null;
 }
 
-// 设置新的定时器
+// 设置新的防抖定时器
 debounceTimer = setTimeout(async () => {
-  // AI API 调用逻辑
+  try {
+    // 第一次位置校验
+    const currentState = extension.editor.state;
+    if (currentState.selection.from !== currentFrom) {
+      return; // 位置已改变，丢弃请求
+    }
+
+    // 调用 AI API
+    const response = await fetch(apiEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: currentState.doc.textContent,
+        cursorPosition: currentFrom,
+      }),
+    });
+
+    const data = await response.json();
+    const suggestionText = data.suggestions?.[0]?.text;
+
+    if (suggestionText && suggestionText.length > 0) {
+      // 第二次位置校验
+      const latestState = extension.editor.state;
+      if (latestState.selection.from === currentFrom) {
+        // 通过元数据更新状态
+        const tr = latestState.tr;
+        tr.setMeta("ai-completion-update", {
+          suggestion: suggestionText,
+          position: currentFrom,
+        });
+        extension.editor.view.dispatch(tr);
+      }
+    }
+  } catch (error) {
+    console.error("AI 补全错误:", error);
+  }
 }, extension.options.debounceMs);
+
+return value;
 ```
 
-**设计要点**：
+**防抖机制的设计要点**:
 
-- 定时器保存在闭包中，避免被垃圾回收
-- 每次清除旧定时器，确保只处理最后一次输入
+1. **取消而非队列**: 新输入取消旧请求，不保留旧请求
+2. **延迟执行**: 等待用户停止输入 500ms 后才请求
+3. **静默失败**: API 错误不影响用户编辑体验
+4. **双重校验**: 防抖回调时和 API 返回时各校验一次位置
 
-#### 2. 双重位置校验
+### 3. decorations 方法：非侵入式渲染
+
+```typescript
+decorations(state) {
+  // 步骤 1：获取插件状态
+  const pluginState = pluginKey.getState(state) as PluginState;
+
+  if (!pluginState.suggestion || pluginState.position === null) {
+    return DecorationSet.empty;
+  }
+
+  // 步骤 2：校验位置有效性
+  try {
+    const resolved = state.doc.resolve(pluginState.position);
+    if (!resolved) {
+      return DecorationSet.empty;
+    }
+  } catch {
+    return DecorationSet.empty;
+  }
+
+  // 校验光标位置
+  const { selection } = state;
+  if (selection.from !== pluginState.position) {
+    return DecorationSet.empty;
+  }
+
+  // 步骤 3：创建装饰
+  const widget = document.createElement("span");
+  widget.className = "ai-completion-suggestion";
+  widget.style.cssText =
+    "color: #9ca3af; " +
+    "font-style: italic; " +
+    "pointer-events: none; " +
+    "user-select: none;";
+  widget.textContent = pluginState.suggestion;
+
+  const decoration = Decoration.widget(pluginState.position, widget, {
+    side: 1, // 在光标后显示
+    ignoreSelection: true, // 不影响文本选择
+  });
+
+  return DecorationSet.create(state.doc, [decoration]);
+}
+```
+
+**装饰渲染的关键设计**:
+
+1. **样式设计**:
+   - `color: #9ca3af`: 浅灰色，不抢夺注意力
+   - `font-style: italic`: 斜体，区分于正常文本
+   - `pointer-events: none`: 不拦截鼠标事件
+   - `user-select: none`: 不可选中
+
+2. **位置设计**:
+   - `side: 1`: 在光标后显示
+   - `ignoreSelection: true`: 不影响文本选择
+
+3. **三次校验**:
+   - 状态检查: 确保有补全建议
+   - 位置有效性: 确保位置在文档范围内
+   - 光标一致性: 确保光标仍在补全位置
+
+### 4. 键盘快捷键处理
+
+#### Tab 键：接受补全
+
+```typescript
+Tab: ({ editor }) => {
+  const pluginState = pluginKey.getState(editor.state) as PluginState;
+
+  if (pluginState?.suggestion && pluginState.position !== null) {
+    const { suggestion } = pluginState;
+    const { state, view } = editor;
+    const { tr } = state;
+    const from = state.selection.from;
+
+    // 插入补全文本
+    tr.insertText(suggestion);
+
+    // 设置光标到插入文本的末尾
+    const newPos = from + suggestion.length;
+    tr.setSelection(TextSelection.create(tr.doc, newPos));
+
+    // 标记为接受补全
+    tr.setMeta("ai-completion-accept", true);
+
+    // 应用事务
+    view.dispatch(tr);
+
+    return true; // 已处理 Tab 键
+  }
+
+  return false; // 允许默认行为
+};
+```
+
+**流程说明**:
+
+1. **检查补全**: 确保有有效的补全建议
+2. **插入文本**: 将补全文本插入到光标位置
+3. **调整光标**: 将光标移动到插入文本的末尾
+4. **清除状态**: 通过元数据标记清除补全状态
+5. **阻止默认**: 返回 true 阻止默认的制表符插入
+
+#### Esc 键：取消补全
+
+```typescript
+Escape: ({ editor }) => {
+  const pluginState = pluginKey.getState(editor.state) as PluginState;
+
+  if (pluginState?.suggestion) {
+    // 通过事务元数据清除补全建议
+    editor.view.dispatch(editor.state.tr.setMeta("ai-completion-clear", true));
+    return true;
+  }
+
+  return false;
+};
+```
+
+**简洁设计**: 直接通过元数据清除补全，apply 方法会处理元数据并更新状态。
+
+---
+
+## 第五部分：技术难点与解决方案
+
+### 难点 1：异步竞态条件
+
+#### 问题描述
+
+```
+时间线：
+t0: 用户输入 "Hello"，触发请求 A
+t1: 用户输入 " World"，触发请求 B
+t2: 请求 B 返回（建议 "!"）
+t3: 请求 A 返回（建议 ", beautiful"）
+
+问题：请求 A 虽然触发较早，但返回较晚，此时用户已输入 " World"
+      如果接受请求 A 的建议，会显示在错误位置
+```
+
+#### 解决方案：双重位置校验
 
 ```typescript
 // 第一次校验：防抖回调执行时
-const currentState = extension.editor.state;
-if (currentSelection.from !== currentFrom) {
-  return; // 位置已改变，丢弃请求
-}
+debounceTimer = setTimeout(async () => {
+  const currentState = extension.editor.state;
+  if (currentState.selection.from !== currentFrom) {
+    return; // 位置已改变，丢弃请求
+  }
+  // ... 调用 API
+}, debounceMs);
 
 // 第二次校验：API 返回后
 const latestState = extension.editor.state;
@@ -600,279 +657,465 @@ if (latestState.selection.from === currentFrom) {
 }
 ```
 
-**设计要点**：
+**双重校验的作用**:
 
-- 第一次校验：避免处理过期的请求
-- 第二次校验：确保 API 返回后位置仍然有效
-- 双重校验确保补全建议的准确性
+1. **第一次校验**: 防抖回调执行时，检查光标是否还在触发位置
+2. **第二次校验**: API 返回后，再次检查光标位置是否一致
+3. **确保准确**: 只有两次校验都通过，才显示补全建议
 
-#### 3. 装饰渲染
+### 难点 2：非侵入式渲染
+
+#### 问题描述
+
+如何在不修改文档模型的情况下，在界面上显示补全建议？
+
+#### 解决方案：ProseMirror Decoration
+
+```
+文档模型 (真实数据):
+{
+  type: "paragraph",
+  content: [
+    { type: "text", text: "Hello" }
+  ]
+}
+
+视图层 (用户看到的):
+Hello world! (blue)
+      ^^^^^^ 补全建议，通过 Decoration 渲染
+
+ Decoration 不会修改文档模型，只是视觉层的叠加
+```
+
+**关键实现**:
 
 ```typescript
-decorations(state) {
-  const pluginState = pluginKey.getState(state);
+const decoration = Decoration.widget(position, widget, {
+  side: 1, // 在位置后显示
+  ignoreSelection: true, // 不影响选择
+});
+```
 
-  // 检查是否有补全建议
-  if (!pluginState.suggestion || pluginState.position === null) {
-    return DecorationSet.empty;
-  }
+**Decoration 的优势**:
 
-  // 校验位置有效性
-  if (selection.from !== pluginState.position) {
-    return DecorationSet.empty;
-  }
+1. **不修改文档**: 文档模型保持纯净
+2. **不污染撤销栈**: 补全建议不影响撤销/重做
+3. **不影响编辑**: 用户可以继续输入，补全自动消失
+4. **样式灵活**: 可以完全自定义样式
 
-  // 创建装饰
-  const widget = document.createElement("span");
-  widget.style.cssText = "color: #9ca3af; font-style: italic; ...";
-  widget.textContent = pluginState.suggestion;
+### 难点 3：频繁 API 调用
 
-  return DecorationSet.create(state.doc, [
-    Decoration.widget(pluginState.position, widget, { side: 1 })
-  ]);
+#### 问题描述
+
+```
+用户快速输入: H e l l o
+每次输入都触发 API 调用 → 5 次请求，只有最后一次有意义
+结果：服务器压力大，用户体验差（补全闪烁）
+```
+
+#### 解决方案：防抖机制
+
+```typescript
+// 每次新输入时清除旧定时器
+if (debounceTimer) {
+  clearTimeout(debounceTimer);
+  debounceTimer = null;
+}
+
+// 设置新定时器
+debounceTimer = setTimeout(async () => {
+  // 只有这个定时器会执行
+  // 之前的定时器都已被清除
+}, debounceMs);
+```
+
+**防抖的效果**:
+
+```
+输入: H    e    l    l    o
+时间: t0   t1   t2   t3   t4
+      ↓    ↓    ↓    ↓    ↓
+定时器: A→B  A→B  A→B  A→B  A→B
+                  清除  清除  清除  清除  清除
+                               ↓
+                              只有 B 执行
+```
+
+### 难点 4：边界情况处理
+
+#### 场景 1：文本选择
+
+```
+问题：用户选择文本 "Hello" 时，补全应该显示在哪里？
+解决：有文本选择时，不显示补全
+```
+
+```typescript
+if (from !== to) {
+  return { suggestion: null, position: null };
 }
 ```
 
-**设计要点**：
-
-- 使用 `Decoration.widget` 创建不影响文档结构的装饰
-- 装饰样式设置为不拦截鼠标事件（`pointer-events: none`）
-- 每次状态变化时重新计算装饰
-
-### 用户交互流程
-
-#### Tab 键接受补全
-
-```mermaid
-graph LR
-    A[用户按 Tab] --> B[检查补全状态]
-    B -->|有补全| C[插入补全文本]
-    C --> D[设置光标位置]
-    D --> E[设置元数据 ai-completion-accept]
-    E --> F[dispatch 事务]
-    F --> G[apply 处理清除]
-    B -->|无补全| H[默认行为]
-```
-
-#### Esc 键取消补全
-
-```mermaid
-graph LR
-    A[用户按 Esc] --> B[检查补全状态]
-    B -->|有补全| C[设置元数据 ai-completion-clear]
-    C --> D[dispatch 事务]
-    D --> E[apply 处理清除]
-    B -->|无补全| F[默认行为]
-```
-
-## 第六部分：技术难点与解决方案
-
-### 在 Markdown 编辑器实现 VSCode 效果的技术难点
-
-虽然 ProseMirror 提供了 Decoration 机制，但要实现类似 VSCode 的虚拟文本效果，仍面临以下挑战：
-
-#### 1. 编辑器架构差异
-
-| 维度     | VSCode (Monaco)    | ProseMirror/Tiptap      |
-| -------- | ------------------ | ----------------------- |
-| 核心模型 | 简单的字符串数组   | 复杂的 Node 树结构      |
-| 装饰系统 | 原生支持，API 完善 | 需要自己实现 Decoration |
-| 光标管理 | 单一光标模型       | 多选区、复杂 Selection  |
-| 渲染层   | 视图层完全独立     | 视图和模型耦合较紧      |
-
-**问题**：ProseMirror 的 Decoration 机制是设计好的，但要做到 VSCode 那种「紧贴光标、不影响输入」的效果，需要处理很多边界情况。
-
-#### 2. 光标位置同步问题
+#### 场景 2：代码块
 
 ```
-用户输入：Hello|
-虚拟文本： Hello World
-问题：光标应该在 "Hello|" 还是 "Hello |"？
-
-VSCode：虚拟文本不影响光标位置，仍在 |
-ProseMirror：Decoration.widget 显示在光标后，但光标位置计算复杂
+问题：代码块内的补全应该由代码编辑器处理
+解决：检测光标是否在代码块内，如果是则不显示补全
 ```
 
-**难点**：
-
-- 虚拟文本不应该让光标"跳"过去
-- 用户输入时，虚拟文本应该被"挤"开还是直接消失？
-- 光标左右移动时，虚拟文本何时显示/隐藏？
-
-**解决方案**：在 `decorations` 方法中校验光标位置，位置不一致时不显示装饰。
-
-#### 3. 文本输入的冲突处理
-
-```
-场景：用户在有虚拟文本时继续输入
-
-初始状态：Hello| World  (World 是虚拟文本)
-用户输入：空格
-期望结果：Hello |  (虚拟文本消失)
-实际可能：Hello  World  (虚拟文本被推开，但样式混乱)
+```typescript
+const codeBlock = $from.node(-1)?.type.name === "codeBlock";
+if (codeBlock) {
+  return { suggestion: null, position: null };
+}
 ```
 
-**难点**：
-
-- 需要拦截每一次输入事件
-- 判断输入是否应该清除虚拟文本
-- 处理中文输入法（IME）的复杂状态
-
-**解决方案**：在 `apply` 方法中检测文本变化，如果有文本变化且不是补全相关操作，则清除补全。
-
-#### 4. 样式渲染的复杂性
-
-VSCode 可以直接控制 DOM 渲染，但 ProseMirror/Tiptap 需要通过：
+#### 场景 3：光标移动
 
 ```
-ProseMirror 层级
-Document Node
-  └─ Paragraph Node
-      └─ Text Node ("Hello")
-      └─ Decoration.widget (虚拟文本容器)
-          └─ span 元素 (样式控制)
+问题：光标移动到其他位置，补全建议不再有效
+解决：检测光标位置是否改变，如果改变则清除补全
 ```
 
-**问题**：
-
-- Widget 的位置计算（`side: 1` 还是 `side: -1`）
-- Widget 的高度、行高如何与真实文本对齐？
-- 换行时虚拟文本如何处理？
-- 不同字号、字体时对齐问题
-
-**解决方案**：使用 `Decoration.widget` 的 `side: 1` 参数，让装饰显示在位置之后，并通过 CSS 样式确保视觉对齐。
-
-#### 5. 性能和响应性
-
-```
-每次输入触发：
-1. ProseMirror 事务更新
-2. 重新计算 Document
-3. 重新计算 Decorations
-4. DOM 更新
-5. 虚拟文本重新渲染
-
-VSCode：
-1. 视图层直接渲染虚拟文本
-2. 不触发表面模型更新
+```typescript
+if (value.position !== null && selection.from !== value.position) {
+  return { suggestion: null, position: null };
+}
 ```
 
-**问题**：
-
-- ProseMirror 的每次状态更新都会触发整个文档的重新计算
-- 虚拟文本的频繁更新可能导致性能问题
-- 大文档时更明显
-
-**解决方案**：
-
-- 防抖机制减少 API 调用
-- 位置校验避免无效的状态更新
-- 边界检查提前过滤不需要补全的场景
-
-#### 6. 边界情况处理
-
-| 场景     | 问题                                                 | 解决方案                           |
-| -------- | ---------------------------------------------------- | ---------------------------------- |
-| 选中状态 | 用户选中一段文本时，虚拟文本应该显示在哪里？         | 有文本选择时清除补全               |
-| 多光标   | ProseMirror 支持多选区，虚拟文本应该为哪个光标显示？ | 只支持单光标场景                   |
-| 代码块   | 代码块内是否需要不同的补全逻辑？                     | 代码块内不显示文本补全             |
-| 表格     | 在表格单元格内输入，虚拟文本如何处理？               | 表格内支持补全，但需要特殊处理     |
-| 拖拽     | 用户拖拽选中时，虚拟文本如何响应？                   | 拖拽时清除补全                     |
-| 复制粘贴 | 复制时是否包含虚拟文本？粘贴时如何处理？             | 虚拟文本不参与复制，粘贴时清除补全 |
-| 撤销重做 | Undo/Redo 栈如何与虚拟文本状态同步？                 | 通过事务元数据同步状态             |
-
-#### 7. IME 输入法的兼容
+#### 场景 4：文本太短
 
 ```
-中文输入流程：
-1. 用户按拼音字母
-2. 显示候选词窗口
-3. 用户选择候选词
-4. 确认输入
-
-问题：
-- 拼音输入阶段是否显示虚拟文本？
-- 候选词选择时虚拟文本如何处理？
-- 确认后虚拟文本是否需要重新计算？
+问题：上下文太短，补全质量差
+解决：设置最小字符数限制
 ```
 
-**解决方案**：在 IME 输入过程中，通过检测 `compositionstart` 和 `compositionend` 事件，在输入法激活时暂停补全，输入法结束后重新触发。
+```typescript
+if (textBeforeCursor.trim().length < minChars) {
+  return { suggestion: null, position: null };
+}
+```
 
-#### 8. 移动端兼容
+### 难点 5：状态同步问题
 
-- 移动端没有物理 Tab 键，如何接受补全？
-- 虚拟键盘弹出时，虚拟文本的位置如何计算？
-- 触摸事件和鼠标事件的处理差异
+#### 问题描述
 
-**解决方案**：移动端可以通过点击补全建议或添加自定义按钮来接受补全。
+如何在插件状态、键盘快捷键和装饰渲染之间同步数据？
 
-### 性能优化
+#### 解决方案：PluginKey
 
-1. **防抖机制**：减少 API 调用次数
-2. **位置校验**：避免无效的状态更新
-3. **边界检查**：提前过滤不需要补全的场景
-4. **静默失败**：API 错误不影响用户编辑体验
+```typescript
+// 模块级别的 PluginKey
+const pluginKey = new PluginKey<PluginState>("aiCompletion");
 
-### 潜在问题与解决方案
+// 在 apply 方法中更新状态
+apply(tr, value, oldState, newState) {
+  if (update) {
+    return { suggestion: update.suggestion, position: update.position };
+  }
+}
 
-#### 问题 1：异步竞态条件
+// 在 decorations 方法中读取状态
+decorations(state) {
+  const pluginState = pluginKey.getState(state) as PluginState;
+  // ... 使用 pluginState
+}
 
-**场景**：用户快速输入，多个 API 请求同时进行，后发的请求可能先返回。
+// 在键盘快捷键中读取状态
+Tab: ({ editor }) => {
+  const pluginState = pluginKey.getState(editor.state) as PluginState;
+  // ... 使用 pluginState
+}
+```
 
-**解决方案**：
+**PluginKey 的作用**:
 
-- 双重位置校验
-- 每次新输入清除旧定时器
-- 只处理位置一致的补全建议
+1. **单一数据源**: 所有组件通过同一个 key 访问状态
+2. **状态同步**: ProseMirror 自动管理状态同步
+3. **类型安全**: TypeScript 提供完整的类型检查
 
-#### 问题 2：补全建议显示在错误位置
+### 难点 6：循环触发问题
 
-**场景**：API 返回时，用户已移动光标。
+#### 问题描述
 
-**解决方案**：
+```
+用户输入 → apply → 插入补全 → 触发新事务 → apply → ...
+可能导致无限循环
+```
 
-- 在 `decorations` 方法中再次校验位置
-- 位置不一致时不显示装饰
+#### 解决方案：元数据标记
 
-#### 问题 3：频繁 API 调用
+```typescript
+// 在 Tab 键处理中标记
+tr.setMeta("ai-completion-accept", true);
 
-**场景**：用户快速输入时，每次输入都触发 API 调用。
+// 在 apply 方法中检查
+const isTextChange =
+  tr.docChanged &&
+  !tr.getMeta("ai-completion") &&
+  !tr.getMeta("ai-completion-accept");
 
-**解决方案**：
+// 补全相关的操作不会触发新的补全请求
+```
 
-- 防抖机制：延迟 500ms 后才调用 API
-- 每次新输入清除旧定时器
+**元数据的作用**:
 
-## 第七部分：总结
+1. **标记操作类型**: 区分用户输入和补全操作
+2. **避免循环**: 补全操作不会触发新的补全
+3. **清晰逻辑**: 明确不同操作的优先级
+
+---
+
+## 第六部分：API 集成
+
+### 补全 API 设计
+
+#### 端点
+
+```
+POST /api/ai/write/complete
+```
+
+#### 请求格式
+
+```json
+{
+  "content": "Next.js 是一个基于 React 的",
+  "cursorPosition": 20,
+  "context": "最近 500 字符",
+  "style": "专业"
+}
+```
+
+#### 响应格式
+
+```json
+{
+  "suggestions": [
+    {
+      "text": "全栈框架",
+      "confidence": 0.8
+    }
+  ],
+  "tokensUsed": 15
+}
+```
+
+### Prompt 设计
+
+#### System Prompt
+
+```typescript
+const COMPLETION_SYSTEM_MESSAGE = `# Role: 智能写作续写专家
+
+## Rules
+1. 续写内容必须与上下文自然衔接，不能产生突兀感
+2. 必须严格保持原文的写作风格，包括语调、用词习惯等
+3. 续写长度控制在 5-30 个汉字之间
+4. 只返回续写内容，不要重复上下文中的任何内容
+5. 如果是代码块，必须保持代码风格、缩进和语法一致
+6. 续写内容应该符合上下文的逻辑发展
+7. 不要添加任何解释、说明或格式标记
+8. 直接输出续写内容，不要添加"续写："等前缀`;
+```
+
+#### User Prompt
+
+```typescript
+function buildCompletionPrompt(
+  context: string,
+  style: string = "专业"
+): string {
+  return `# Role: 智能写作续写专家
+
+## Goals
+- 深入理解上下文的语境、写作意图和逻辑发展
+- 识别原文的写作风格（${style}）和表达方式
+- 生成与上下文自然衔接的续写内容
+
+## Input
+上下文内容：
+${context}
+
+## OutputFormat
+- 直接输出续写内容，不包含任何前缀、后缀或格式标记
+- 续写长度必须严格控制在 5-30 个汉字之间`;
+}
+```
+
+**Prompt 设计要点**:
+
+1. **明确角色**: 定义 AI 的角色和职责
+2. **清晰规则**: 明确输出格式和长度限制
+3. **上下文感知**: 传递最近的 500 字符作为上下文
+4. **风格保持**: 要求 AI 保持原文的写作风格
+
+---
+
+## 第七部分：插件使用指南
+
+### 基本使用
+
+```tsx
+import { EditorContent } from "@/tiptap/react";
+import { AICompletion } from "@/lib/editor/ai-completion-extension";
+
+function MyEditor() {
+  return (
+    <EditorContent
+      extensions={[
+        AICompletion.configure({
+          debounceMs: 500, // 防抖延迟（毫秒）
+          minChars: 3, // 最小字符数
+          apiEndpoint: "/api/ai/write/complete", // API 端点
+        }),
+      ]}
+    />
+  );
+}
+```
+
+### 配置选项
+
+| 选项          | 类型     | 默认值                     | 说明                 |
+| ------------- | -------- | -------------------------- | -------------------- |
+| `debounceMs`  | `number` | `500`                      | 防抖延迟时间（毫秒） |
+| `minChars`    | `number` | `3`                        | 触发补全的最小字符数 |
+| `apiEndpoint` | `string` | `"/api/ai/write/complete"` | AI 补全 API 端点     |
+
+### 与 Novel 编辑器集成
+
+```tsx
+import { EditorRoot, EditorContent, StarterKit } from "novel";
+import { AICompletion } from "@/lib/editor/ai-completion-extension";
+
+<EditorRoot>
+  <EditorContent
+    extensions={[
+      StarterKit.configure({}),
+      AICompletion.configure({
+        debounceMs: 500,
+        minChars: 3,
+        apiEndpoint: "/api/ai/write/complete",
+      }),
+    ]}
+    onUpdate={({ editor }) => {
+      // 编辑器内容变化
+      const markdown = jsonToMarkdown(editor.getJSON());
+      onChange(markdown);
+    }}
+  />
+</EditorRoot>;
+```
+
+### 交互流程
+
+```
+1. 用户输入文本
+   ↓
+2. 等待 500ms（防抖）
+   ↓
+3. 调用 AI API
+   ↓
+4. 显示补全建议（灰色斜体）
+   ↓
+5. 用户选择：
+   - 按 Tab: 接受补全，插入文档
+   - 按 Esc: 取消补全
+   - 继续输入: 补全自动消失
+```
+
+---
+
+## 第八部分：性能优化
+
+### 1. 防抖机制
+
+```typescript
+// 减少不必要的 API 调用
+debounceTimer = setTimeout(async () => {
+  // 只有用户停止输入 500ms 后才执行
+}, debounceMs);
+```
+
+**效果**: 用户快速输入时，只触发最后一次输入的 API 调用
+
+### 2. 位置校验
+
+```typescript
+// 避免无效的状态更新
+if (selection.from !== pluginState.position) {
+  return DecorationSet.empty;
+}
+```
+
+**效果**: 光标移动后不显示补全，避免无效渲染
+
+### 3. 边界检查
+
+```typescript
+// 提前过滤不需要补全的场景
+if (from !== to) return; // 文本选择
+if (codeBlock) return; // 代码块
+if (text.length < minChars) return; // 文本太短
+```
+
+**效果**: 减少不必要的 API 调用和状态更新
+
+### 4. 静默失败
+
+```typescript
+try {
+  // AI API 调用
+} catch (error) {
+  console.error("AI 补全错误:", error);
+  // 不抛出错误，不影响用户编辑
+}
+```
+
+**效果**: API 错误不影响用户编辑体验
+
+---
+
+## 第九部分：总结与展望
 
 ### 实现路径回顾
 
-1. **需求明确**：在 Markdown 编辑器中实现 AI Tab 补全功能
-2. **初期尝试**：直接插入文本方案遇到撤销栈污染、数据污染等问题
-3. **学习借鉴**：研究 VSCode 的虚拟文本机制，理解模型-视图分离的设计
-4. **技术选型**：选择 ProseMirror 作为编辑器基础，利用其 Decoration 机制
-5. **实现方案**：通过 ProseMirror 插件系统实现非侵入式补全功能
+```
+需求分析
+  ↓
+方案探索
+  ├─ 方案 A: 直接插入 ❌ (撤销栈污染)
+  ├─ 方案 B: DOM 叠加 ❌ (位置计算困难)
+  └─ 方案 C: Decoration ✅ (非侵入式渲染)
+  ↓
+技术实现
+  ├─ 状态管理: ProseMirror Plugin State
+  ├─ 渲染机制: ProseMirror Decoration
+  ├─ 防抖优化: 双重位置校验
+  └─ 边界检查: 4 项检查
+  ↓
+功能完善
+  ├─ 键盘快捷键: Tab/Esc
+  ├─ API 集成: Kimi API
+  └─ Prompt 优化: 结构化提示
+  ↓
+测试优化
+  ├─ 性能优化: 防抖、校验
+  └─ 边界情况: 各种场景处理
+```
 
-### 核心设计思路
+### 核心技术亮点
 
-AI 补全扩展的核心设计思路是：
-
-1. **状态驱动**：使用 ProseMirror Plugin 状态管理补全信息
-2. **防抖优化**：避免频繁 API 调用，提升性能和用户体验
-3. **竞态防护**：双重位置校验确保补全建议的准确性
-4. **非侵入式**：使用 Decoration 机制，不影响文档结构和用户操作
-
-### 关键技术点
-
-- **ProseMirror Plugin 系统**：管理状态、监听变化、渲染装饰
-- **Decoration 机制**：非侵入式渲染，类似 VSCode 的虚拟文本
-- **事务元数据**：在不同阶段传递补全信息，避免循环触发
-- **双重位置校验**：确保补全建议显示在正确的位置
-- **防抖机制**：减少 API 调用，提升性能
+1. **非侵入式渲染**: 使用 ProseMirror Decoration 实现类似 VSCode 的虚拟文本效果
+2. **双重位置校验**: 解决异步竞态条件问题
+3. **防抖机制**: 减少不必要的 API 调用
+4. **边界检查**: 处理各种边界情况
+5. **元数据驱动**: 通过元数据传递状态，避免循环触发
 
 ### 与 VSCode 的对比
 
-| 维度          | VSCode                 | ProseMirror 实现           |
+| 维度          | VSCode (Monaco)        | ProseMirror 实现           |
 | ------------- | ---------------------- | -------------------------- |
 | 虚拟文本机制  | Monaco Editor 原生支持 | 通过 Decoration 实现       |
 | 模型-视图分离 | 完全分离               | 耦合较紧，但可通过插件解耦 |
@@ -882,9 +1125,72 @@ AI 补全扩展的核心设计思路是：
 
 ### 未来优化方向
 
-1. **性能优化**：大文档时的渲染性能优化
-2. **边界情况**：完善 IME 输入法、移动端等场景的处理
-3. **用户体验**：支持自定义快捷键、补全建议的样式定制
-4. **功能扩展**：支持多行补全、代码块内的补全等
+1. **性能优化**:
+   - 大文档时的渲染性能优化
+   - 减少不必要的重新计算
 
-整个流程通过 `apply` 方法的状态更新逻辑和 `decorations` 方法的渲染逻辑，实现了从用户输入到补全建议显示的完整闭环。虽然实现过程复杂，但最终实现了类似 VSCode 的虚拟文本效果，为 Markdown 编辑器提供了良好的 AI 补全体验。
+2. **功能扩展**:
+   - 支持多行补全
+   - 代码块内的补全
+   - 多光标支持
+
+3. **用户体验**:
+   - 支持自定义快捷键
+   - 补全建议的样式定制
+   - 补全历史的记录和管理
+
+4. **边界情况**:
+   - IME 输入法的兼容性
+   - 移动端的适配
+   - 拖拽和复制粘贴的处理
+
+### 关键代码文件
+
+| 文件                                                                            | 说明                 |
+| ------------------------------------------------------------------------------- | -------------------- |
+| [ai-completion-extension.ts](../../src/lib/editor/ai-completion-extension.ts)   | AI 补全扩展核心实现  |
+| [route.ts](../../src/app/api/ai/write/complete/route.ts)                        | AI 补全 API 端点     |
+| [completion.ts](../../src/lib/ai/prompts/completion.ts)                         | AI 补全 Prompt 模板  |
+| [novel-editor-wrapper.tsx](../../src/components/admin/novel-editor-wrapper.tsx) | Novel 编辑器包装组件 |
+
+---
+
+## 附录：常见问题
+
+### Q1: 为什么不直接使用 VSCode 的方案？
+
+**A**: VSCode 使用的是 Monaco Editor，它原生支持虚拟文本。而我们的编辑器基于 ProseMirror，需要自己实现类似的机制。
+
+### Q2: 为什么使用元数据而不是直接修改状态？
+
+**A**:
+
+1. **避免循环**: 直接修改状态可能触发新的补全请求
+2. **清晰职责**: 元数据明确表示操作类型
+3. **ProseMirror 推荐**: ProseMirror 推荐通过元数据传递信息
+
+### Q3: 为什么需要双重位置校验？
+
+**A**:
+
+1. **第一次校验**: 防抖回调执行时，检查光标是否还在触发位置
+2. **第二次校验**: API 返回后，再次检查光标位置是否一致
+3. **确保准确**: 只有两次校验都通过，才显示补全建议
+
+### Q4: 如何处理中文输入法？
+
+**A**: 当前实现中，IME 输入会触发文本变化，清除补全建议。未来可以优化为检测 IME 状态，在输入过程中暂停补全。
+
+### Q5: 如何扩展支持代码补全？
+
+**A**:
+
+1. 检测光标是否在代码块内
+2. 如果是代码块，调用专门的代码补全 API
+3. 使用代码风格的 Prompt 和模型
+
+---
+
+**文档版本**: v2.0
+**最后更新**: 2025-01-06
+**作者**: Spring Broken AI Blog System
