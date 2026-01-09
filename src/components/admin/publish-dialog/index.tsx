@@ -70,23 +70,21 @@ export default function PublishDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+            className="space-y-5"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CategorySection
-                control={form.control}
-                categories={categories}
-                effectiveAiCategories={effectiveAiCategories}
-                articleContent={articleContent}
-                isCreating={isCreatingCategory}
-                isGenerating={isGeneratingCategories}
-                onSelectCategory={(id) => form.setValue("categoryId", id)}
-                onCreateCategory={handleCreateCategory}
-                onGenerateCategories={generateCategories}
-              />
+            <CategorySection
+              control={form.control}
+              categories={categories}
+              effectiveAiCategories={effectiveAiCategories}
+              articleContent={articleContent}
+              isCreating={isCreatingCategory}
+              isGenerating={isGeneratingCategories}
+              onSelectCategory={(id) => form.setValue("categoryId", id)}
+              onCreateCategory={handleCreateCategory}
+              onGenerateCategories={generateCategories}
+            />
 
-              <PublishSettings control={form.control} />
-            </div>
+            <PublishSettings control={form.control} />
 
             <TagSection
               tags={tags}
@@ -109,7 +107,7 @@ export default function PublishDialog({
               onGenerate={handleGenerateExcerpt}
             />
 
-            <DialogFooter>
+            <DialogFooter className="pt-2">
               <Button
                 type="button"
                 variant="outline"
