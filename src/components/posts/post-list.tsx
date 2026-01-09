@@ -63,6 +63,8 @@ export default function PostList({
             setPosts((prev) => [...prev, ...data.posts]);
           }
           setHasMore(data.pagination.current < data.pagination.pages);
+        } else {
+          console.error("获取文章列表失败: 响应状态", response.status);
         }
       } catch (error) {
         console.error("获取文章列表失败:", error);
@@ -73,20 +75,29 @@ export default function PostList({
     [categorySlug]
   );
 
+  // 首次加载：如果没有初始数据，则获取数据
   useEffect(() => {
-    if (initialPosts.length === 0) {
+    if (initialPosts.length === 0 && page === 1) {
+      fetchPosts(1);
+    }
+  }, [fetchPosts]);
+
+  // 加载更多：当页码变化时
+  useEffect(() => {
+    if (page > 1) {
       fetchPosts(page);
     }
-  }, [page, fetchPosts, initialPosts]);
+  }, [page]);
 
   // 当分类变化时重置页面并重新加载
   useEffect(() => {
-    if (categorySlug !== undefined && initialPosts.length === 0) {
+    if (categorySlug !== undefined) {
       setPage(1);
+      setPosts([]);
       setHasMore(true);
       fetchPosts(1);
     }
-  }, [categorySlug, fetchPosts, initialPosts]);
+  }, [categorySlug]);
 
   // 滚动监听自动加载
   useEffect(() => {
