@@ -280,8 +280,8 @@ export function ModernTable<T = any>({
                   : "opacity-0 translate-x-4 pointer-events-none"
               )}
             >
-              <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 dark:bg-blue-950 rounded-xl min-w-0">
-                <span className="text-sm text-blue-700 dark:text-blue-300 font-medium whitespace-nowrap">
+              <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl min-w-0">
+                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium whitespace-nowrap">
                   已选择 {selectedIds.length} 项
                 </span>
                 {batchActions.map((batchAction, index) => {
@@ -318,7 +318,7 @@ export function ModernTable<T = any>({
           {createButton &&
             (createButton.href ? (
               <Link href={createButton.href as any}>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                <Button className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0">
                   {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                   {createButton.label}
                 </Button>
@@ -326,7 +326,7 @@ export function ModernTable<T = any>({
             ) : (
               <Button
                 onClick={createButton.onClick}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+                className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0"
               >
                 {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                 {createButton.label}
@@ -355,7 +355,7 @@ export function ModernTable<T = any>({
               createButton &&
               (createButton.href ? (
                 <Link href={createButton.href as any}>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0">
                     {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                     {createButton.label}
                   </Button>
@@ -363,7 +363,7 @@ export function ModernTable<T = any>({
               ) : (
                 <Button
                   onClick={createButton.onClick}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+                  className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0"
                 >
                   {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                   {createButton.label}

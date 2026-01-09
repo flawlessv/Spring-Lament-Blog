@@ -23,7 +23,7 @@ async function main() {
       profile: {
         create: {
           displayName: "春光摧折",
-          bio: "虚无主义 | INFJ",
+          bio: "永言配命｜莫向外求",
           avatar: "/images/avatar.png",
           website: "http://powder.icu/",
           github: "https://github.com/flawlessv",
@@ -58,7 +58,7 @@ async function main() {
       sortOrder: 1,
     },
     {
-      name: "源码解析",
+      name: "源码",
       slug: "source-code",
       description: "开源项目源码分析与解读",
       color: "#10B981",
@@ -66,7 +66,7 @@ async function main() {
       sortOrder: 3,
     },
     {
-      name: "编程基础",
+      name: "编程",
       slug: "programming",
       description: "编程基础知识、算法、数据结构",
       color: "#F59E0B",
@@ -80,14 +80,6 @@ async function main() {
       color: "#EF4444",
       icon: "🍋‍🟩",
       sortOrder: 5,
-    },
-    {
-      name: "AboutMe",
-      slug: "about-me",
-      description: "个人经历、成长感悟、自我介绍",
-      color: "#6366F1",
-      icon: "👋",
-      sortOrder: 7,
     },
     {
       name: "随笔",

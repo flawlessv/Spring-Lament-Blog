@@ -291,7 +291,7 @@ export default async function CleanDashboardStats() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               发布进度
             </h3>
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
+            <CheckCircle2 className="h-5 w-5 text-gray-900 dark:text-gray-100" />
           </div>
 
           <div className="space-y-4">

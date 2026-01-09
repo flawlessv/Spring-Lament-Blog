@@ -269,9 +269,9 @@ export default function ImageUploader({
                     <X className="h-4 w-4" />
                   </Button>
                 ) : (
-                  <div className="h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
+                  <div className="h-5 w-5 rounded-full bg-black dark:bg-white flex items-center justify-center">
                     <svg
-                      className="h-3 w-3 text-white"
+                      className="h-3 w-3 text-white dark:text-black"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"

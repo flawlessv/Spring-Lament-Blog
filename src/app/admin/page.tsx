@@ -15,7 +15,7 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         {/* 页面标题 */}
         <div className="flex items-center space-x-2">
-          <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+          <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full"></div>
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             管理概览
           </h1>

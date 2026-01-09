@@ -54,17 +54,17 @@ export default function RAGChatButton() {
     if (indexStatus.needsIndex) {
       return (
         <div className="relative">
-          <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
+          <AlertCircle className="h-3.5 w-3.5 text-gray-500" />
           <span className="absolute -top-1 -right-1 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
           </span>
         </div>
       );
     }
 
     if (indexStatus.indexedPosts > 0) {
-      return <Check className="h-3.5 w-3.5 text-green-500" />;
+      return <Check className="h-3.5 w-3.5 text-gray-400" />;
     }
 
     return <Database className="h-3.5 w-3.5 text-muted-foreground" />;

@@ -483,7 +483,7 @@ export default function UnifiedPostsTable({
           <div className="min-w-0">
             <Link
               href={`/admin/posts/${post.id}/edit`}
-              className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block truncate"
+              className="text-base font-semibold text-gray-900 dark:text-gray-100 hover:opacity-70 transition-colors block truncate"
             >
               {post.title}
             </Link>
@@ -618,7 +618,7 @@ export default function UnifiedPostsTable({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
+              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => window.open(`/posts/${post.slug}`, "_blank")}
             >
               <Eye className="h-4 w-4 mr-1" />
@@ -627,7 +627,7 @@ export default function UnifiedPostsTable({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950"
+              className="h-8 px-3 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() =>
                 (window.location.href = `/admin/posts/${post.id}/edit`)
               }
@@ -655,11 +655,12 @@ export default function UnifiedPostsTable({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => handleTogglePublish(post)}
-                  className={`rounded-lg ${
+                  className={cn(
+                    "rounded-lg",
                     post.published
-                      ? "text-orange-600 dark:text-orange-400"
-                      : "text-green-600 dark:text-green-400"
-                  }`}
+                      ? "text-gray-600 dark:text-gray-400"
+                      : "text-black dark:text-white font-bold"
+                  )}
                 >
                   {post.published ? "取消发布" : "发布"}
                 </DropdownMenuItem>
