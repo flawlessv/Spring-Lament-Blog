@@ -110,9 +110,11 @@ export default function ImageUpload({
       />
 
       {value ? (
-        <div className="relative group">
+        <div
+          className={`relative group ${type === "avatar" ? "w-32 h-32" : "w-full"}`}
+        >
           <div
-            className={`${aspectRatioClass} rounded-lg overflow-hidden border-2 border-dashed border-gray-300 dark:border-gray-700`}
+            className={`${aspectRatioClass} ${type === "avatar" ? "" : "w-full"} rounded-lg overflow-hidden border-2 border-dashed border-gray-300 dark:border-gray-700`}
           >
             <img
               src={value}
@@ -145,7 +147,7 @@ export default function ImageUpload({
         </div>
       ) : (
         <div
-          className={`${aspectRatioClass} rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-gray-50 dark:bg-gray-900`}
+          className={`${aspectRatioClass} ${type === "avatar" ? "w-32 h-32" : "w-full"} rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-gray-50 dark:bg-gray-900`}
           onClick={() => fileInputRef.current?.click()}
         >
           {isUploading ? (

@@ -148,8 +148,16 @@ export default function ProfileForm() {
         throw new Error(error.error || "更新失败");
       }
 
-      // 更新会话信息
-      await update();
+      const result = await response.json();
+
+      // 更新会话信息，使用返回的最新用户数据
+      await update({
+        ...session,
+        user: {
+          ...session.user,
+          ...result.user,
+        },
+      });
 
       toast({
         title: "更新成功",
