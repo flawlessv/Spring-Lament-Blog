@@ -3,30 +3,22 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
 import { BackgroundImage } from "@/components/optimized/image-with-fallback";
-
-// 类型定义
-interface PostListProps {
-  className?: string;
-  categorySlug?: string;
-  initialPosts?: Post[];
-  initialHasMore?: boolean;
-}
 
 interface Post {
   id: string;
   title: string;
   slug: string;
-  excerpt?: string;
   coverImage?: string;
   createdAt: Date;
   publishedAt?: Date;
-  featured: boolean;
-  categories: Array<{
-    id: string;
-    name: string;
-  }>;
+}
+
+interface PostListProps {
+  className?: string;
+  categorySlug?: string;
+  initialPosts?: Post[];
+  initialHasMore?: boolean;
 }
 
 export default function PostList({
@@ -36,7 +28,7 @@ export default function PostList({
   initialHasMore = true,
 }: PostListProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [page, setPage] = useState(initialPosts.length > 0 ? 1 : 1);
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -63,11 +55,9 @@ export default function PostList({
             setPosts((prev) => [...prev, ...data.posts]);
           }
           setHasMore(data.pagination.current < data.pagination.pages);
-        } else {
-          console.error("获取文章列表失败: 响应状态", response.status);
         }
       } catch (error) {
-        console.error("获取文章列表失败:", error);
+        console.error("Failed to fetch posts:", error);
       } finally {
         setLoadingMore(false);
       }
@@ -75,128 +65,56 @@ export default function PostList({
     [categorySlug]
   );
 
-  // 首次加载：如果没有初始数据，则获取数据
   useEffect(() => {
     if (initialPosts.length === 0 && page === 1) {
       fetchPosts(1);
     }
-  }, [fetchPosts]);
-
-  // 加载更多：当页码变化时
-  useEffect(() => {
-    if (page > 1) {
-      fetchPosts(page);
-    }
-  }, [page]);
-
-  // 当分类变化时重置页面并重新加载
-  useEffect(() => {
-    if (categorySlug !== undefined) {
-      setPage(1);
-      setPosts([]);
-      setHasMore(true);
-      fetchPosts(1);
-    }
-  }, [categorySlug]);
-
-  // 滚动监听自动加载
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 1000 &&
-        hasMore &&
-        !loadingMore
-      ) {
-        setPage((prev) => prev + 1);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loadingMore]);
-
-  if (!posts.length) {
-    return (
-      <div className={`text-center py-12 ${className}`}>
-        <p className="text-gray-500">还没有发布任何文章</p>
-      </div>
-    );
-  }
+  }, [fetchPosts, initialPosts.length, page]);
 
   return (
-    <div className={`space-y-[60px] sm:space-y-[60px] ${className}`}>
+    <div className={`space-y-12 ${className}`}>
       {posts.map((post, index) => (
-        <article key={post.id}>
-          <Link
-            href={`/posts/${post.slug}`}
-            className="block w-full max-w-[680px] mx-auto"
-          >
-            <div className="relative w-full h-[220px] sm:h-[285px] overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-2xl group">
-              {/* 优化的背景图片 */}
-              <div className="absolute inset-0">
+        <article key={post.id} className="w-full">
+          <Link href={`/posts/${post.slug}`} className="group block w-full">
+            <div className="relative w-full h-[220px] sm:h-[280px] overflow-hidden bg-gray-100">
+              {/* 背景图片 - 占满全屏，无圆角 */}
+              <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
                 <BackgroundImage
                   src={post.coverImage || ""}
-                  className="w-full h-full"
-                  priority={index < 2} // 前两张图片优先加载
+                  className="w-full h-full object-cover"
+                  priority={index < 2}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/70 transition-opacity duration-300 group-hover:from-black/20 group-hover:via-black/30 group-hover:to-black/80"></div>
+                {/* 叠加层：深色渐变保证文字可读性 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent"></div>
               </div>
 
-              {/* 文章内容覆盖层 */}
-              <div
-                className="relative h-full p-4 sm:p-8 flex flex-col justify-between text-white"
-                style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
-              >
-                {/* 顶部：日期和精选标识 */}
-                <div className="flex items-start justify-between">
-                  <div className="text-xs sm:text-sm opacity-90 font-medium tracking-wider">
+              {/* 内容区域：左下角对齐 */}
+              <div className="relative h-full flex flex-col justify-end p-6 sm:p-10 text-white">
+                <div className="space-y-3">
+                  {/* 日期：全大写，间距拉开 */}
+                  <div className="text-[11px] sm:text-[13px] font-bold tracking-[0.2em] uppercase opacity-90">
                     {format(
                       new Date(post.publishedAt || post.createdAt),
-                      "MMM dd, yyyy",
-                      {
-                        locale: zhCN,
-                      }
-                    ).toUpperCase()}
+                      "MMM dd, yyyy"
+                    )}
                   </div>
-                  {post.featured && (
-                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full shadow-lg"></div>
-                  )}
-                </div>
 
-                {/* 中间：标题 - 垂直居中 */}
-                <div className="flex-1 flex items-center">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight line-clamp-3 transition-all duration-300 group-hover:scale-[1.02]">
+                  {/* 标题：大且醒目 */}
+                  <h2 className="text-xl sm:text-2xl md:text-[28px] font-bold leading-tight drop-shadow-sm">
                     {post.title}
                   </h2>
                 </div>
-
-                {/* 底部：分类标签 */}
-                {post.categories.length > 0 && (
-                  <div className="flex items-center space-x-2 sm:space-x-3">
-                    {post.categories.slice(0, 2).map((category) => (
-                      <span
-                        key={category.id}
-                        className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm bg-white/25 backdrop-blur-sm rounded-full transition-all duration-300 group-hover:bg-white/35"
-                      >
-                        {category.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           </Link>
         </article>
       ))}
 
-      {/* 自动加载指示器 */}
       {loadingMore && (
         <div className="text-center py-8">
-          <div className="inline-flex items-center gap-3 text-muted-foreground">
-            {/* 简单的旋转圈 */}
-            <div className="w-5 h-5 border-2 border-t-primary border-r-primary/50 border-b-transparent border-l-transparent rounded-full animate-spin" />
-            <span className="text-sm animate-pulse">永言配命，莫向外求</span>
+          <div className="inline-flex items-center gap-3 text-gray-400">
+            <div className="w-5 h-5 border-2 border-t-black border-r-black/30 border-b-transparent border-l-transparent rounded-full animate-spin" />
+            <span className="text-sm">加载中...</span>
           </div>
         </div>
       )}

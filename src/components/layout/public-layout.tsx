@@ -91,22 +91,45 @@ export default function PublicLayout({
       )}
 
       {/* 顶部右上角按钮 */}
-      <div className="fixed top-0 right-0 z-50 pt-4 pr-6 lg:pr-8 flex items-center gap-2">
+      <div className="fixed top-0 right-0 z-50 pt-4 pr-6 lg:pr-8 flex items-center gap-4">
         {/* 额外的按钮（如沉浸式阅读） */}
         {extraButtons}
 
-        {/* 主题切换按钮 */}
+        {/* 主题切换开关 - 药丸形状 */}
         <button
           onClick={toggleTheme}
-          className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-accent transition-colors"
-          title={theme === "light" ? "深色模式" : "浅色模式"}
+          className="relative inline-flex h-8 w-16 items-center rounded-full bg-gray-200 dark:bg-gray-800 transition-colors focus:outline-none"
+          title={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
         >
-          {mounted &&
-            (theme === "light" ? (
-              <Moon className="w-4 h-4 text-foreground" strokeWidth={2} />
-            ) : (
-              <Sun className="w-4 h-4 text-foreground" strokeWidth={2} />
-            ))}
+          {/* 滑动背景圆圈 */}
+          <span
+            className={cn(
+              "absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ease-in-out",
+              theme === "dark" ? "translate-x-8" : "translate-x-0"
+            )}
+          />
+
+          {/* 太阳图标 - 始终在左侧 */}
+          <span className="flex-1 flex justify-center z-10 pointer-events-none">
+            <Sun
+              className={cn(
+                "w-3.5 h-3.5 transition-colors",
+                theme === "light" ? "text-black" : "text-gray-500"
+              )}
+            />
+          </span>
+
+          {/* 月亮图标 - 始终在右侧 */}
+          <span className="flex-1 flex justify-center z-10 pointer-events-none">
+            <Moon
+              className={cn(
+                "w-3.5 h-3.5 transition-colors",
+                theme === "dark"
+                  ? "text-white dark:text-black"
+                  : "text-gray-500"
+              )}
+            />
+          </span>
         </button>
 
         {/* 管理按钮 */}
@@ -123,7 +146,7 @@ export default function PublicLayout({
       </div>
 
       {/* 主要内容 */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-8 animate-fade-in w-full">
+      <main className="flex-1 max-w-[1400px] ml-0 lg:ml-[4%] xl:ml-[8%] px-6 lg:px-12 pt-16 pb-16 animate-fade-in w-full">
         {children}
       </main>
 

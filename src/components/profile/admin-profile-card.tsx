@@ -1,22 +1,8 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import {
-  Mail,
-  Github,
-  Globe,
-  MessageSquare,
-  Phone,
-  User,
-  FileText,
-  Tv,
-} from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Mail, Github, User } from "lucide-react";
 
 interface AdminProfile {
   id: string;
@@ -27,24 +13,8 @@ interface AdminProfile {
     bio?: string;
     avatar?: string;
     email?: string;
-    phone?: string;
-    wechat?: string;
-    qq?: string;
-    website?: string;
     github?: string;
     twitter?: string;
-    weibo?: string;
-    bilibili?: string;
-    youtube?: string;
-    location?: string;
-    company?: string;
-    position?: string;
-  };
-  joinedAt: string;
-  stats: {
-    posts: number;
-    categories: number;
-    tags: number;
   };
 }
 
@@ -52,11 +22,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
-  color?: string;
   icon?: string;
-  _count?: {
-    posts: number;
-  };
 }
 
 interface AdminProfileCardProps {
@@ -75,202 +41,99 @@ export default function AdminProfileCard({
   const { displayName, bio, avatar } = profile.profile || {};
 
   return (
-    <div className="lg:sticky lg:top-24 space-y-6 w-full max-w-xs">
-      {/* 个人信息卡片 */}
-      <div className="space-y-4">
-        {/* 头像 */}
-        <div className="flex">
-          {avatar ? (
-            <img
-              src={avatar}
-              alt={displayName}
-              className="w-28 h-28 rounded-full object-cover border-2 border-border"
-            />
-          ) : (
-            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-border">
-              <User
-                className="w-14 h-14 text-muted-foreground"
-                strokeWidth={1.5}
+    <div className="lg:sticky lg:top-12 w-full flex flex-col items-start font-sans">
+      {/* 顶部个人信息区域 */}
+      <div className="flex items-start justify-between w-full relative pr-12">
+        <div className="flex-1 space-y-4">
+          {/* 头像 - 再次增大，保持 6px 边框 */}
+          <div className="w-28 h-28 rounded-full border-[6px] border-black dark:border-white overflow-hidden bg-white flex-shrink-0 shadow-md">
+            {avatar ? (
+              <img
+                src={avatar}
+                alt={displayName}
+                className="w-full h-full object-cover"
               />
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <User className="w-20 h-20 text-gray-200" strokeWidth={1} />
+              </div>
+            )}
+          </div>
 
-        {/* 名称 */}
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {displayName || profile.username}
-          </h1>
+          {/* 名字与简介 */}
+          <div className="space-y-2">
+            <h1 className="text-[28px] font-bold text-black dark:text-white leading-tight">
+              {displayName || profile.username}
+            </h1>
 
-          {/* 个人简介 */}
-          {bio && (
-            <p className="text-base text-muted-foreground leading-relaxed">
-              {bio}
-            </p>
-          )}
-        </div>
-
-        {/* 关于我按钮 */}
-        <Link
-          href="/about"
-          className="inline-block w-full text-center px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-        >
-          关于我
-        </Link>
-      </div>
-
-      {/* 分类导航 */}
-      {categories.length > 0 && (
-        <div className="space-y-1">
-          <div className="space-y-0.5">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/category/${category.slug}`}
-                className="flex items-center gap-1.5 py-1.5 text-sm hover:text-foreground transition-colors group"
-              >
-                {category.icon ? (
-                  <span className="w-3.5 h-3.5 text-center flex items-center justify-center flex-shrink-0 text-xs">
-                    {category.icon}
-                  </span>
+            {/* 简介 - 进一步增大字体，水平排列 */}
+            {bio && (
+              <div className="text-[18px] text-gray-400 dark:text-gray-500 font-light flex flex-wrap items-center gap-x-2 leading-none">
+                {bio.includes("|") ? (
+                  bio.split("|").map((part, i) => (
+                    <React.Fragment key={i}>
+                      <span className="whitespace-nowrap">{part.trim()}</span>
+                      {i < bio.split("|").length - 1 && (
+                        <span className="text-gray-200">|</span>
+                      )}
+                    </React.Fragment>
+                  ))
                 ) : (
-                  <FileText
-                    className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
-                    strokeWidth={1.5}
-                  />
+                  <span>{bio}</span>
                 )}
-                <span className="text-muted-foreground group-hover:text-foreground transition-colors">
-                  {category.name}
-                </span>
-                {category._count?.posts ? (
-                  <span className="text-xs text-muted-foreground ml-1 font-mono">
-                    {category._count.posts}
-                  </span>
-                ) : null}
-              </Link>
-            ))}
+              </div>
+            )}
+          </div>
+
+          {/* 订阅按钮 - 进一步加厚边框 */}
+          <div className="pt-0.5">
+            <button className="px-5 py-1.5 border-[3px] border-black dark:border-white rounded-full text-[12px] font-bold hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300">
+              Subscribe
+            </button>
           </div>
         </div>
-      )}
 
-      {/* 社交媒体图标 */}
-      <TooltipProvider>
-        <div className="flex flex-wrap gap-2 pt-2">
-          {profile.profile?.email && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={`mailto:${profile.profile.email}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative p-1 hover:bg-accent transition-colors rounded"
-                >
-                  <Mail
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>邮箱：{profile.profile.email}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {profile.profile?.phone && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={`tel:${profile.profile.phone}`}
-                  className="group relative p-1 hover:bg-accent transition-colors rounded"
-                >
-                  <Phone
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>电话：{profile.profile.phone}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {profile.profile?.wechat && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="group relative p-1 hover:bg-accent transition-colors cursor-pointer rounded">
-                  <MessageSquare
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>微信：{profile.profile.wechat}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {profile.profile?.website && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={profile.profile.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative p-1 hover:bg-accent transition-colors rounded"
-                >
-                  <Globe
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>个人网站</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {profile.profile?.github && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={`https://github.com/${profile.profile.github}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative p-1 hover:bg-accent transition-colors rounded"
-                >
-                  <Github
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>GitHub：{profile.profile.github}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {profile.profile?.bilibili && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={`https://space.bilibili.com/${profile.profile.bilibili}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative p-1 hover:bg-accent transition-colors rounded"
-                >
-                  <Tv
-                    className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors"
-                    strokeWidth={1.5}
-                  />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>B站：{profile.profile.bilibili}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
+        {/* 装饰蓝线 - 对齐头像顶部 */}
+        <div className="w-[4px] h-20 bg-[#0047AB] absolute right-4 top-0 hidden lg:block opacity-90"></div>
+      </div>
+
+      {/* 分类导航 - 彩色图标，适度加粗 */}
+      <nav className="w-full mt-6">
+        <ul className="space-y-1.5">
+          {categories.map((category) => (
+            <li key={category.id}>
+              <Link
+                href={`/category/${category.slug}`}
+                className="flex items-center gap-3 text-[15px] text-black dark:text-white hover:opacity-70 transition-all group"
+              >
+                <span className="text-lg opacity-100">
+                  {category.icon || "📄"}
+                </span>
+                <span className="font-semibold tracking-tight">
+                  {category.name}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* 底部社交 - 强化图标颜色 */}
+      <div className="w-full mt-8">
+        <div className="flex gap-5 text-gray-500">
+          <a href="#" className="hover:text-black transition-colors">
+            <Mail className="w-5 h-5" />
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.36-.49.99-.75 3.87-1.68 6.45-2.79 7.74-3.33 3.68-1.54 4.44-1.81 4.94-1.82.11 0 .35.03.5.16.13.1.17.24.18.33.02.06.02.13.01.2z" />
+            </svg>
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            <Github className="w-5 h-5" />
+          </a>
         </div>
-      </TooltipProvider>
+      </div>
     </div>
   );
 }
