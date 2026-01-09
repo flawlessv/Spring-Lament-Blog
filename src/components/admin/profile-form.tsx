@@ -119,13 +119,15 @@ export default function ProfileForm() {
       const result = await response.json();
 
       // 更新会话信息，使用返回的最新用户数据
-      await update({
-        ...session,
-        user: {
-          ...session.user,
-          ...result.user,
-        },
-      });
+      if (session) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            ...result.user,
+          },
+        });
+      }
 
       toast({
         title: "更新成功",
