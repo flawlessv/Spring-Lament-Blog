@@ -169,8 +169,8 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
             </Button>
 
             <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
-                <Sparkles className="h-4.5 w-4.5 text-white" />
+              <div className="w-9 h-9 bg-black dark:bg-white rounded-xl flex items-center justify-center shadow-md">
+                <Sparkles className="h-4.5 w-4.5 text-white dark:text-black" />
               </div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
@@ -213,11 +213,11 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                     <img
                       src={avatarUrl}
                       alt={session.user.displayName || session.user.username}
-                      className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 group-hover:border-purple-400 dark:group-hover:border-purple-500 transition-all shadow-sm"
+                      className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-all shadow-sm"
                     />
                   ) : (
-                    <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-sm border-2 border-gray-200 dark:border-gray-700 group-hover:border-purple-400 dark:group-hover:border-purple-500 transition-all">
-                      <User className="h-4.5 w-4.5 text-white" />
+                    <div className="w-9 h-9 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm border-2 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-all">
+                      <User className="h-4.5 w-4.5 text-gray-500 dark:text-gray-400" />
                     </div>
                   )}
                 </div>
@@ -277,7 +277,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                       className={cn(
                         "group flex items-center px-3 py-3 text-[15px] font-medium rounded-lg transition-all duration-200",
                         item.current
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-200 dark:shadow-purple-900/20"
+                          ? "bg-black dark:bg-white text-white dark:text-black shadow-md shadow-black/10 dark:shadow-white/10"
                           : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
                       )}
                     >
@@ -285,7 +285,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
                         className={cn(
                           "mr-3 h-5 w-5 transition-transform",
                           item.current
-                            ? "text-white"
+                            ? "text-white dark:text-black"
                             : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 group-hover:scale-110"
                         )}
                       />

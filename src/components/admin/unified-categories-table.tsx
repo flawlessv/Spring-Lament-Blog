@@ -155,7 +155,7 @@ export default function UnifiedCategoriesTable({
       {/* 拖拽排序表格 */}
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black dark:border-white"></div>
           <p className="mt-2 text-gray-600 dark:text-gray-400">加载中...</p>
         </div>
       ) : error ? (
@@ -220,7 +220,7 @@ export default function UnifiedCategoriesTable({
                         <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                           排序
                         </div>
-                        <div className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+                        <div className="font-semibold text-black dark:text-white text-lg">
                           {category.sortOrder}
                         </div>
                       </div>

@@ -154,8 +154,8 @@ export default function UnifiedTagsTable({
       className: "text-center",
       render: (_: unknown, tag: Tag) => (
         <div className="flex items-center justify-center space-x-2">
-          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
-            <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+            <FileText className="h-4 w-4 text-black dark:text-white" />
           </div>
           <span className="font-medium text-gray-700 dark:text-gray-300">
             {tag._count?.posts || 0} 篇
@@ -184,7 +184,7 @@ export default function UnifiedTagsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950"
+            className="h-8 w-8 p-0 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
             onClick={() => onEdit?.(tag)}
             title="编辑"
           >
@@ -193,7 +193,7 @@ export default function UnifiedTagsTable({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950"
+            className="h-8 w-8 p-0 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
             onClick={() => handleDelete(tag)}
             title="删除"
           >

@@ -3,6 +3,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
 import { LayoutDashboard, Moon, Sun, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 interface PublicLayoutProps {
@@ -18,28 +19,12 @@ export default function PublicLayout({
   leftButtons,
   sidebar,
 }: PublicLayoutProps) {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const html = document.documentElement;
-    if (html.classList.contains("dark")) {
-      setTheme("dark");
-    }
   }, []);
-
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    if (theme === "light") {
-      html.classList.add("dark");
-      setTheme("dark");
-    } else {
-      html.classList.remove("dark");
-      setTheme("light");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -95,42 +80,8 @@ export default function PublicLayout({
         {/* 额外的按钮（如沉浸式阅读） */}
         {extraButtons}
 
-        {/* 主题切换开关 - 药丸形状 */}
-        <button
-          onClick={toggleTheme}
-          className="relative inline-flex h-8 w-16 items-center rounded-full bg-gray-200 dark:bg-gray-800 transition-colors focus:outline-none"
-          title={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
-        >
-          {/* 滑动背景圆圈 */}
-          <span
-            className={cn(
-              "absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ease-in-out",
-              theme === "dark" ? "translate-x-8" : "translate-x-0"
-            )}
-          />
-
-          {/* 太阳图标 - 始终在左侧 */}
-          <span className="flex-1 flex justify-center z-10 pointer-events-none">
-            <Sun
-              className={cn(
-                "w-3.5 h-3.5 transition-colors",
-                theme === "light" ? "text-black" : "text-gray-500"
-              )}
-            />
-          </span>
-
-          {/* 月亮图标 - 始终在右侧 */}
-          <span className="flex-1 flex justify-center z-10 pointer-events-none">
-            <Moon
-              className={cn(
-                "w-3.5 h-3.5 transition-colors",
-                theme === "dark"
-                  ? "text-white dark:text-black"
-                  : "text-gray-500"
-              )}
-            />
-          </span>
-        </button>
+        {/* 主题切换开关 */}
+        <ThemeToggle />
 
         {/* 管理按钮 */}
         <Link

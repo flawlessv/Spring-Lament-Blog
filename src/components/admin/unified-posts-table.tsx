@@ -260,7 +260,7 @@ export default function UnifiedPostsTable({
   const getStatusBadge = useCallback((post: Post) => {
     if (post.featured) {
       return (
-        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0">
+        <Badge className="bg-black dark:bg-white text-white dark:text-black border-0">
           <Star className="h-3 w-3 mr-1" />
           精选
         </Badge>
@@ -268,13 +268,13 @@ export default function UnifiedPostsTable({
     }
     if (post.published) {
       return (
-        <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
+        <Badge className="bg-gray-600 dark:bg-gray-400 text-white dark:text-black border-0">
           已发布
         </Badge>
       );
     }
     return (
-      <Badge variant="secondary" className="text-gray-600">
+      <Badge variant="secondary" className="text-gray-600 dark:text-gray-400">
         <Clock className="h-3 w-3 mr-1" />
         草稿
       </Badge>
@@ -456,9 +456,9 @@ export default function UnifiedPostsTable({
   // 优化：使用useMemo缓存静态配置
   const statusOptions = useMemo(
     () => [
-      { label: "已发布", value: "published", color: "#10B981" },
-      { label: "草稿", value: "draft", color: "#6B7280" },
-      { label: "精选", value: "featured", color: "#F59E0B" },
+      { label: "已发布", value: "published" },
+      { label: "草稿", value: "draft" },
+      { label: "精选", value: "featured" },
     ],
     []
   );

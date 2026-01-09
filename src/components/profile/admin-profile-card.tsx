@@ -61,14 +61,14 @@ export default function AdminProfileCard({
           </div>
 
           {/* 名字与简介 */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h1 className="text-[28px] font-bold text-black dark:text-white leading-tight">
               {displayName || profile.username}
             </h1>
 
             {/* 简介 - 进一步增大字体，水平排列 */}
             {bio && (
-              <div className="text-[18px] text-gray-400 dark:text-gray-500 font-light flex flex-wrap items-center gap-x-2 leading-none">
+              <div className="text-[18px] text-gray-600 dark:text-gray-600 font-light flex flex-wrap items-center gap-x-2 leading-none">
                 {bio.includes("|") ? (
                   bio.split("|").map((part, i) => (
                     <React.Fragment key={i}>
