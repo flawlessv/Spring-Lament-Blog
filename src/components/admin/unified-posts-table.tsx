@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ModernTable } from "@/components/ui/modern-table";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 // 文章数据类型
 interface Post {

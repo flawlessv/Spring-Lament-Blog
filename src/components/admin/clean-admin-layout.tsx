@@ -192,7 +192,7 @@ export default function CleanAdminLayout({ children }: CleanAdminLayoutProps) {
             <RAGChatButton />
 
             {/* 主题切换按钮 */}
-            <ThemeToggle className="h-9 w-9 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" />
+            <ThemeToggle />
 
             <Link href="/">
               <Button

@@ -18,14 +18,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   }, []);
 
   if (!mounted) {
-    return (
-      <div
-        className={cn(
-          "h-8 w-16 rounded-full bg-gray-100 dark:bg-gray-800",
-          className
-        )}
-      />
-    );
+    return <div className={cn("h-8 w-16 rounded-full bg-muted", className)} />;
   }
 
   return (
@@ -33,7 +26,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       onClick={toggleTheme}
       className={cn(
         "relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-300 focus:outline-none",
-        "bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-800",
+        "bg-muted border-2 border-border hover:bg-accent",
         className
       )}
       title={theme === "light" ? "切换到深色模式" : "切换到亮色模式"}
@@ -41,14 +34,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       {/* 滑动背景圆圈 */}
       <span
         className={cn(
-          "absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-white dark:bg-gray-200 shadow-sm transition-transform duration-300 ease-in-out z-20",
+          "absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-background shadow-sm transition-transform duration-300 ease-in-out z-20",
           theme === "dark" ? "translate-x-8" : "translate-x-0"
         )}
       >
         {theme === "light" ? (
-          <Sun className="w-3.5 h-3.5 text-black" />
+          <Sun className="w-3.5 h-3.5 text-amber-500" />
         ) : (
-          <Moon className="w-3.5 h-3.5 text-black" />
+          <Moon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
         )}
       </span>
 
@@ -57,7 +50,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         <Sun
           className={cn(
             "w-3.5 h-3.5 transition-opacity duration-300",
-            theme === "light" ? "opacity-0" : "opacity-40 text-gray-500"
+            theme === "light" ? "opacity-100" : "opacity-30"
           )}
         />
       </span>
@@ -67,7 +60,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         <Moon
           className={cn(
             "w-3.5 h-3.5 transition-opacity duration-300",
-            theme === "dark" ? "opacity-0" : "opacity-40 text-gray-500"
+            theme === "dark" ? "opacity-100" : "opacity-30"
           )}
         />
       </span>
