@@ -196,7 +196,7 @@ export default function PostList({
           <div className="inline-flex items-center gap-3 text-muted-foreground">
             {/* 简单的旋转圈 */}
             <div className="w-5 h-5 border-2 border-t-primary border-r-primary/50 border-b-transparent border-l-transparent rounded-full animate-spin" />
-            <span className="text-sm animate-pulse">永言配命，莫向外求。</span>
+            <span className="text-sm animate-pulse">永言配命，莫向外求</span>
           </div>
         </div>
       )}

@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
  * 统一默认文案：永言配命，莫向外求。
  */
 export function SimpleLoading({
-  text = "永言配命，莫向外求。",
+  text = "永言配命，莫向外求",
   className,
 }: {
   text?: string;
@@ -29,14 +29,25 @@ export function SimpleLoading({
         </div>
       </div>
 
-      {/* 文字带动态省略号 */}
+      {/* 文字带跳动省略号 */}
       {text && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-end gap-1">
           <span className="text-sm text-muted-foreground tracking-wide">
             {text}
           </span>
-          <span className="text-sm text-muted-foreground animate-pulse">
-            ...
+          <span className="flex gap-[3px] mb-[3px]">
+            <span
+              className="w-1 h-1 rounded-full bg-muted-foreground animate-bounce"
+              style={{ animationDelay: "0ms", animationDuration: "600ms" }}
+            />
+            <span
+              className="w-1 h-1 rounded-full bg-muted-foreground animate-bounce"
+              style={{ animationDelay: "150ms", animationDuration: "600ms" }}
+            />
+            <span
+              className="w-1 h-1 rounded-full bg-muted-foreground animate-bounce"
+              style={{ animationDelay: "300ms", animationDuration: "600ms" }}
+            />
           </span>
         </div>
       )}
