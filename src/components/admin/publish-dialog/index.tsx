@@ -14,7 +14,6 @@ import { usePublishDialog } from "./hooks/use-publish-dialog";
 import { CategorySection } from "./components/category-section";
 import { TagSection } from "./components/tag-section";
 import { PublishSettings } from "./components/publish-settings";
-import { CoverImageField } from "./components/cover-image-field";
 import { ExcerptField } from "./components/excerpt-field";
 import type { PublishDialogProps } from "./types";
 
@@ -97,8 +96,6 @@ export default function PublishDialog({
               onCreate={handleCreateTag}
               onGenerate={generateTags}
             />
-
-            <CoverImageField control={form.control} />
 
             <ExcerptField
               control={form.control}
