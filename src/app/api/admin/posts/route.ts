@@ -279,6 +279,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 验证 authorId 是否存在
+    const authorExists = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
+
     // 创建文章
     const post = await prisma.post.create({
       data: {

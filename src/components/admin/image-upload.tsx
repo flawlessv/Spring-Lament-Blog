@@ -1,30 +1,33 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { useState, useRef, ChangeEvent } from "react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 interface ImageUploadProps {
   value?: string;
-  onChange: (url: string) => void;
-  type?: "cover" | "content" | "avatar";
-  aspectRatio?: "16:9" | "4:3" | "1:1";
-  maxSize?: number; // MB
+  onChange: (value: string) => void;
+  type?: "avatar" | "cover";
+  aspectRatio?: string;
 }
 
+/**
+ * 简单的图片上传组件
+ * 用于头像、个人资料等场景
+ */
 export default function ImageUpload({
   value,
   onChange,
-  type = "cover",
-  aspectRatio = "16:9",
-  maxSize = 5,
+  type = "avatar",
+  aspectRatio = "1:1",
 }: ImageUploadProps) {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -38,11 +41,11 @@ export default function ImageUpload({
       return;
     }
 
-    // 验证文件大小
-    if (file.size > maxSize * 1024 * 1024) {
+    // 验证文件大小（2MB）
+    if (file.size > 2 * 1024 * 1024) {
       toast({
         title: "文件过大",
-        description: `图片大小不能超过 ${maxSize}MB`,
+        description: "图片大小不能超过 2MB",
         variant: "destructive",
       });
       return;
@@ -51,126 +54,97 @@ export default function ImageUpload({
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", type);
+      // 创建本地预览 URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        onChange(dataUrl);
 
-      const response = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "上传失败");
-      }
-
-      const data = await response.json();
-      onChange(data.url);
-
-      toast({
-        title: "上传成功",
-        description: "图片已保存",
-        variant: "success",
-      });
+        toast({
+          title: "上传成功",
+          description: "图片已更新（预览模式）",
+          variant: "default",
+        });
+      };
+      reader.readAsDataURL(file);
     } catch (error) {
       console.error("上传失败:", error);
       toast({
         title: "上传失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
+        description: error instanceof Error ? error.message : "上传失败",
         variant: "destructive",
       });
     } finally {
       setIsUploading(false);
-      // 重置文件输入
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
   };
 
   const handleRemove = () => {
     onChange("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  const aspectRatioClass = {
-    "16:9": "aspect-video",
-    "4:3": "aspect-[4/3]",
-    "1:1": "aspect-square",
-  }[aspectRatio];
-
   return (
-    <div className="space-y-2">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-        onChange={handleFileSelect}
-        className="hidden"
-      />
-
+    <div className="space-y-4">
       {value ? (
-        <div
-          className={`relative group ${type === "avatar" ? "w-32 h-32" : "w-full"}`}
-        >
+        <div className="relative inline-block">
+          {/* 图片预览 */}
           <div
-            className={`${aspectRatioClass} ${type === "avatar" ? "" : "w-full"} rounded-lg overflow-hidden border-2 border-dashed border-gray-300 dark:border-gray-700`}
+            className={`
+              relative overflow-hidden rounded-lg border bg-muted
+              ${type === "avatar" ? "w-32 h-32" : "w-full max-w-md aspect-video"}
+            `}
           >
-            <img
-              src={value}
-              alt="预览"
-              className="w-full h-full object-cover"
-            />
+            <Image src={value} alt="预览" fill className="object-cover" />
           </div>
 
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-lg">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <Upload className="h-4 w-4 mr-1" />
-              更换
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={handleRemove}
-            >
-              <X className="h-4 w-4 mr-1" />
-              删除
-            </Button>
-          </div>
+          {/* 删除按钮 */}
+          <Button
+            type="button"
+            size="sm"
+            variant="destructive"
+            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+            onClick={handleRemove}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
       ) : (
         <div
-          className={`${aspectRatioClass} ${type === "avatar" ? "w-32 h-32" : "w-full"} rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-gray-50 dark:bg-gray-900`}
+          className={`
+            border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
+            hover:border-primary hover:bg-muted/50 transition-colors
+            ${type === "avatar" ? "w-32 h-32 flex flex-col items-center justify-center" : ""}
+          `}
           onClick={() => fileInputRef.current?.click()}
         >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
           {isUploading ? (
-            <>
-              <Loader2 className="h-12 w-12 text-muted-foreground animate-spin mb-2" />
-              <p className="text-sm text-muted-foreground">上传中...</p>
-            </>
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
           ) : (
             <>
-              <ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground mb-1">点击上传图片</p>
+              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
               <p className="text-xs text-muted-foreground">
-                支持 JPG、PNG、GIF、WebP
+                {type === "avatar" ? "上传头像" : "点击上传"}
               </p>
-              <p className="text-xs text-muted-foreground">最大 {maxSize}MB</p>
             </>
           )}
         </div>
       )}
 
-      {value && (
-        <p className="text-xs text-muted-foreground break-all">{value}</p>
-      )}
+      {/* 提示文字 */}
+      <p className="text-xs text-muted-foreground">
+        支持 JPG、PNG、WebP，最大 2MB
+      </p>
     </div>
   );
 }

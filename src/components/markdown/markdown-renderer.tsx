@@ -244,7 +244,7 @@ export default function MarkdownRenderer({
           prose-th:bg-gray-50 dark:prose-th:bg-gray-800 prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:font-medium
           prose-td:border-gray-300 dark:prose-td:border-gray-700 dark:prose-td:text-gray-300
           prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:break-words prose-a:break-all
-          prose-img:max-w-full
+          prose-img:max-w-xl prose-img:mx-auto prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
           [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:whitespace-nowrap
           [&_iframe]:max-w-full [&_iframe]:w-full
         "
