@@ -73,14 +73,14 @@ export default function Home() {
           <AdminProfileCard profile={profileData} categories={categories} />
         }
       >
-        <div className="flex flex-col lg:grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-12">
+        <div className="flex flex-col lg:grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16 lg:ml-32">
           {/* 桌面端：个人信息在左侧 */}
           <aside className="hidden lg:block order-1 lg:order-none pt-4">
             <AdminProfileCard profile={profileData} categories={categories} />
           </aside>
 
           {/* 文章列表 */}
-          <main className="order-2 lg:order-none max-w-[680px]">
+          <main className="order-2 lg:order-none max-w-2xl">
             <PostList initialPosts={postsData} />
           </main>
         </div>

@@ -98,7 +98,7 @@ export default function PublicLayout({
 
       {/* 主要内容 */}
       <main className="flex-1 w-full px-6 lg:px-12 pt-16 pb-16 animate-fade-in">
-        <div className="max-w-4xl mx-auto">{children}</div>
+        <div className="w-full">{children}</div>
       </main>
 
       {/* 极简底部 */}
