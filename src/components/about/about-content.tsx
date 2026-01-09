@@ -217,11 +217,11 @@ export default function AboutContent() {
               <img
                 src={avatar}
                 alt={displayName || profile.username}
-                className="w-32 h-32 rounded-full border-4 border-gray-100 dark:border-gray-800"
+                className="w-32 h-32 rounded-full border-[6px] border-black dark:border-white shadow-md object-cover"
               />
             ) : (
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <User className="w-16 h-16 text-white" strokeWidth={1.5} />
+              <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-[6px] border-black dark:border-white">
+                <User className="w-16 h-16 text-gray-400" strokeWidth={1.5} />
               </div>
             )}
           </div>
@@ -332,7 +332,7 @@ export default function AboutContent() {
 
               <div className="flex gap-6">
                 {/* 时间点 */}
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 border-4 border-background shadow-lg" />
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-black dark:bg-white border-4 border-background shadow-lg" />
 
                 {/* 内容 */}
                 <div className="flex-1 pb-10">
@@ -349,7 +349,9 @@ export default function AboutContent() {
                   <ul className="space-y-2 text-muted-foreground">
                     {work.achievements.map((achievement, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <span className="text-blue-500 mt-0.5 text-lg">→</span>
+                        <span className="text-black dark:text-white mt-0.5 text-lg">
+                          →
+                        </span>
                         <span>{achievement}</span>
                       </li>
                     ))}
@@ -379,8 +381,8 @@ export default function AboutContent() {
                 rel={link.href ? "noopener noreferrer" : undefined}
                 className="flex items-center gap-4 p-5 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-all group"
               >
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                  <link.icon className="w-6 h-6 text-white" />
+                <div className="p-3 bg-black dark:bg-white rounded-lg">
+                  <link.icon className="w-6 h-6 text-white dark:text-black" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-muted-foreground mb-1">

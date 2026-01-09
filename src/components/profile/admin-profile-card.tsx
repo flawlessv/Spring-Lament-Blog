@@ -85,11 +85,14 @@ export default function AdminProfileCard({
             )}
           </div>
 
-          {/* 订阅按钮 - 进一步加厚边框 */}
+          {/* 关于我按钮 */}
           <div className="pt-0.5">
-            <button className="px-5 py-1.5 border-[3px] border-black dark:border-white rounded-full text-[12px] font-bold hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300">
-              Subscribe
-            </button>
+            <Link
+              href="/about"
+              className="inline-block px-5 py-1.5 border-[3px] border-black dark:border-white rounded-full text-[12px] font-bold hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300"
+            >
+              About Me
+            </Link>
           </div>
         </div>
 
