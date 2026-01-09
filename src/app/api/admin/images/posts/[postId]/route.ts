@@ -12,7 +12,7 @@ import { ImageType } from "@prisma/client";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     // 权限验证
@@ -21,7 +21,7 @@ export async function GET(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const { postId } = params;
+    const { postId } = await params;
 
     // 查询文章是否存在
     const post = await prisma.post.findUnique({
