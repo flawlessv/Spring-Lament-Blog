@@ -17,7 +17,7 @@ import { isValidExtension } from "@/lib/images/validator";
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { imageId: string } }
+  { params }: { params: Promise<{ imageId: string }> }
 ) {
   try {
     // 权限验证
@@ -26,7 +26,7 @@ export async function DELETE(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const { imageId } = params;
+    const { imageId } = await params;
 
     // 查询图片
     const image = await prisma.image.findUnique({
@@ -74,7 +74,7 @@ export async function DELETE(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { imageId: string } }
+  { params }: { params: Promise<{ imageId: string }> }
 ) {
   try {
     // 权限验证
@@ -83,7 +83,7 @@ export async function PATCH(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const { imageId } = params;
+    const { imageId } = await params;
     const body = await request.json();
     const { newFilename } = body;
 
