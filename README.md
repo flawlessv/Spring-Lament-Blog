@@ -80,7 +80,15 @@ Spring-Broken-AI-Blog/
 │   ├── schema.prisma               # 数据库模型
 │   ├── seed.ts                     # 数据库种子
 │   └── dev.db                      # SQLite 数据库 (开发环境)
+├── scripts/                        # 脚本工具
+│   ├── ai/                         # AI 服务脚本
+│   │   ├── start-ai.sh            # 启动 AI 服务 (开发)
+│   │   └── stop-ai.sh             # 停止 AI 服务 (开发)
+│   └── README.md                   # 脚本说明文档
 ├── docs/                           # 项目文档
+│   ├── guides/                     # 使用指南
+│   ├── operations/                 # 运维部署
+│   └── ai-features/                # AI 功能文档
 ├── public/                         # 静态资源
 ├── components.json                 # shadcn/ui 配置
 ├── tailwind.config.ts              # Tailwind CSS 配置
@@ -286,7 +294,7 @@ npm install
 brew install ollama
 
 # 3. 启动 AI 服务
-./start-ai.sh
+./scripts/ai/start-ai.sh
 
 # 4. 配置环境变量
 cp .env.example .env.local
@@ -305,7 +313,7 @@ npm run dev
 **停止 AI 服务:**
 
 ```bash
-./stop-ai.sh
+./scripts/ai/stop-ai.sh
 ```
 
 ### AI 服务启动说明
@@ -319,7 +327,7 @@ npm run dev
 
 - 首次运行 `start-ai.sh` 会自动下载 `nomic-embed-text` 模型 (约 274MB)
 - 需要申请 [Kimi API Key](https://platform.moonshot.cn/) 才能使用 AI 对话功能
-- 详细的启动指南和故障排查请查看 [启动指南.md](./docs/启动指南.md)
+- 详细的启动指南和故障排查请查看 [启动指南.md](./docs/guides/启动指南.md)
 
 ---
 
@@ -888,8 +896,10 @@ CMD ["npm", "start"]
 ### 开发指南
 
 - [Next.js全栈开发完全指南](./docs/goodblog/frontend/react/Next.js全栈开发完全指南.md) - Next.js 教程
-- [启动指南](./docs/启动指南.md) - AI 服务启动
-- [部署指南](./docs/部署指南.md) - 生产环境部署
+- [启动指南](./docs/guides/启动指南.md) - AI 服务启动
+- [图片管理指南](./docs/guides/图片管理指南.md) - 图片资源管理
+- [部署指南](./docs/operations/部署指南.md) - 生产环境部署
+- [宝塔面板指南](./docs/operations/宝塔面板指南.md) - 宝塔面板配置
 
 ### 技术分享
 

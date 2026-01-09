@@ -4,7 +4,37 @@
 
 ## 📜 脚本列表
 
-### 1. ai-services.sh - AI 服务管理脚本
+### 1. ai/start-ai.sh - AI 服务启动脚本 (开发环境)
+
+**用途:** 启动 AI 服务用于开发环境
+
+**用法:**
+
+```bash
+# 启动 AI 服务
+./scripts/ai/start-ai.sh
+
+# 停止 AI 服务
+./scripts/ai/stop-ai.sh
+```
+
+**功能:**
+
+- ✅ 自动启动 Ollama 服务 (端口 11434)
+- ✅ 自动启动 ChromaDB 服务 (端口 8000)
+- ✅ 自动下载 nomic-embed-text 模型 (首次运行)
+- ✅ 验证服务运行状态
+- ✅ 显示服务地址和日志查看命令
+
+**适用场景:**
+
+- 本地开发环境
+- 不需要 root 权限
+- 快速启动 AI 服务进行测试
+
+---
+
+### 2. ai-services.sh - AI 服务管理脚本 (生产环境)
 
 **用途:** 管理 Ollama 和 ChromaDB AI 服务
 
@@ -296,8 +326,8 @@ pm2 describe spring-broken-ai-blog
 
 ## 📚 相关文档
 
-- [部署指南](../docs/部署指南.md) - 完整的部署文档
-- [启动指南](../docs/启动指南.md) - AI 服务启动说明
+- [部署指南](../docs/operations/部署指南.md) - 完整的部署文档
+- [启动指南](../docs/guides/启动指南.md) - AI 服务启动说明
 - [CLAUDE.md](../CLAUDE.md) - 开发指南
 
 ---
