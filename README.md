@@ -1,14 +1,27 @@
-# Spring Broken AI Blog 博客系统 - Claude 开发文档
+# Spring Broken AI Blog 🚀
 
-这是一个基于 Next.js 15 + TypeScript + shadcn/ui + NextAuth.js 构建的现代化个人博客系统，集成了 AI 智能助手和 RAG (检索增强生成) 功能。
+一个基于 **Next.js 15 + TypeScript + AI** 构建的现代化智能博客系统，集成了 AI 智能助手和 RAG (检索增强生成) 功能。
 
-## 🚀 项目概览
+## ✨ 功能预览
 
-Spring Broken AI Blog 是一个全栈博客系统，专注于**高效创作**和**优雅展示**。系统采用现代化技术栈，提供完整的内容管理功能和用户友好的管理界面，并通过 AI 技术增强写作体验。
+**首页**
+![首页](/public/images/broken/shouye.png)
 
-### 核心特性
+**文章详情**
+![详情](/public/images/broken/详情.png)
 
-#### 基础功能
+**关于我**
+![关于我页面](/public/images/broken/关于我页面.png)
+
+**AI 辅助写作**
+![AI文章新建和编辑页](/public/images/broken/AI文章新建和编辑页.png)
+
+**RAG 知识库问答**
+![rag知识库问答](/public/images/broken/rag知识库问答.png)
+
+## 🎯 核心特性
+
+### 基础功能
 
 - ✅ **现代化前端**: Next.js 15 + App Router + Turbopack
 - ✅ **类型安全**: 全栈 TypeScript 支持
@@ -18,7 +31,7 @@ Spring Broken AI Blog 是一个全栈博客系统，专注于**高效创作**和
 - ✅ **代码质量**: ESLint + Prettier + Husky
 - ✅ **响应式设计**: 移动端友好的界面
 
-#### AI 功能亮点
+### AI 功能亮点
 
 - 🤖 **智能写作助手**: 基于 Kimi API 的 AI 辅助创作
 - 🧠 **向量索引系统**: ChromaDB + Ollama 实现本地向量存储
@@ -26,6 +39,48 @@ Spring Broken AI Blog 是一个全栈博客系统，专注于**高效创作**和
 - ✨ **AI 补全功能**: 编辑器内的智能内容续写
 - 📝 **智能推荐**: AI 自动推荐分类和标签
 - 💬 **流式输出**: 实时展示 AI 生成内容
+
+## 🛠️ 技术栈
+
+### 核心框架
+
+- **Next.js 15**: React 全栈框架，使用 App Router + Turbopack
+- **TypeScript**: 静态类型检查
+- **React 18**: 用户界面库
+
+### UI 系统
+
+- **shadcn/ui**: 无头组件库
+- **Radix UI**: 无头 UI 原语
+- **Tailwind CSS**: 实用优先的 CSS 框架
+- **Lucide React**: 现代化图标库
+- **Novel**: Notion 风格的编辑器
+- **react-markdown**: Markdown 渲染
+- **highlight.js**: 代码高亮
+
+### AI 能力
+
+- **Kimi API (Moonshot AI)**: AI 对话和生成
+- **Ollama**: 本地 Embedding 生成 (nomic-embed-text 模型)
+- **ChromaDB**: 向量数据库，用于 RAG 检索
+- **OpenAI SDK**: 兼容 Kimi API 的调用方式
+
+### 数据层
+
+- **Prisma 6.16.1**: 现代化 ORM
+- **SQLite**: 开发/生产环境数据库
+- **Prisma Adapter**: NextAuth.js 数据库适配器
+
+### 身份认证
+
+- **NextAuth.js v4**: 身份认证库
+- **JWT**: 会话管理策略
+- **bcryptjs**: 密码哈希
+
+### 部署工具
+
+- **PM2**: Node.js 进程管理器
+- **Nginx**: Web 服务器和反向代理
 
 ## 📁 项目结构
 
@@ -86,9 +141,6 @@ Spring-Broken-AI-Blog/
 │   │   └── stop-ai.sh             # 停止 AI 服务 (开发)
 │   └── README.md                   # 脚本说明文档
 ├── docs/                           # 项目文档
-│   ├── guides/                     # 使用指南
-│   ├── operations/                 # 运维部署
-│   └── ai-features/                # AI 功能文档
 ├── public/                         # 静态资源
 ├── components.json                 # shadcn/ui 配置
 ├── tailwind.config.ts              # Tailwind CSS 配置
@@ -96,58 +148,7 @@ Spring-Broken-AI-Blog/
 └── ecosystem.config.js             # PM2 配置文件
 ```
 
-## 🛠️ 技术栈
-
-### 核心框架
-
-- **Next.js 15**: React 全栈框架，使用 App Router + Turbopack
-- **TypeScript**: 静态类型检查
-- **React 18**: 用户界面库
-
-### UI 系统
-
-- **shadcn/ui**: 无头组件库
-- **Radix UI**: 无头 UI 原语
-- **Tailwind CSS**: 实用优先的 CSS 框架
-- **Lucide React**: 现代化图标库
-- **Novel**: Notion 风格的编辑器
-- **react-markdown**: Markdown 渲染
-- **remark/rehype**: Markdown 处理插件
-- **highlight.js**: 代码高亮
-
-### AI 能力
-
-- **Kimi API (Moonshot AI)**: AI 对话和生成
-- **Ollama**: 本地 Embedding 生成 (nomic-embed-text 模型)
-- **ChromaDB**: 向量数据库，用于 RAG 检索
-- **OpenAI SDK**: 兼容 Kimi API 的调用方式
-
-### 数据层
-
-- **Prisma 6.16.1**: 现代化 ORM
-- **SQLite**: 开发/生产环境数据库
-- **Prisma Adapter**: NextAuth.js 数据库适配器
-
-### 身份认证
-
-- **NextAuth.js v4**: 身份认证库
-- **JWT**: 会话管理策略
-- **bcryptjs**: 密码哈希
-
-### 开发工具
-
-- **ESLint**: 代码质量检查
-- **Prettier**: 代码格式化
-- **Husky**: Git hooks 管理
-- **lint-staged**: 暂存区文件检查
-
-### 部署工具
-
-- **PM2**: Node.js 进程管理器
-- **Nginx**: Web 服务器和反向代理
-- **GitHub Actions**: CI/CD 自动化部署 (可选)
-
-## 🔧 快速开始
+## 🚀 快速开始
 
 ### 环境要求
 
@@ -351,13 +352,6 @@ npm run format
 npm run build
 ```
 
-### Git Hooks
-
-项目配置了自动化的代码质量检查：
-
-- **pre-commit**: 自动格式化代码，运行 ESLint
-- **commit-msg**: 检查提交信息格式
-
 ### 常用命令
 
 ```bash
@@ -432,273 +426,7 @@ import { ragChat } from "@/lib/ai/rag";
 const answer = await ragChat("如何使用 Next.js？");
 ```
 
-### 组件开发
-
-#### 创建 UI 组件
-
-使用 shadcn/ui CLI 添加新组件：
-
-```bash
-# 添加预制组件
-npx shadcn@latest add dialog
-npx shadcn@latest add dropdown-menu
-npx shadcn@latest add table
-
-# 查看可用组件
-npx shadcn@latest add --help
-```
-
-#### 自定义组件
-
-```tsx
-// 示例：创建自定义按钮组件
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-interface CustomButtonProps extends React.ComponentProps<typeof Button> {
-  variant?: "default" | "primary" | "danger";
-}
-
-export function CustomButton({
-  variant = "default",
-  className,
-  ...props
-}: CustomButtonProps) {
-  return (
-    <Button
-      className={cn(
-        variant === "primary" && "bg-blue-600 hover:bg-blue-700",
-        variant === "danger" && "bg-red-600 hover:bg-red-700",
-        className
-      )}
-      {...props}
-    />
-  );
-}
-```
-
-### 页面开发
-
-#### 路由结构
-
-```
-app/
-├── page.tsx                 # 首页 /
-├── login/page.tsx          # 登录页 /login
-├── admin/
-│   ├── page.tsx           # 管理首页 /admin
-│   ├── posts/
-│   │   ├── page.tsx       # 文章列表 /admin/posts
-│   │   ├── new/page.tsx   # 新建文章 /admin/posts/new
-│   │   └── [id]/edit/     # 编辑文章 /admin/posts/123/edit
-│   ├── categories/page.tsx # 分类管理 /admin/categories
-│   ├── tags/page.tsx      # 标签管理 /admin/tags
-│   ├── profile/page.tsx   # 个人资料 /admin/profile
-│   └── layout.tsx         # 管理后台布局
-├── posts/[slug]/page.tsx  # 文章详情 /posts/hello-world
-├── category/[slug]/page.tsx # 分类页面 /category/frontend
-└── api/
-    ├── auth/[...nextauth]/ # 认证 API
-    ├── admin/             # 管理后台 API
-    └── ai/                # AI 功能 API
-```
-
-#### 页面模板
-
-```tsx
-// app/admin/example/page.tsx
-import { Metadata } from "next";
-import AdminLayout from "@/components/admin/clean-admin-layout";
-
-export const metadata: Metadata = {
-  title: "示例页面 - Spring Broken AI Blog",
-  description: "这是一个示例页面",
-};
-
-export default function ExamplePage() {
-  return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">示例页面</h1>
-          <p className="text-muted-foreground">页面描述信息</p>
-        </div>
-        {/* 页面内容 */}
-      </div>
-    </AdminLayout>
-  );
-}
-```
-
-### 数据库操作
-
-#### 数据模型
-
-项目包含以下核心数据模型：
-
-```prisma
-// 用户系统
-User          - 用户账户
-Profile       - 用户资料 (一对一)
-Role          - 用户角色 (USER/ADMIN)
-
-// 内容管理
-Post          - 文章
-PostVectorIndex - 文章向量索引 (AI 功能)
-Category      - 分类
-Tag           - 标签
-PostTag       - 文章标签关联 (多对多)
-```
-
-#### 数据库查询
-
-```typescript
-import { prisma } from "@/lib/prisma";
-
-// 获取文章列表 (包含关联数据)
-export async function getPosts() {
-  return await prisma.post.findMany({
-    include: {
-      author: { select: { username: true, avatar: true } },
-      category: true,
-      tags: { include: { tag: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-}
-
-// 创建新文章
-export async function createPost(data: CreatePostData) {
-  return await prisma.post.create({
-    data: {
-      ...data,
-      author: { connect: { id: data.authorId } },
-    },
-  });
-}
-```
-
-### 认证和授权
-
-#### 保护路由
-
-```typescript
-// middleware.ts
-import { withAuth } from "next-auth/middleware";
-
-export default withAuth(
-  function middleware(req) {
-    // 额外的中间件逻辑
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl;
-
-        // 管理员路由保护
-        if (pathname.startsWith("/admin")) {
-          return token?.role === "ADMIN";
-        }
-
-        return true;
-      },
-    },
-  }
-);
-
-export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
-};
-```
-
-#### 获取会话信息
-
-```tsx
-"use client";
-import { useSession } from "next-auth/react";
-
-export function UserProfile() {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return <div>加载中...</div>;
-  }
-
-  if (!session) {
-    return <div>请先登录</div>;
-  }
-
-  return (
-    <div>
-      <h2>欢迎，{session.user.username}!</h2>
-      <p>角色: {session.user.role}</p>
-    </div>
-  );
-}
-```
-
-## 🎨 设计系统
-
-### 颜色系统
-
-项目使用 CSS 变量构建灵活的颜色系统：
-
-```css
-:root {
-  --background: 0 0% 100%; /* 背景色 */
-  --foreground: 240 10% 3.9%; /* 文字色 */
-  --primary: 221.2 83.2% 53.3%; /* 主色调 */
-  --secondary: 210 40% 96%; /* 次要色 */
-  --muted: 210 40% 96%; /* 静音色 */
-  --accent: 210 40% 96%; /* 强调色 */
-  --destructive: 0 84.2% 60.2%; /* 危险色 */
-}
-
-.dark {
-  --background: 240 10% 3.9%; /* 暗色背景 */
-  --foreground: 0 0% 98%; /* 暗色文字 */
-  /* ... 其他暗色变量 */
-}
-```
-
-### 组件样式
-
-```tsx
-// 使用设计令牌
-<div className="bg-background text-foreground border border-border">
-  <h1 className="text-primary">主标题</h1>
-  <p className="text-muted-foreground">次要文字</p>
-</div>
-```
-
-### 响应式设计
-
-```tsx
-// Tailwind 响应式类名
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  <Card className="p-4 sm:p-6">
-    <h3 className="text-lg sm:text-xl font-semibold">卡片标题</h3>
-  </Card>
-</div>
-```
-
-## 🧪 测试
-
-### 运行测试
-
-```bash
-# 构建测试
-npm run build
-
-# 类型检查
-npm run type-check
-
-# 代码风格检查
-npm run lint
-
-# 启动开发服务器测试
-npm run dev
-```
+---
 
 ## 🚀 部署
 
@@ -730,20 +458,7 @@ CHROMADB_HOST="localhost"
 CHROMADB_PORT="8000"
 ```
 
-#### 2. 数据库初始化
-
-```bash
-# 生成 Prisma 客户端 (生产环境)
-npm run db:generate:prod
-
-# 推送 schema (生产环境)
-npm run db:push:prod
-
-# 填充种子数据 (生产环境)
-npm run db:seed:prod
-```
-
-#### 3. 构建和启动
+#### 2. 构建和启动
 
 ```bash
 # 构建项目
@@ -756,51 +471,7 @@ npm run pm2:start
 npm start
 ```
 
-### PM2 进程管理
-
-项目包含 PM2 配置文件 `ecosystem.config.js`:
-
-```javascript
-module.exports = {
-  apps: [
-    {
-      name: "spring-broken-ai-blog",
-      script: "node_modules/next/dist/bin/next",
-      args: "start -p 3000",
-      instances: 1,
-      exec_mode: "cluster",
-      env: {
-        NODE_ENV: "production",
-      },
-    },
-  ],
-};
-```
-
-### Nginx 配置示例
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
 ### 部署脚本
-
-项目提供了便捷的部署脚本:
 
 ```bash
 # 完整部署流程 (构建 + 数据库设置)
@@ -810,30 +481,7 @@ npm run deploy:setup:prod
 npm run deploy:build
 ```
 
-### Docker 部署 (可选)
-
-```dockerfile
-# Dockerfile (示例)
-FROM node:18-alpine
-WORKDIR /app
-
-# 安装依赖
-COPY package*.json ./
-RUN npm ci --only=production
-
-# 复制源码
-COPY . .
-
-# 生成 Prisma 客户端
-RUN npx prisma generate
-
-# 构建应用
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
-```
+---
 
 ## 🎯 AI 功能亮点
 
@@ -876,67 +524,20 @@ CMD ["npm", "start"]
   - `indexer.ts`: 索引管理
   - `store.ts`: ChromaDB 存储
 
+---
+
 ## 📚 项目文档
 
-项目包含丰富的技术文档:
-
-### 核心文档
-
-- [README.md](./README.md) - 项目概览和快速开始
-- [CLAUDE.md](./CLAUDE.md) - 开发指南 (本文档)
-
-### AI 功能文档
-
-- [AI集成实现指南](./docs/ai-ts/AI集成实现指南.md) - AI 功能完整实现
-- [AI功能亮点总结](./docs/ai-features/AI功能亮点总结.md) - AI 技术亮点
-- [向量索引系统技术文档](./docs/ai-features/向量索引系统技术文档.md) - RAG 实现
-- [流式输出实现文档](./docs/ai-features/流式输出实现文档.md) - 流式输出
-- [AI补全扩展技术文档](./docs/ai-features/AI补全扩展技术文档.md) - 编辑器扩展
-
-### 开发指南
-
-- [Next.js全栈开发完全指南](./docs/goodblog/frontend/react/Next.js全栈开发完全指南.md) - Next.js 教程
 - [启动指南](./docs/guides/启动指南.md) - AI 服务启动
 - [图片管理指南](./docs/guides/图片管理指南.md) - 图片资源管理
 - [部署指南](./docs/operations/部署指南.md) - 生产环境部署
-- [宝塔面板指南](./docs/operations/宝塔面板指南.md) - 宝塔面板配置
+- [从零打造 AI 智能博客](./docs/templates/AI/从零打造AI智能博客.md) - 项目技术分享
 
-### 技术分享
+## 🔗 获取 AI API Key
 
-- [浅谈Vibe Coding](./docs/resume/浅谈Vibe Coding.md) - Vibe Coding 理念
-- [从零到一：在博客系统中实践AI Agent开发](./docs/goodblog/AI/从零到一：在博客系统中实践AI Agent开发.md) - AI Agent 实践
-
-## 🤝 贡献指南
-
-### 开发流程
-
-1. Fork 项目仓库
-2. 创建功能分支: `git checkout -b feature/new-feature`
-3. 提交更改: `git commit -m 'feat: add new feature'`
-4. 推送到分支: `git push origin feature/new-feature`
-5. 创建 Pull Request
-
-### 代码风格
-
-- 使用 TypeScript 进行开发
-- 遵循 ESLint 和 Prettier 规则
-- 为新功能添加适当的注释
-- 保持组件的单一职责原则
-- 提交信息遵循 Conventional Commits 规范
-
-### 提交信息规范
-
-```
-feat: 添加新功能
-fix: 修复 bug
-docs: 更新文档
-style: 代码格式调整
-refactor: 代码重构
-test: 添加测试
-chore: 构建过程或工具变更
-perf: 性能优化
-ci: CI/CD 相关
-```
+- **Kimi (推荐)**: https://platform.moonshot.cn/
+- **DeepSeek**: https://platform.deepseek.com/
+- **通义千问**: https://dashscope.aliyun.com/
 
 ## 🔍 常见问题
 
@@ -972,31 +573,6 @@ npm run db:push
 npm run db:seed
 ```
 
-### Q: PM2 启动失败?
-
-**A**: 检查:
-
-1. 是否已构建: `npm run build`
-2. 端口 3000 是否被占用
-3. 查看日志: `pm2 logs spring-broken-ai-blog`
-
-## 📞 支持与反馈
-
-如果你在使用过程中遇到问题或有建议，欢迎:
-
-1. 查阅项目文档
-2. 搜索已有的 Issues
-3. 创建新的 Issue 描述问题
-4. 参与项目讨论
-
-## 📄 许可证
-
-本项目采用 MIT 许可证。详情请查看 [LICENSE](./LICENSE) 文件。
-
 ---
 
-**Spring Broken AI Blog** - 集成 AI 功能的现代化博客系统
-
-🔗 **技术栈**: Next.js 15 + TypeScript + shadcn/ui + NextAuth.js + Prisma + Tailwind CSS + Kimi AI + ChromaDB
-
-🌟 **特色**: 智能写作助手 | RAG 聊天 | 向量检索 | 流式输出
+**Spring Broken AI Blog** - 用 AI 赋能写作，让博客更智能 ✨
