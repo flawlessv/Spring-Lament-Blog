@@ -19,13 +19,13 @@ tags:
 
 下面将简单介绍下这三种AI编程工具的发展历程以及它们**关于上下文的不同处理方式**，然后再结合这些原理简单聊一下如何更好地进行 "Vibe Coding"
 
-![AI工具发展历程](https://youke1.picui.cn/s1/2025/11/13/6915411b01c29.png)
+![AI工具发展历程](/public/images/posts/vibe-coding/img1.PNG)
 
 ## 到底什么是Vibe Coding
 
 Vibe Coding（氛围编程）这一概念最早由Andrej Karpathy（前特斯拉AI总监，OpenAI创始成员之一）在一条推特上提出。
 
-![Vibe Coding](https://youke1.picui.cn/s1/2025/11/13/6915470574d58.png)
+![Vibe Coding](/public/images/posts/vibe-coding/img2.PNG)
 
 基于原文的内容，我们可以提炼出Vibe Coding的几个核心特征：
 
@@ -55,7 +55,7 @@ GitHub Copilot是大多数开发者接触的第一款AI辅助编程工具。除�
 Copilot能够根据当前代码文件的上下文进行智能补全。它会将光标位置的代码上下文提供给LLM，据此生成代码建议。
 
 基于这一特性，开发者可以采用"注释驱动开发"的模式：先编写函数注释，让Copilot基于注释生成函数实现，再进行细节调整。这种模式显著提升了编码效率。
-![vscode代码提示](https://vscode.js.cn/assets/docs/copilot/inline-suggestions/ts-suggest-code-comment.png)
+![vscode代码提示](/public/images/posts/vibe-coding/img3.PNG)
 
 但是有一个关键的问题是，Copilot**只能将当前打开窗口的代码文件作为上下文**，无法利用其他文件或整个项目的上下文信息。
 这导致LLM无法提供跨文件的代码建议，例如当我们在A文件中实现了某个方法，切换到B文件时，LLM缺少A文件的上下文，无法生成基于该方法的调用代码。对于需要跨多个文件协同修改的编程任务，在当时几乎无法实现。
@@ -72,7 +72,7 @@ Cursor在上下文工程方面的第一个关键突破，是采用RAG（Retrieva
 
 当使用Cursor打开一个新项目时，在Cursor Settings的Indexing设置中，可以看到Cursor正在索引整个项目，并实时显示已索引的文件数量。
 
-![Cursor Indexing 设置界面](https://youke1.picui.cn/s1/2025/11/13/69154705370ba.png)
+![Cursor Indexing 设置界面](/public/images/posts/vibe-coding/img4.PNG)
 
 Cursor的代码库检索通过Codebase Indexing流程实现，本质上是对整个代码仓库进行RAG处理，将代码转换为可搜索的向量表示。
 
@@ -112,7 +112,7 @@ Cursor的代码库检索通过Codebase Indexing流程实现，本质上是对整
 在 Cursor 以各种优化上下文工程保持领先状态时，Claude Code 以一种完全意想不到的命令行终端的形式闯进了Vibe Coding赛道。
 
 > 还不懂claude code怎么用的可以看下这篇文章 [Claude Code 核心：深度介绍 MCP+Agent+斜杆命令+Hook 一文通](https://mp.weixin.qq.com/s/7g5DugzATAIX1by4yAYtTg)
-> ![fuckwork](https://youke1.picui.cn/s1/2025/11/13/691542fc42c67.png)
+> ![fuckwork](/public/images/posts/vibe-coding/img5.png)
 
 Claude Code 选择了一套和 Cursor 完全不同的检索代码上下文的方案，那就是基于 Unix 工具的检索方案。 例如使用 grep, find, git, cat 等等终端命令而不是 RAG 的方案。
 
@@ -128,7 +128,7 @@ Claude Code 每次一上来就先通过终端命令开始分析代码库的项�
 
 ### RAG跟grep到底哪个好
 
-![RAG跟grep到底哪个好](https://youke1.picui.cn/s1/2025/11/13/69158111ae2b7.jpeg)
+![RAG跟grep到底哪个好](/public/images/posts/vibe-coding/img6.jpeg)
 
 RAG 和 grep 两种检索方式各有优缺点。RAG 方案一般检索快、省 token，但依赖语义匹配，容易遗漏代码间实际的业务关联。grep 方案虽然更费 token、速度慢，但能保证全局、精准地覆盖源码中所有关键词，非常适合复杂、跨文件的工程任务。
 
@@ -194,11 +194,11 @@ RAG 和 grep 两种检索方式各有优缺点。RAG 方案一般检索快、省
 现在不少工具都支持上下文占用量展示，比如显示之前的对话占用的上下文窗口比例。超出这个比例之后，工具会对历史内容进行压缩，保证对话的正常进行。
 
 - Cursor的上下文占用量展示
-  ![上下文占用量展示](https://youke1.picui.cn/s1/2025/11/13/6915470434de7.png)
+  ![上下文占用量展示](/public/images/posts/vibe-coding/img7.png)
 
 - Claude Code 也内置了 `/context` 命令，可以非常直观的看到已经使用的上下文里面，不同类型工具的占比，包括还有多少剩余的上下文。
 
-![Claude Code Context](https://youke1.picui.cn/s1/2025/11/13/691547051d4b6.png)
+![Claude Code Context](/public/images/posts/vibe-coding/img8.png)
 
 其实从这也能看出 Claude 团队对 Context Engineering 有深刻的理解，站在开发的角度来思考编程时应该如何管理上下文。
 
