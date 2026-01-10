@@ -2,22 +2,14 @@
 
 一个基于 **Next.js 15 + TypeScript + AI** 构建的现代化智能博客系统，集成了 AI 智能助手和 RAG (检索增强生成) 功能。
 
-## ✨ 功能预览
-
 **首页**
 ![首页](/public/images/broken/shouye.png)
 
 **文章详情**
 ![详情](/public/images/broken/详情.png)
 
-**关于我**
-![关于我页面](/public/images/broken/关于我页面.png)
-
-**AI 辅助写作**
-![AI文章新建和编辑页](/public/images/broken/AI文章新建和编辑页.png)
-
-**RAG 知识库问答**
-![rag知识库问答](/public/images/broken/rag知识库问答.png)
+**后台管理**
+![详情](/public/images/broken/后台仪表盘.png)
 
 ## 🎯 核心特性
 
@@ -487,6 +479,8 @@ npm run deploy:build
 
 ### 1. 智能写作助手
 
+![AI 辅助写作](/public/images/broken/AI文章新建和编辑页.png)
+
 - **位置**: `src/components/admin/ai-assistant.tsx`
 - **功能**: 基于 Kimi API 的 AI 辅助创作
 - **特性**:
@@ -495,6 +489,8 @@ npm run deploy:build
   - 支持自定义提示词
 
 ### 2. RAG 聊天系统
+
+![RAG 知识库问答](/public/images/broken/cover.gif)
 
 - **位置**: `src/components/admin/rag-chat.tsx`
 - **功能**: 基于文章内容的智能问答

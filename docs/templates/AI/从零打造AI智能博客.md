@@ -26,7 +26,7 @@ tags:
 
 ![首页](/public/images/broken/shouye.png)
 
-![后台仪表盘](/public/images/broken/后台仪表盘.png)
+![后台仪表盘](/public/images/broken/AI文章新建和编辑页.png)
 
 项目用的技术栈：
 
@@ -156,13 +156,13 @@ ${content.slice(0, 3000)}
 
 **1. 非侵入式显示**
 
-补全建议不能直接写入文档，否则会污染撤销栈。比如用户不接受补全，但补全已经写入文档了，撤销起来就很麻烦。
+补全建议不能直接写入文档，只能在视图层显示。
 
-我一开始想的是直接插入文本，用户不接受就撤销。结果发现问题很多：撤销栈被污染、数据可能丢失、并发冲突……
+我一开始想的就是用样式来实现——在光标位置叠加一个灰色斜体的文本，看起来像是补全建议，但实际上不是文档的一部分。这个思路是对的，关键是怎么实现。
 
-后来参考了 VSCode 的实现方式。VSCode 的 AI 补全（GitHub Copilot）用的是「虚拟文本」机制：**补全建议只在视图层显示，不写入文档模型**。只有用户按 Tab 确认后，才真正写入。
+参考了 VSCode 的做法。VSCode 的 AI 补全（GitHub Copilot）用的是「虚拟文本」机制：**补全建议只在视图层显示，不写入文档模型**。只有用户按 Tab 确认后，才真正写入。
 
-我用的编辑器是 Tiptap（基于 ProseMirror），刚好有类似的机制叫 Decoration。它可以在视图层叠加显示内容，不影响文档结构。
+我用的编辑器是 Tiptap（基于 ProseMirror），刚好有类似的机制叫 Decoration。它可以在视图层叠加显示内容，不影响文档结构，正好符合我的需求。
 
 **2. 防抖**
 
@@ -248,7 +248,7 @@ RAG 是这个项目里我花时间最多的功能。
 
 RAG（Retrieval-Augmented Generation，检索增强生成）就是为了解决这个问题。简单说就是给大模型「开卷考试」：先从你的内容里检索相关信息，再让大模型基于这些信息回答。
 
-![RAG 问答](/public/images/broken/rag知识库问答.png)
+![RAG 问答](/public/images/broken/cover.gif)
 
 ### 我的实现思路
 
@@ -302,34 +302,6 @@ export function chunkPost(content: string, options = {}) {
   }
 
   return chunks;
-}
-```
-
-### RAG 的 Prompt
-
-RAG 的 Prompt 也有讲究。我需要告诉大模型：
-
-1. 你是一个基于知识库的问答助手
-2. 只能根据提供的内容回答，不能瞎编
-3. 如果内容里没有相关信息，要明确说「不知道」
-
-```typescript
-export function buildRAGPrompt(context: string, question: string): string {
-  return `# Role: 知识库问答专家
-
-## Rules
-1. 必须严格基于提供的知识库内容回答问题
-2. 如果知识库中没有相关信息，必须明确说明
-3. 在回答中引用相关的知识来源
-
-## Input
-知识库内容：
-${context}
-
-用户问题：${question}
-
-## Initialization
-作为知识库问答专家，严格基于知识库内容回答问题。`;
 }
 ```
 
