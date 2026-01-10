@@ -1,6 +1,7 @@
 ---
 title: 从零打造AI智能博客：一个项目带你入门全栈与大模型应用开发
 slug: ai-blog-fullstack-guide
+excerpt: 通过一个 Next.js 全栈 AI 博客项目，带你实践 Prompt 工程、AI Copilot、RAG 知识库和流式输出，快速入门大模型应用开发。
 published: true
 featured: true
 category: ai
@@ -13,6 +14,8 @@ tags:
   - Prompt
   - 全栈开发
 ---
+
+**🔗 线上地址**：[http://powder.icu/](http://powder.icu/)
 
 ## 写在前面
 
@@ -428,7 +431,7 @@ RAG 依赖 Ollama 和 ChromaDB，这两个服务挂了怎么办？
 
 项目开源在 GitHub，感兴趣的话可以 clone 下来跑一跑：
 
-**GitHub 地址**：https://github.com/your-username/Spring-Broken-AI-Blog
+**GitHub 地址**：https://github.com/flawlessv/Spring-Broken-AI-Blog
 
 如果觉得有帮助，欢迎给个 ⭐️ Star！
 
@@ -460,3 +463,13 @@ RAG 依赖 Ollama 和 ChromaDB，这两个服务挂了怎么办？
 - **微调**：用自己的数据训练模型
 
 希望这篇文章对你有帮助。有问题欢迎交流！
+
+---
+
+## 附录：参考资料
+
+本项目在开发过程中参考了以下优秀内容：
+
+- **样式生成**：[如何用 Claude Code 生成顶级 UI](https://juejin.cn/post/7569777676098814002) - 通过 STYLE_GUIDE.md 减少样式信息丢失，让 AI 生成更精准的 UI
+- **Prompt 设计**：[结构化 Prompt 设计指南](https://juejin.cn/post/7462691800122884136) - 结构化 Prompt 的写法和最佳实践
+- **博客样式**：[Ursb's Blog](https://blog.ursb.me/) - 博客整体风格参考
