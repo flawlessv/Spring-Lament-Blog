@@ -90,8 +90,14 @@ async function main() {
 
   for (const categoryData of categories) {
     const category = await prisma.category.upsert({
-      where: { name: categoryData.name },
-      update: {},
+      where: { slug: categoryData.slug },
+      update: {
+        name: categoryData.name,
+        description: categoryData.description,
+        color: categoryData.color,
+        icon: categoryData.icon,
+        sortOrder: categoryData.sortOrder,
+      },
       create: categoryData,
     });
     console.log("✅ 创建分类:", category.name);
@@ -121,8 +127,11 @@ async function main() {
 
   for (const tagData of tags) {
     const tag = await prisma.tag.upsert({
-      where: { name: tagData.name },
-      update: {},
+      where: { slug: tagData.slug },
+      update: {
+        name: tagData.name,
+        color: tagData.color,
+      },
       create: tagData,
     });
     console.log("✅ 创建标签:", tag.name);
