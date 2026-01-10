@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableFilter } from "@/components/ui/table-filter";
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { AdminLoading } from "@/components/ui/loading";
 import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -227,7 +227,13 @@ export function ModernTable<T = any>({
 
   // 加载状态
   if (loading && data.length === 0) {
-    return <LoadingSpinner />;
+    return (
+      <Card>
+        <CardContent className="py-20">
+          <AdminLoading text="正在加载数据..." />
+        </CardContent>
+      </Card>
+    );
   }
 
   // 错误状态

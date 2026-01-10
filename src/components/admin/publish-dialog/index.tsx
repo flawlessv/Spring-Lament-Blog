@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { AdminLoadingOverlay } from "@/components/ui/loading";
 import { usePublishDialog } from "./hooks/use-publish-dialog";
 import { CategorySection } from "./components/category-section";
 import { TagSection } from "./components/tag-section";
@@ -58,7 +59,8 @@ export default function PublishDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        {isLoading && <AdminLoadingOverlay text="正在发布文章..." />}
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Send className="h-5 w-5" />

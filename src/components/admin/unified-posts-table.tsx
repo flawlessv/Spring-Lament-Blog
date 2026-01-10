@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -101,6 +102,8 @@ export default function UnifiedPostsTable({
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [exporting, setExporting] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false);
   const [tableFilters, setTableFilters] = useState<Record<string, any>>({});
   const [availableTags, setAvailableTags] = useState<
     { label: string; value: string; color?: string }[]
@@ -370,17 +373,15 @@ export default function UnifiedPostsTable({
   );
 
   const handleBatchDelete = useCallback(
-    async (selectedIds: string[]) => {
+    async (ids: string[]) => {
       try {
         await Promise.all(
-          selectedIds.map((id) =>
-            fetch(`/api/admin/posts/${id}`, { method: "DELETE" })
-          )
+          ids.map((id) => fetch(`/api/admin/posts/${id}`, { method: "DELETE" }))
         );
 
         toast({
           title: "批量删除成功",
-          description: `已删除 ${selectedIds.length} 篇文章`,
+          description: `已删除 ${ids.length} 篇文章`,
           variant: "success",
         });
 
@@ -393,6 +394,8 @@ export default function UnifiedPostsTable({
           description: "请稍后重试",
           variant: "destructive",
         });
+      } finally {
+        setIsBatchDeleting(false);
       }
     },
     [toast, onSelectionChange, fetchPosts]
@@ -673,7 +676,7 @@ export default function UnifiedPostsTable({
                   {post.featured ? "取消精选" : "设为精选"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleDelete(post)}
+                  onClick={() => setDeleteId(post.id)}
                   className="rounded-lg text-red-600 dark:text-red-400"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
@@ -742,7 +745,7 @@ export default function UnifiedPostsTable({
         key: "delete",
         label: "删除",
         icon: <Trash2 className="h-4 w-4" />,
-        onClick: handleDelete,
+        onClick: (post: Post) => setDeleteId(post.id),
         variant: "danger" as const,
       },
     ],
@@ -774,43 +777,94 @@ export default function UnifiedPostsTable({
   );
 
   return (
-    <ModernTable
-      data={posts}
-      columns={columns}
-      loading={loading}
-      error={error}
-      searchable={true}
-      searchPlaceholder="搜索文章标题..."
-      onSearch={fetchPosts}
-      filterable={enableTableFilters}
-      onFilterChange={(filters) => {
-        console.log("Table filters changed:", filters);
-        // 处理筛选逻辑
-        handleTableFilters(filters);
-      }}
-      selectable={true}
-      selectedIds={selectedIds}
-      onSelectionChange={(ids) => {
-        setSelectedIds(ids);
-        onSelectionChange?.(ids);
-      }}
-      createButton={{
-        label: "新建文章",
-        href: "/admin/posts/new",
-        icon: <Plus className="mr-2 h-4 w-4" />,
-      }}
-      batchActions={batchActions}
-      pagination={{
-        current: pagination.page,
-        total: pagination.total,
-        pageSize: pagination.limit,
-        onChange: (page) => setPagination((prev) => ({ ...prev, page })),
-      }}
-      emptyIcon={<FileText className="h-10 w-10 text-gray-400" />}
-      emptyTitle="暂无文章"
-      emptyDescription="开始创建您的第一篇文章吧"
-      getRecordId={(post) => post.id}
-      onRetry={fetchPosts}
-    />
+    <>
+      {/* 批量操作 */}
+      {batchActions && batchActions.length > 0 && selectedIds.length > 0 && (
+        <div className="flex items-center space-x-2 animate-in slide-in-from-bottom-2">
+          {batchActions.map((action, index) => (
+            <Button
+              key={index}
+              variant={action.variant === "danger" ? "destructive" : "outline"}
+              size="sm"
+              onClick={() => {
+                if (action.label === "批量删除") {
+                  setIsBatchDeleting(true);
+                } else {
+                  action.onClick(selectedIds);
+                }
+              }}
+              disabled={action.disabled}
+              className="h-8"
+            >
+              {action.icon}
+              {action.label}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {/* 确认删除对话框 */}
+      <DeleteConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={async () => {
+          if (deleteId) {
+            const post = posts.find((p) => p.id === deleteId);
+            if (post) await handleDelete(post);
+          }
+        }}
+        itemType="文章"
+        itemName={posts.find((p) => p.id === deleteId)?.title || ""}
+      />
+
+      <DeleteConfirmDialog
+        open={isBatchDeleting}
+        onClose={() => setIsBatchDeleting(false)}
+        onConfirm={async () => {
+          await handleBatchDelete(selectedIds);
+        }}
+        itemType="文章"
+        itemName={`选中的 ${selectedIds.length} 篇文章`}
+      />
+
+      <ModernTable
+        data={posts}
+        columns={columns}
+        loading={loading}
+        error={error}
+        searchable={true}
+        searchPlaceholder="搜索文章标题..."
+        onSearch={fetchPosts}
+        filterable={enableTableFilters}
+        onFilterChange={(filters) => {
+          console.log("Table filters changed:", filters);
+          // 处理筛选逻辑
+          handleTableFilters(filters);
+        }}
+        selectable={true}
+        selectedIds={selectedIds}
+        onSelectionChange={(ids) => {
+          setSelectedIds(ids);
+          onSelectionChange?.(ids);
+        }}
+        createButton={{
+          label: "新建文章",
+          href: "/admin/posts/new",
+          icon: <Plus className="mr-2 h-4 w-4" />,
+        }}
+        batchActions={batchActions}
+        pagination={{
+          current: pagination.page,
+          total: pagination.total,
+          pageSize: pagination.limit,
+          onChange: (page) => setPagination((prev) => ({ ...prev, page })),
+        }}
+        emptyIcon={<FileText className="h-10 w-10 text-gray-400" />}
+        emptyTitle="暂无文章"
+        emptyDescription="开始创建您的第一篇文章吧"
+        getRecordId={(post) => post.id}
+        onRetry={fetchPosts}
+      />
+    </>
   );
 }

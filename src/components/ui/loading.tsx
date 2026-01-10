@@ -72,6 +72,47 @@ export function LoadingSpinner({
   );
 }
 
+/**
+ * 后台专用的简洁 Loading - 只是个转圈
+ */
+export function AdminLoading({
+  className,
+  text = "处理中...",
+}: {
+  className?: string;
+  text?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-4 py-8",
+        className
+      )}
+    >
+      <div className="relative w-10 h-10">
+        <div className="absolute inset-0 border-4 border-gray-200 dark:border-gray-800 rounded-full" />
+        <div className="absolute inset-0 border-4 border-black dark:border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+      {text && (
+        <p className="text-sm font-bold text-black dark:text-white uppercase tracking-widest animate-pulse">
+          {text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * 后台全屏 Loading 遮罩
+ */
+export function AdminLoadingOverlay({ text }: { text?: string }) {
+  return (
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-black/60 backdrop-blur-[2px] rounded-xl overflow-hidden animate-in fade-in duration-200">
+      <AdminLoading text={text} />
+    </div>
+  );
+}
+
 export function LoadingButton({
   children,
   isLoading,

@@ -10,6 +10,7 @@ import { zhCN } from "date-fns/locale";
 import { Edit, Trash2, Tags, FileText, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ModernTable } from "@/components/ui/modern-table";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,6 +40,8 @@ export default function UnifiedTagsTable({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [deleteTag, setDeleteTag] = useState<Tag | null>(null);
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false);
 
   const { toast } = useToast();
 
@@ -101,17 +104,15 @@ export default function UnifiedTagsTable({
     }
   };
 
-  const handleBatchDelete = async (selectedIds: string[]) => {
+  const handleBatchDelete = async (ids: string[]) => {
     try {
       await Promise.all(
-        selectedIds.map((id) =>
-          fetch(`/api/admin/tags/${id}`, { method: "DELETE" })
-        )
+        ids.map((id) => fetch(`/api/admin/tags/${id}`, { method: "DELETE" }))
       );
 
       toast({
         title: "批量删除成功",
-        description: `已删除 ${selectedIds.length} 个标签`,
+        description: `已删除 ${ids.length} 个标签`,
         variant: "success",
       });
 
@@ -123,6 +124,8 @@ export default function UnifiedTagsTable({
         description: "请稍后重试",
         variant: "destructive",
       });
+    } finally {
+      setIsBatchDeleting(false);
     }
   };
 
@@ -194,7 +197,7 @@ export default function UnifiedTagsTable({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
-            onClick={() => handleDelete(tag)}
+            onClick={() => setDeleteTag(tag)}
             title="删除"
           >
             <Trash2 className="h-4 w-4" />
@@ -207,34 +210,56 @@ export default function UnifiedTagsTable({
   const batchActions = [
     {
       label: "批量删除",
-      onClick: handleBatchDelete,
+      onClick: () => setIsBatchDeleting(true),
       variant: "danger" as const,
       icon: <Trash2 className="h-4 w-4 mr-2" />,
     },
   ];
 
   return (
-    <ModernTable
-      data={tags}
-      columns={columns}
-      loading={loading}
-      error={error}
-      searchable={true}
-      searchPlaceholder="搜索标签名称..."
-      selectable={true}
-      selectedIds={selectedIds}
-      onSelectionChange={setSelectedIds}
-      createButton={{
-        label: "新建标签",
-        onClick: onCreate,
-        icon: <Plus className="mr-2 h-4 w-4" />,
-      }}
-      batchActions={batchActions}
-      emptyIcon={<Tags className="h-10 w-10 text-gray-400" />}
-      emptyTitle="暂无标签"
-      emptyDescription="创建第一个标签来组织您的内容"
-      getRecordId={(tag) => tag.id}
-      onRetry={fetchTags}
-    />
+    <>
+      <DeleteConfirmDialog
+        open={!!deleteTag}
+        onClose={() => setDeleteTag(null)}
+        onConfirm={async () => {
+          if (deleteTag) await handleDelete(deleteTag);
+        }}
+        itemType="标签"
+        itemName={deleteTag?.name || ""}
+      />
+
+      <DeleteConfirmDialog
+        open={isBatchDeleting}
+        onClose={() => setIsBatchDeleting(false)}
+        onConfirm={async () => {
+          await handleBatchDelete(selectedIds);
+        }}
+        itemType="标签"
+        itemName={`选中的 ${selectedIds.length} 个标签`}
+      />
+
+      <ModernTable
+        data={tags}
+        columns={columns}
+        loading={loading}
+        error={error}
+        searchable={true}
+        searchPlaceholder="搜索标签名称..."
+        selectable={true}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        createButton={{
+          label: "新建标签",
+          onClick: onCreate,
+          icon: <Plus className="mr-2 h-4 w-4" />,
+        }}
+        batchActions={batchActions}
+        emptyIcon={<Tags className="h-10 w-10 text-gray-400" />}
+        emptyTitle="暂无标签"
+        emptyDescription="创建第一个标签来组织您的内容"
+        getRecordId={(tag) => tag.id}
+        onRetry={fetchTags}
+      />
+    </>
   );
 }
