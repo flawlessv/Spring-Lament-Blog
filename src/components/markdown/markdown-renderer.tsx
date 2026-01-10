@@ -174,14 +174,14 @@ export default function MarkdownRenderer({
   return (
     <>
       {/* 顶部阅读进度条 */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
+      <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 dark:bg-gray-800 z-50">
         <div
-          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-150 ease-out"
+          className="h-full bg-black dark:bg-white transition-all duration-150 ease-out"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
 
-      <div className="flex gap-8 min-w-0">
+      <div className="flex gap-20 min-w-0">
         {/* 文章内容区域 */}
         <div className="flex-1 min-w-0 overflow-x-hidden">
           {/* 移动端目录切换按钮 */}
@@ -189,30 +189,30 @@ export default function MarkdownRenderer({
             <div className="mb-6 xl:hidden">
               <button
                 onClick={() => setTocOpen(!tocOpen)}
-                className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors"
+                className="inline-flex items-center space-x-2 px-4 py-2 text-sm text-black dark:text-white border-2 border-black dark:border-white rounded-lg font-bold transition-colors"
               >
-                <List className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                <List className="w-4 h-4" />
                 <span>目录</span>
                 <ChevronRight
-                  className={`w-4 h-4 text-gray-700 dark:text-gray-300 transition-transform ${tocOpen ? "rotate-90" : ""}`}
+                  className={`w-4 h-4 transition-transform ${tocOpen ? "rotate-90" : ""}`}
                 />
               </button>
 
               {/* 移动端目录内容面板 */}
               {tocOpen && (
-                <div className="mt-4 max-h-80 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
+                <div className="mt-4 max-h-80 overflow-y-auto border-2 border-black dark:border-white rounded-lg bg-white dark:bg-black">
                   <nav className="space-y-1 p-3">
                     {toc.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => scrollToHeading(item.id)}
-                        className={`block w-full text-left py-1.5 px-3 text-sm rounded transition-all truncate ${
+                        className={`block w-full text-left py-2 px-3 text-sm rounded transition-all truncate ${
                           activeHeading === item.id
-                            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
-                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            ? "text-white dark:text-black bg-black dark:bg-white font-bold"
+                            : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
                         }`}
                         style={{
-                          paddingLeft: `${(item.level - 1) * 10 + 12}px`,
+                          paddingLeft: `${(item.level - 1) * 12 + 12}px`,
                         }}
                         title={item.text}
                       >
@@ -227,25 +227,25 @@ export default function MarkdownRenderer({
 
           {/* Markdown 内容渲染区域 */}
           <div
-            className="prose prose-lg prose-gray dark:prose-invert w-full max-w-full min-w-0 overflow-x-hidden break-words break-all font-serif
-          prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-bold prose-headings:font-sans
-          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-gray-200 dark:prose-h1:border-gray-700 prose-h1:pb-3
-          prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-8 prose-h2:text-gray-800 dark:prose-h2:text-gray-200
-          prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-6 prose-h3:text-gray-800 dark:prose-h3:text-gray-200
-          prose-h4:text-lg prose-h4:mb-3 prose-h4:mt-5 prose-h4:text-gray-800 dark:prose-h4:text-gray-200
-          prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base
-          prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2 prose-li:leading-relaxed
-          prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-strong:font-semibold
+            className="prose prose-gray dark:prose-invert w-full max-w-full min-w-0 overflow-x-hidden break-words break-all font-sans
+          prose-headings:text-black dark:prose-headings:text-white prose-headings:font-bold prose-headings:font-sans
+          prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-10 prose-h1:border-b-4 prose-h1:border-black dark:prose-h1:border-white prose-h1:pb-3
+          prose-h2:text-2xl prose-h2:mb-5 prose-h2:mt-10 prose-h2:border-l-4 prose-h2:border-black dark:prose-h2:border-white prose-h2:pl-4
+          prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-8
+          prose-h4:text-lg prose-h4:mb-4 prose-h4:mt-6
+          prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-p:leading-[1.7] prose-p:mb-6 prose-p:text-base
+          prose-li:text-gray-800 dark:prose-li:text-gray-200 prose-li:mb-2 prose-li:leading-relaxed
+          prose-strong:text-black dark:prose-strong:text-white prose-strong:font-black
           prose-em:text-gray-600 dark:prose-em:text-gray-400 prose-em:italic
-          prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:font-mono prose-code:text-sm prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:break-words prose-code:break-all
-          prose-pre:bg-transparent prose-pre:p-0 prose-pre:overflow-x-auto prose-pre:max-w-full
-          prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-950 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:font-serif prose-blockquote:italic
-          prose-table:text-sm prose-table:font-sans
-          prose-th:bg-gray-50 dark:prose-th:bg-gray-800 prose-th:border-gray-300 dark:prose-th:border-gray-700 prose-th:font-medium
-          prose-td:border-gray-300 dark:prose-td:border-gray-700 dark:prose-td:text-gray-300
-          prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:break-words prose-a:break-all
-          prose-img:max-w-xl prose-img:mx-auto prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
-          [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:whitespace-nowrap
+          prose-code:text-black dark:prose-code:text-white prose-code:font-mono prose-code:text-[0.9em] prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+          prose-pre:bg-transparent prose-pre:p-0 prose-pre:my-8
+          prose-blockquote:border-l-[6px] prose-blockquote:border-black dark:prose-blockquote:border-white prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900/50 prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:font-serif prose-blockquote:italic prose-blockquote:py-1
+          prose-table:text-sm prose-table:font-sans prose-table:my-8
+          prose-th:bg-gray-100 dark:prose-th:bg-gray-800 prose-th:border-2 prose-th:border-black dark:prose-th:border-white prose-th:font-bold prose-th:text-black dark:prose-th:text-white prose-th:px-4 prose-th:py-2
+          prose-td:border-2 prose-td:border-black dark:prose-td:border-white prose-td:px-4 prose-td:py-2
+          prose-a:text-black dark:prose-a:text-white prose-a:font-bold prose-a:underline prose-a:underline-offset-4 decoration-2 transition-all
+          prose-img:max-w-full prose-img:mx-auto prose-img:rounded-none prose-img:border-[4px] prose-img:border-black dark:prose-img:border-white prose-img:my-12 prose-img:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:prose-img:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]
+          [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto
           [&_iframe]:max-w-full [&_iframe]:w-full
         "
           >
@@ -454,7 +454,7 @@ export default function MarkdownRenderer({
                     // 自定义链接样式 - 外部链接在新窗口打开
                     a: ({ children, ...props }) => (
                       <a
-                        className="text-blue-600 hover:text-blue-700 underline"
+                        className="text-black dark:text-white font-bold underline underline-offset-4 decoration-2 transition-all"
                         target="_blank" // 在新窗口打开链接
                         rel="noopener noreferrer" // 安全属性：防止新窗口访问原窗口对象
                         {...props}
@@ -464,11 +464,11 @@ export default function MarkdownRenderer({
                     ),
                     // 自定义表格样式 - 响应式表格，支持水平滚动
                     table: ({ children, ...props }) => (
-                      <div className="overflow-x-auto">
+                      <div className="overflow-x-auto my-8">
                         {" "}
                         {/* 水平滚动容器，防止表格在小屏幕上溢出 */}
                         <table
-                          className="min-w-full border border-gray-200"
+                          className="min-w-full border-2 border-black dark:border-white"
                           {...props}
                         >
                           {children}
@@ -478,7 +478,7 @@ export default function MarkdownRenderer({
                     // 表格头部单元格样式
                     th: ({ children, ...props }) => (
                       <th
-                        className="px-4 py-2 bg-gray-50 border-b border-gray-200 text-left font-medium text-gray-900"
+                        className="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-white text-left font-bold text-black dark:text-white"
                         {...props}
                       >
                         {children}
@@ -487,7 +487,7 @@ export default function MarkdownRenderer({
                     // 表格数据单元格样式
                     td: ({ children, ...props }) => (
                       <td
-                        className="px-4 py-2 border-b border-gray-200 text-gray-700"
+                        className="px-4 py-2 border-2 border-black dark:border-white text-gray-800 dark:text-gray-200"
                         {...props}
                       >
                         {children}
@@ -496,7 +496,7 @@ export default function MarkdownRenderer({
                     // 自定义引用块样式 - 左侧蓝色边框，浅蓝背景
                     blockquote: ({ children, ...props }) => (
                       <blockquote
-                        className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 text-gray-700 italic"
+                        className="border-l-[6px] border-black dark:border-white pl-6 py-4 bg-gray-50 dark:bg-gray-900/50 text-gray-700 dark:text-gray-300 italic font-serif my-8"
                         {...props}
                       >
                         {children}
@@ -516,46 +516,46 @@ export default function MarkdownRenderer({
         {/* 桌面端右侧目录 */}
         {showToc && toc.length > 0 && (
           <div
-            className={`hidden xl:block flex-shrink-0 pl-4 transition-all duration-300 ${
-              desktopTocCollapsed ? "w-8" : "w-56"
+            className={`hidden xl:block flex-shrink-0 transition-all duration-300 ${
+              desktopTocCollapsed ? "w-12" : "w-64"
             }`}
           >
             <div className="sticky top-24 max-h-[calc(100vh-6rem)]">
               {/* 目录折叠按钮 */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 {!desktopTocCollapsed && (
-                  <h4 className="text-xs font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
-                    目录
+                  <h4 className="text-[10px] font-black text-black dark:text-white uppercase tracking-[0.2em]">
+                    Table of Contents
                   </h4>
                 )}
                 <button
                   onClick={() => setDesktopTocCollapsed(!desktopTocCollapsed)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                  className="p-2 border-2 border-black dark:border-white rounded-lg hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all group"
                   title={desktopTocCollapsed ? "展开目录" : "折叠目录"}
                 >
                   {desktopTocCollapsed ? (
-                    <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100" />
+                    <ChevronRight className="w-4 h-4" />
                   ) : (
-                    <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100" />
+                    <ChevronLeft className="w-4 h-4" />
                   )}
                 </button>
               </div>
 
               {/* 目录内容 */}
               {!desktopTocCollapsed && (
-                <div className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-2">
-                  <nav className="space-y-0.5 animate-in fade-in duration-200">
+                <div className="overflow-y-auto max-h-[calc(100vh-12rem)] pr-4 custom-scrollbar">
+                  <nav className="space-y-1 animate-in fade-in slide-in-from-right-4 duration-300">
                     {toc.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => scrollToHeading(item.id)}
-                        className={`block w-full text-left py-1 px-2 text-sm rounded transition-all truncate ${
+                        className={`block w-full text-left py-2 px-3 text-sm rounded-none border-l-4 transition-all truncate ${
                           activeHeading === item.id
-                            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-l-2 border-blue-600 dark:border-blue-400 font-medium"
-                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            ? "text-black dark:text-white border-black dark:border-white bg-gray-100 dark:bg-gray-800 font-bold"
+                            : "text-gray-400 dark:text-gray-500 border-transparent hover:text-black dark:hover:text-white hover:border-gray-200 dark:hover:border-gray-700"
                         }`}
                         style={{
-                          paddingLeft: `${(item.level - 1) * 10 + 8}px`,
+                          paddingLeft: `${(item.level - 1) * 12 + 12}px`,
                         }}
                         title={item.text}
                       >
