@@ -119,7 +119,6 @@ async function main() {
     // 保留一些常用的技术标签
     { name: "Next.js", slug: "nextjs", color: "#000000" },
     { name: "Prisma", slug: "prisma", color: "#2D3748" },
-    { name: "Tailwind CSS", slug: "tailwind", color: "#38BDF8" },
     { name: "算法", slug: "algorithm", color: "#95A5A6" },
     { name: "生活", slug: "life", color: "#F39C12" },
   ];
