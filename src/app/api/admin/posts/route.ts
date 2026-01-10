@@ -247,6 +247,26 @@ export async function POST(request: NextRequest) {
 
     const data = createPostSchema.parse(body);
 
+    // 验证分类 ID 是否存在
+    if (data.categoryId) {
+      const category = await prisma.category.findUnique({
+        where: { id: data.categoryId },
+      });
+      if (!category) {
+        return NextResponse.json({ error: "所选分类不存在" }, { status: 400 });
+      }
+    }
+
+    // 验证标签 ID 是否存在
+    if (data.tags && data.tags.length > 0) {
+      const tags = await prisma.tag.findMany({
+        where: { id: { in: data.tags } },
+      });
+      if (tags.length !== data.tags.length) {
+        return NextResponse.json({ error: "部分标签不存在" }, { status: 400 });
+      }
+    }
+
     // 检查slug是否已存在
     const existingPost = await prisma.post.findUnique({
       where: { slug: data.slug },
@@ -258,6 +278,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 验证 authorId 是否存在
+    const authorExists = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
 
     // 创建文章
     const post = await prisma.post.create({

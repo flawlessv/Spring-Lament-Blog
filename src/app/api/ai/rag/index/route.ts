@@ -6,9 +6,49 @@ import {
   indexAllPosts,
   deletePostIndex,
 } from "@/lib/vector/indexer";
+import { prisma } from "@/lib/prisma";
 
 /**
- * 构建文章索引
+ * GET - 获取索引状态
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "无权限" }, { status: 403 });
+    }
+
+    // 获取已发布的文章总数
+    const totalPosts = await prisma.post.count({
+      where: { published: true },
+    });
+
+    // 获取已索引的文章数
+    const indexedPosts = await prisma.postVectorIndex.count();
+
+    // 获取最近索引时间
+    const latestIndex = await prisma.postVectorIndex.findFirst({
+      orderBy: { updatedAt: "desc" },
+      select: { updatedAt: true },
+    });
+
+    return NextResponse.json({
+      totalPosts,
+      indexedPosts,
+      needsIndex: totalPosts > indexedPosts,
+      lastIndexed: latestIndex?.updatedAt || null,
+    });
+  } catch (error) {
+    console.error("获取索引状态失败:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "获取索引状态失败" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST - 构建文章索引
  */
 export async function POST(request: NextRequest) {
   try {

@@ -84,7 +84,7 @@ export function TableFilter({
           variant="ghost"
           size="sm"
           className={`h-6 w-6 p-0 hover:bg-gray-200 ${
-            hasActiveFilter ? "bg-blue-100 text-blue-600" : ""
+            hasActiveFilter ? "bg-gray-200 text-black" : ""
           }`}
           onClick={handleOpen}
         >
@@ -133,12 +133,6 @@ export function TableFilter({
                         }}
                         className="rounded"
                       />
-                      {option.color && (
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: option.color }}
-                        />
-                      )}
                       <span className="text-sm">{option.label}</span>
                     </label>
                   );
@@ -166,12 +160,6 @@ export function TableFilter({
                         }}
                         className="rounded"
                       />
-                      {option.color && (
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: option.color }}
-                        />
-                      )}
                       <span className="text-sm">{option.label}</span>
                     </label>
                   );
@@ -193,7 +181,7 @@ export function TableFilter({
             <Button
               size="sm"
               onClick={handleApply}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90"
             >
               确定
             </Button>

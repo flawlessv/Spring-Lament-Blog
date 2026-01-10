@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableFilter } from "@/components/ui/table-filter";
 import { Card, CardContent } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading";
+import { AdminLoading } from "@/components/ui/loading";
 import { DeleteConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -227,7 +227,13 @@ export function ModernTable<T = any>({
 
   // 加载状态
   if (loading && data.length === 0) {
-    return <LoadingSpinner />;
+    return (
+      <Card>
+        <CardContent className="py-20">
+          <AdminLoading text="正在加载数据..." />
+        </CardContent>
+      </Card>
+    );
   }
 
   // 错误状态
@@ -280,8 +286,8 @@ export function ModernTable<T = any>({
                   : "opacity-0 translate-x-4 pointer-events-none"
               )}
             >
-              <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 dark:bg-blue-950 rounded-xl min-w-0">
-                <span className="text-sm text-blue-700 dark:text-blue-300 font-medium whitespace-nowrap">
+              <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl min-w-0">
+                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium whitespace-nowrap">
                   已选择 {selectedIds.length} 项
                 </span>
                 {batchActions.map((batchAction, index) => {
@@ -318,7 +324,7 @@ export function ModernTable<T = any>({
           {createButton &&
             (createButton.href ? (
               <Link href={createButton.href as any}>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                <Button className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0">
                   {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                   {createButton.label}
                 </Button>
@@ -326,7 +332,7 @@ export function ModernTable<T = any>({
             ) : (
               <Button
                 onClick={createButton.onClick}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+                className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0"
               >
                 {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                 {createButton.label}
@@ -355,7 +361,7 @@ export function ModernTable<T = any>({
               createButton &&
               (createButton.href ? (
                 <Link href={createButton.href as any}>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg">
+                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0">
                     {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                     {createButton.label}
                   </Button>
@@ -363,7 +369,7 @@ export function ModernTable<T = any>({
               ) : (
                 <Button
                   onClick={createButton.onClick}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg"
+                  className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 rounded-xl shadow-md border-0"
                 >
                   {createButton.icon || <Plus className="mr-2 h-4 w-4" />}
                   {createButton.label}
