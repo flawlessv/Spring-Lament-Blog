@@ -11,7 +11,7 @@ tags:
   - Agent
   - MCP
   - RAG
-coverImage: https://youke1.picui.cn/s1/2025/10/21/68f748ab81821.jpg
+coverImage: /images/posts/ai-base/cover.png
 ---
 
 ## 1. 背景介绍
@@ -26,7 +26,7 @@ AI（ChatGPT）已经充斥了我们的生活和工作，但是很多基本概�
 
 ### 2.2. 大模型的特点
 
-![大模型特点](/public/images/posts/ai-base/img1.png)
+![大模型特点](/images/posts/ai-base/img1.png)
 
 ### 2.3. 大模型的分类
 
@@ -40,7 +40,7 @@ AI（ChatGPT）已经充斥了我们的生活和工作，但是很多基本概�
 
 提示词就是给大模型输入的文字。提示词工程不仅仅是简单的提问，而是一门能让AI更好理解和执行我们需求的技术。
 
-![提示词工程](/public/images/posts/ai-base/img2.png)
+![提示词工程](/images/posts/ai-base/img2.png)
 
 ### 3.2. Prompt技巧
 
@@ -68,7 +68,7 @@ Fine-tuning（微调）：通过特定领域数据对大模型进行针对性优
 
 在参数规模上，大模型微调主要有两种方法：全量微调（FFT）和参数高效微调（PEFT）。
 
-![微调方法](/public/images/posts/ai-base/img3.PNG)
+![微调方法](/images/posts/ai-base/img3.PNG)
 
 ### 4.4. 模型微调流程
 
@@ -85,7 +85,7 @@ Fine-tuning（微调）：通过特定领域数据对大模型进行针对性优
 
 ### 5.2. 常见的数据库类型
 
-![数据库类型](/public/images/posts/ai-base/img4.png)
+![数据库类型](/images/posts/ai-base/img4.png)
 
 1. **关系型数据库**是最基础的数据库类型，其表现特征为二维表格，行和列清晰分明
 2. **KV数据库**以键值对的形式存储数据，且value可以是多种类型，如字符串、数字或二进制等
@@ -106,11 +106,11 @@ Fine-tuning（微调）：通过特定领域数据对大模型进行针对性优
 2. 搜索时，先用embedding模型将目标图片转为向量，在数据库中检索相似度高的图片
 3. 返回这些相似度图片的ID、路径和相似度距离
 
-![图像识别案例](/public/images/posts/ai-base/img5.png)
+![图像识别案例](/images/posts/ai-base/img5.png)
 
 #### 5.3.2. Cursor代码库索引
 
-![Cursor代码库索引](/public/images/posts/ai-base/img6.png)
+![Cursor代码库索引](/images/posts/ai-base/img6.png)
 
 Cursor 的代码库索引功能通过以下关键步骤实现：
 
@@ -140,7 +140,7 @@ RAG = LLM + 知识库
 
 RAG的工作原理是通过检索大规模文档集合中的相关信息，然后利用这些信息来指导文本的生成，从而提高预测的质量和准确性。
 
-![RAG架构图1](/public/images/posts/ai-base/img7.png)
+![RAG架构图1](/images/posts/ai-base/img7.png)
 
 ### 6.4. RAG工作流程
 
@@ -150,7 +150,7 @@ RAG的工作原理是通过检索大规模文档集合中的相关信息，然�
 2. **利用阶段**：系统会利用这些检索到的信息来填充文本或回答问题
 3. **生成阶段**：系统会根据检索到的知识来生成最终的文本内容
 
-![RAG架构图2](/public/images/posts/ai-base/img8.png)
+![RAG架构图2](/images/posts/ai-base/img8.png)
 
 ### 6.5. 知识库技术架构
 
@@ -161,14 +161,14 @@ RAG的工作原理是通过检索大规模文档集合中的相关信息，然�
 3. **向量**：对拆分的数据块，进行 Embedding （Embedding 是一种将高维数据（如单词、句子、图片等）转换为低维向量空间的技术。这个过程的目的是使数据在低维空间中以一种更易于计算和处理的方式表示，同时尽可能保留数据之间的语义关系）向量化处理
 4. **存储**：将向量化的数据块存储到向量数据库 VectorDB 中，方便进行搜索
 
-![知识库技术架构](/public/images/posts/ai-base/img9.png)
+![知识库技术架构](/images/posts/ai-base/img9.png)
 
 **第二、在线的知识检索返回**
 
 1. **检索**：根据用户输入，使用检索器从存储中检索相关的Chunk
 2. **生成**：使用包含问题和检索到的知识提示词，交给大语言模型生成答案
 
-![知识检索返回](/public/images/posts/ai-base/img10.png)
+![知识检索返回](/images/posts/ai-base/img10.png)
 
 ## 7. 智能体（AI Agent）
 
@@ -206,13 +206,13 @@ AI Agent是由人工智能驱动的程序，当给定目标时，它们能够自
 - **Check**：检查实施效果
 - **Action**：将成功的纳入标准，不成功的留待下一循环去解决
 
-![PDCA思维模型](/public/images/posts/ai-base/img11.png)
+![PDCA思维模型](/images/posts/ai-base/img11.png)
 
 ### 7.4. 智能体架构
 
 基于PDCA模型，智能体具备以下能力：
 
-![智能体架构](/public/images/posts/ai-base/img12.png)
+![智能体架构](/images/posts/ai-base/img12.png)
 
 **规划能力（Plan）**：智能体（Agent）的大脑能够将复杂的大任务细分为小的、可操作的子任务，这种能力对于高效、有序地处理大型任务至关重要。
 
@@ -224,7 +224,7 @@ AI Agent是由人工智能驱动的程序，当给定目标时，它们能够自
 
 ### 7.5. 智能体框架
 
-![智能体框架](/public/images/posts/ai-base/img13.png)
+![智能体框架](/images/posts/ai-base/img13.png)
 
 **主要组件：**
 

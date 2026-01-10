@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-07-09
 readingTime: 14
-coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17681258350497152
+coverImage: /images/posts/ai-prompt/cover.PNG
 tags:
   - prompt
 ---
@@ -24,7 +24,7 @@ tags:
 
 ### 2.2. Prompt的运行过程
 
-![Prompt运行过程](/public/images/posts/ai-prompt/img1.PNG)
+![Prompt运行过程](/images/posts/ai-prompt/img1.PNG)
 
 **Prompt的运行主要包含以下步骤：**
 
@@ -597,7 +597,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 ### 6.1. Prompt攻击
 
-![提示词攻击类别](/public/images/posts/ai-prompt/img4.png)
+![提示词攻击类别](/images/posts/ai-prompt/img4.png)
 
 ### 6.2. 提示词注入
 
@@ -611,7 +611,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 可以看到通过提示词注入，当我们的大模型拿到这样的数据的时候，就有可能给出不适当的回应（即使它已经知道不恰当）
 
-![提示词注入示例](/public/images/posts/ai-prompt/img5.png)
+![提示词注入示例](/images/posts/ai-prompt/img5.png)
 
 ### 6.3. 提示词泄漏
 
@@ -623,7 +623,7 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 可以看到系统的System Prompt也是采用的结构化Prompt。获取之后用户就可以对System Prompt进行更改，甚至解除System Prompt的约束条件来做一些非法操作。
 
-![提示词泄漏示例](/public/images/posts/ai-prompt/img6.png)
+![提示词泄漏示例](/images/posts/ai-prompt/img6.png)
 
 ### 6.4. 提示词越狱
 
@@ -631,11 +631,11 @@ Prompt 设计时，任务粒度的设计很重要，考虑该任务使用单个 
 
 例如某模型本来无法输出不正当言辞，但是通过扮演"过世的祖母"并不断诱导，便实现了对LLM的越狱。
 
-![越狱攻击示例1](/public/images/posts/ai-prompt/img7.jpeg)
+![越狱攻击示例1](/images/posts/ai-prompt/img7.jpeg)
 
 通过不断诱导，模型已经破防。
 
-![越狱攻击示例2](/public/images/posts/ai-prompt/img8.jpeg)
+![越狱攻击示例2](/images/posts/ai-prompt/img8.jpeg)
 
 ### 6.5. 防御措施
 
