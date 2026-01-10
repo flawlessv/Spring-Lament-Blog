@@ -121,7 +121,6 @@ async function main() {
     { name: "Prisma", slug: "prisma", color: "#2D3748" },
     { name: "Tailwind CSS", slug: "tailwind", color: "#38BDF8" },
     { name: "算法", slug: "algorithm", color: "#95A5A6" },
-    { name: "数据结构", slug: "data-structure", color: "#E74C3C" },
     { name: "生活", slug: "life", color: "#F39C12" },
   ];
 
