@@ -6,7 +6,7 @@ featured: true
 category: ai
 publishedAt: 2025-11-14
 readingTime: 14
-coverImage: https://haowallpaper.com/link/common/file/previewFileImg/17673907924028800
+coverImage:
 tags:
   - AI
 ---
